@@ -2,9 +2,11 @@
   <v-app>
     <v-app-bar
       app
+      absolute
       flat
       outlined
-      class="px-12 main-toolbar"
+      class="px-12 main-toolbar nobg-dark"
+      v-if="isLogged"
     >
       <div class="d-flex align-center mr-4">
         <v-img
@@ -17,40 +19,110 @@
         />
       </div>
 
-      <v-tabs>
-        <v-tab>Treści</v-tab>
-        <v-tab>Tagi</v-tab>
+      
+      <v-tabs
+        :hide-slider="hideSlider"
+      >
+        <v-tab to="/">Treści</v-tab>
+        <v-tab to="/tags" value="/tags">Tagi</v-tab>
       </v-tabs>
 
       <v-spacer></v-spacer>
-
-      <v-btn icon class="mx-1">
+      <v-btn to="/users" icon class="ml-5 mr-1" :color="($route.path == '/users') ? 'primary' : ''" title="Użytkownicy">
         <v-icon>mdi-account-multiple</v-icon>
       </v-btn>
-      <v-btn icon class="mx-1">
+      <v-btn icon class="mx-1" :color="($route.path == '/settigs') ? 'primary' : ''" title="Ustawienia">
         <v-icon>mdi-cog</v-icon>
       </v-btn>
-      <v-btn icon class="mx-1">
-        <v-icon>mdi-brightness-4</v-icon>
+      <v-btn @click="darkMode = !darkMode" icon class="mx-1" title="Ciemny motyw">
+        <v-icon v-text="(darkMode) ? 'mdi-brightness-5' : 'mdi-brightness-4'"></v-icon>
       </v-btn>
-      <v-btn icon class="ml-1">
-        <v-icon>mdi-account-circle</v-icon>
-      </v-btn>
+      <v-menu
+        bottom
+        left
+        offset-y
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            icon
+            v-bind="attrs"
+            v-on="on"
+            class="ml-1"
+            title="Twój profil"
+          >
+            <v-icon>mdi-account-circle</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item @click="logoutUser">
+            <v-list-item-title>Wyloguj się</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
-    <v-main>
+    <v-main v-bind:class="{ esyfloresy: !isLogged }">
+      <transition name="fade" mode="out-in">
       <router-view/>
+      </transition>
+      <snack />
     </v-main>
   </v-app>
 </template>
 
 <script>
-
+import Snack from './components/Snack';
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'App',
-
+  components: {
+    Snack,
+  },
   data: () => ({
-    //
+    darkMode: false,
   }),
+  computed: {
+    ...mapGetters('profile', ['isLogged','user']),
+    hideSlider() {
+      return (this.$route.path == '/' || this.$route.path == '/tags') ? false : true
+    }
+  },
+  watch: {
+		darkMode: function() {
+			localStorage.setItem("dark", JSON.stringify(this.darkMode));
+      this.$vuetify.theme.dark = this.darkMode;
+    }
+  },
+  mounted() {
+    const mode = localStorage.getItem("dark");
+    if (mode == "true") {
+      this.$vuetify.theme.dark = true;
+      this.darkMode = true;
+    } else {
+      this.$vuetify.theme.dark = false;
+      this.darkMode = false;
+    }
+  },
+  methods: {
+    ...mapActions('profile', ['logout']),
+    logoutUser() {
+      this.logout();
+      this.$router.push({ path: '/login' })
+    }
+  }
 };
 </script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 0.3s;
+  transition-property: opacity;
+  transition-timing-function: ease;
+}
+.fade-enter,
+.fade-leave-active {
+  opacity: 0
+}
+</style>

@@ -1,55 +1,62 @@
 <template>
-  <v-container class="py-4">
-    <v-toolbar
-      flat
-      outlined
-      rounded
-      height="56px"
-      class="rounded-pill find-toolbar"
-    >
-      <v-text-field
-        label="Szukaj w tytule"
-        solo
-        flat
-        hide-details
-        prepend-inner-icon="mdi-magnify"
-      ></v-text-field>
-      <v-divider
-        class="mx-4"
-        vertical
-      ></v-divider>
-      <v-select
-        :items="items"
-        label="Kategoria"
-        solo
-        flat
-        hide-details
-      ></v-select>
-      <v-divider
-        class="mx-4"
-        vertical
-      ></v-divider>
-      <v-combobox
-        v-model="selectTag"
-        :items="items"
-        label="Tag"
-        solo
-        flat
-        hide-details
-      ></v-combobox>
-      <v-divider
-        class="ml-4"
-        vertical
-      ></v-divider>
-      <v-btn icon class="ml-1">
-        <v-icon>mdi-refresh</v-icon>
-      </v-btn>
-    </v-toolbar>
+  <v-container class="pt-4 pb-10" v-scroll="onScroll">
+    
+    <div class="h-56">
+      <div id="finder" class="find-container" v-bind:class="{ sticked: finderSticked }">
+        <div class="container">
+          <v-toolbar
+            flat
+            outlined
+            rounded
+            :height="finderHeight"
+            class="rounded-pill find-toolbar nob-dark"
+          >
+            <v-text-field
+              label="Szukaj w tytule"
+              solo
+              flat
+              hide-details
+              prepend-inner-icon="mdi-magnify"
+            ></v-text-field>
+            <v-divider
+              class="mx-4"
+              vertical
+            ></v-divider>
+            <v-select
+              :items="items"
+              label="Kategoria"
+              solo
+              flat
+              hide-details
+            ></v-select>
+            <v-divider
+              class="mx-4"
+              vertical
+            ></v-divider>
+            <v-combobox
+              v-model="selectTag"
+              :items="items"
+              label="Tag"
+              solo
+              flat
+              hide-details
+            ></v-combobox>
+            <v-divider
+              class="ml-4"
+              vertical
+            ></v-divider>
+            <v-btn icon class="ml-1" color="primary">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+          </v-toolbar>
+        </div>
+      </div>
+    </div>
 
     <v-toolbar
       flat
       height="56px"
-      class="filter-toolbar my-3 mb-12"
+      class="filter-toolbar nobg-dark my-3 mb-12"
     >
       <v-select
         :items="items"
@@ -81,12 +88,13 @@
 
     <v-card
       outlined
+      class="nobg-dark"
     >
       <v-data-table
         :headers="headers"
         :items="desserts"
-        :items-per-page="5"
-        class=""
+        :items-per-page="20"
+        class="nobg-dark"
       ></v-data-table>
     </v-card>
   </v-container>
@@ -277,6 +285,32 @@
             iron: '6%',
           },
         ],
+        finderTop: 0,
+        finderSticked: false,
     }),
+    computed: {
+      finderHeight() {
+        return (this.finderSticked) ? 64 : 56;
+      }
+    },
+    mounted() {
+      this.stickFinderInit();
+    },
+    methods: {
+      stickFinderInit() {
+        const finder = document.getElementById("finder");
+        var rect = finder.getBoundingClientRect(),
+        scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        this.finderTop = rect.top + scrollTop;
+      },
+      onScroll () {
+        let scrollT = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollT > this.finderTop) {
+          this.finderSticked = true;
+        } else {
+          this.finderSticked = false;
+        }
+      },
+    }
   }
 </script>
