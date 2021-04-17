@@ -39,5 +39,15 @@ export default {
   },
   delete(table, id) {
     console.log(table, id);
-  }
+  },
+  getConfig() {
+    console.log('getting config');
+  },
+  autocomplete(table, q) {
+    return fetch(apiUrl + '/autocomplete/' + table + '/' + q + '?t=' + new Date().getTime(), {
+      method: 'GET'
+    })
+    .then(response => response.json())
+    .catch(() => badResponse());
+  },
 }

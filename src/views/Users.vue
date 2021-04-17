@@ -12,7 +12,7 @@
             class="rounded-pill find-toolbar nob-dark"
           >
             <v-text-field
-              label="Szukaj w tytule"
+              label="Adres e-mail"
               solo
               flat
               hide-details
@@ -24,23 +24,11 @@
             ></v-divider>
             <v-select
               :items="itemsx"
-              label="Kategoria"
+              label="Grupa robocza"
               solo
               flat
               hide-details
             ></v-select>
-            <v-divider
-              class="mx-4"
-              vertical
-            ></v-divider>
-            <v-combobox
-              v-model="selectTag"
-              :items="itemsx"
-              label="Tag"
-              solo
-              flat
-              hide-details
-            ></v-combobox>
             <v-divider
               class="ml-4"
               vertical
@@ -66,16 +54,6 @@
         rounded
         hide-details
         class="mr-2 state-select"
-      ></v-select>
-
-      <v-select
-        :items="itemsx"
-        placeholder="Grupa robocza"
-        dense
-        outlined
-        rounded
-        hide-details
-        class="mr-4 user-select"
       ></v-select>
       <v-spacer></v-spacer>
      </v-toolbar>
@@ -216,7 +194,8 @@
             this.results = response.results;
             this.totalItems = response.totalItems;
           } else {
-            this.items = [];
+            this.results = [];
+            this.totalItems = 0;
           }
           this.loading = false;
         });

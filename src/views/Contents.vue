@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pt-4 pb-10" v-scroll="onScroll">
+  <v-container class="pt-4 pb-16 mb-4" v-scroll="onScroll">
     
     <div class="h-56">
       <div id="finder" class="find-container" v-bind:class="{ sticked: finderSticked }">
@@ -12,35 +12,56 @@
             class="rounded-pill find-toolbar nob-dark"
           >
             <v-text-field
+              v-model="q"
               label="Szukaj w tytule"
               solo
               flat
               hide-details
               prepend-inner-icon="mdi-magnify"
+              clearable
             ></v-text-field>
             <v-divider
               class="mx-4"
               vertical
             ></v-divider>
             <v-select
-              :items="items"
+              :items="config.categories"
+              item-text="title"
+              item-value="id"
+              v-model="filters.id_category"
               label="Kategoria"
               solo
               flat
               hide-details
+              dense
             ></v-select>
             <v-divider
               class="mx-4"
               vertical
             ></v-divider>
-            <v-combobox
+            <v-autocomplete
+              v-model="filters.id_tag"
+              item-text="title"
+              item-value="id"
+              :loading="tagLoading"
+              :items="tagItems"
+              :search-input.sync="searchTag"
+              cache-items
+              class="mx-4"
+              flat
+              hide-no-data
+              hide-details
+              label="Tag"
+              solo
+            ></v-autocomplete>
+            <!--<v-combobox
               v-model="selectTag"
-              :items="items"
+              :items="itemsx"
               label="Tag"
               solo
               flat
               hide-details
-            ></v-combobox>
+            ></v-combobox>-->
             <v-divider
               class="ml-4"
               vertical
@@ -59,8 +80,12 @@
       class="filter-toolbar nobg-dark my-3 mb-12"
     >
       <v-select
-        :items="items"
+        v-model="filters.state"
+        :items="config.contentsStates"
+        item-text="title"
+        item-value="id"
         placeholder="Status"
+        clearable
         dense
         outlined
         rounded
@@ -69,234 +94,232 @@
       ></v-select>
 
       <v-select
-        :items="items"
+        v-model="filters.id_user"
+        :items="config.usersGroups"
+        item-text="title"
+        item-value="id"
         placeholder="Redaktor"
+        clearable
         dense
         outlined
         rounded
         hide-details
-        class="mr-4 user-select"
+        class="mr-2 user-select"
       ></v-select>
 
-      <v-checkbox
-        v-model="ord"
-        label="Sponsorowane"
-        hide-details
-      ></v-checkbox>
+      <v-chip
+        outlined
+        filter
+        :input-value="filters.ord == 2"
+        @click="toggleSponsored()"
+      >
+        Sponsorowane
+      </v-chip>
       <v-spacer></v-spacer>
-     </v-toolbar>
+    </v-toolbar>
 
     <v-card
       outlined
-      class="nobg-dark"
+      class="nobg-dark pb-1"
     >
       <v-data-table
         :headers="headers"
-        :items="desserts"
-        :items-per-page="20"
+        :items="items"
+        :items-per-page="itemsPerPage"
+        :options.sync="options"
+        :page.sync="page"
+        :server-items-length="totalItems"
+        hide-default-footer
+        :loading="loading"
+        loading-text="Pobieram dane..."
         class="nobg-dark"
-      ></v-data-table>
+        @page-count="pageCount = $event"
+      >
+        <template v-slot:item.image_url="{ item }">
+          <img v-if="item.image_url" :src="imageServer + item.image_url" loading="lazy" class="thu" />
+        </template>
+        <template v-slot:item.title="{ item }">
+          {{ item.title }}
+          <v-chip v-if="item.ord == 3" class="mx-2 primary" small >Przypięty</v-chip>
+          <v-chip v-else-if="item.ord == 2" class="mx-2 orange" small >Sponsor</v-chip>
+        </template>
+        <template v-slot:item.state="{ item }">
+          {{ states[item.state].name }}
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-btn
+            icon
+            @click="editItem(item.id)"
+          >
+            <v-icon>
+              mdi-pencil
+            </v-icon>
+          </v-btn>
+        </template>
+        <template v-slot:no-data>
+          Nic nie znaleziono
+        </template>
+      </v-data-table>
+
+      <div v-if="pageCount > 1" class="paginate-bar py-1" v-bind:class="{ sticked: finderSticked }">
+        <v-pagination
+          v-model="page"
+          :length="pageCount"
+          total-visible="10"
+        ></v-pagination>
+      </div>
     </v-card>
+
   </v-container>
 </template>
 
 <script>
-  
-
+  import cms from '../api/cms';
+  import { mapGetters } from 'vuex'
+  import UsersEdit from '../components/UsersEdit.vue';
   export default {
     name: 'Contents',
+    components: {
+      UsersEdit
+    },
     data: () => ({
-      items: ['Kategoria', 'Foo', 'Bar', 'Fizz', 'Buzz'],
-      selectTag: null,
-      ord: false,
+      tableName: 'contents',
+      results: [], //from cms
+      totalItems: 0, //from cms
+      itemsPerPage: 50,
+      page: 1,
+      pageCount: 0,
+
+      loading: false,
+      editDialog: false,
+      editId: 0,
+
+      //finder bar stick
+      finderTop: 0,
+      finderSticked: false,
+
+      options: {},
+      filters: {
+        id_category: 1,
+        q: '',
+        ord: '',
+        state: '',
+        id_user: '',
+        id_tag: null
+      },
+      
+      //title
+      q: '',
+      qTimeout: null,
+
+      //tag
+      tagLoading: false,
+      tagItems: [],
+      searchTag: null,
 
       headers: [
-          {
-            text: 'Dessert (100g serving)',
-            align: 'start',
-            sortable: false,
-            value: 'name',
-          },
-          { text: 'Calories', value: 'calories' },
-          { text: 'Fat (g)', value: 'fat' },
-          { text: 'Carbs (g)', value: 'carbs' },
-          { text: 'Protein (g)', value: 'protein' },
-          { text: 'Iron (%)', value: 'iron' },
-        ],
-        desserts: [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-            iron: '1%',
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-            iron: '1%',
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-            iron: '7%',
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-            iron: '8%',
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-            iron: '16%',
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-            iron: '0%',
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-            iron: '2%',
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-            iron: '45%',
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-            iron: '22%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-        ],
-        finderTop: 0,
-        finderSticked: false,
+        { text: 'Obrazek',  align: 'start', sortable: false, value: 'image_url' },
+        { text: 'Tytuł', align: 'start', sortable: true, value: 'title' },
+        { text: 'Aktualizacja', align: 'start', sortable: true, value: 'update_time' },
+        { text: 'Status', align: 'start', value: 'state' },
+        { text: '', align: 'start', value: 'actions', sortable: false }
+      ],
+      states: [
+        { id: 0, name: 'Nieaktywny', color: 'accent' },
+        { id: 1, name: 'Aktywny', color: 'secondary' },
+      ],
+      groups: [
+        { id: 1, name: 'Administratorzy' },
+        { id: 2, name: 'Redaktorzy' },
+      ],
+      
+
+      itemsx: ['Kategoria', 'Foo', 'Bar', 'Fizz', 'Buzz'],
+      selectTag: null,
+      ord: false,
+      
     }),
     computed: {
+      ...mapGetters('config', ['config']),
       finderHeight() {
-        return (this.finderSticked) ? 64 : 56;
+        return (this.finderSticked) ? 64 : 56
+      },
+      items() {
+        return this.results
+      },
+      itemsTotal() {
+        return this.totalItems
+      },
+      countItems() {
+        return this.items.length
+      },
+      imageServer() {
+        return (this.filters.id_category == 1) ? 'http://blokpres/thumbs/180x120/' : 'http://blokpres/thumbs/60x60/'
       }
     },
     mounted() {
       this.stickFinderInit();
+      //this.getItems();
+    },
+    watch: {
+      options: {
+        handler () {
+          console.log('watch options');
+          this.getItems()
+        },
+        deep: true
+      },
+      filters: {
+        handler () {
+          if (this.options.page == 1) {
+            console.log('page=1');
+            this.getItems();
+            //this.options.page = 1;
+          } else {
+            console.log('page!=1');
+            //this.options.page = 1;
+            this.page = 1;
+          }
+        },
+        deep: true,
+      },
+      q(newVal) {
+        if (this.qTimeout) {
+          clearTimeout(this.qTimeout);
+        }
+        this.qTimeout = setTimeout(() => {
+          this.filters.q = newVal
+        }, 650);
+      },
+      searchTag (val) {
+        val && val !== this.filters.id_tag && this.findTag(val)
+      },
     },
     methods: {
+      getItems() {
+        console.log(new Date().getTime());
+        this.loading = true;
+        let params = {...this.options, ...this.filters};
+        cms.getItems(this.tableName, params)
+        .then(response => {
+          if (response.results) {
+            this.results = response.results;
+            this.totalItems = response.totalItems;
+          } else {
+            this.results = [];
+            this.totalItems = 0;
+          }
+          this.loading = false;
+        });
+      },
+      editItem(id) {
+        this.editId = id;
+        this.editDialog = true;
+      },
+      editUpdated() {
+        this.editDialog = false;
+        this.getItems();
+      },
       stickFinderInit() {
         const finder = document.getElementById("finder");
         var rect = finder.getBoundingClientRect(),
@@ -311,6 +334,25 @@
           this.finderSticked = false;
         }
       },
+      toggleSponsored() {
+        this.filters.ord = (this.filters.ord == 2) ? '' : 2
+        console.log(this.filters.ord);
+      },
+      findTag(q) {
+        this.tagLoading = true;
+        cms.autocomplete('tags', q)
+        .then(response => {
+          if (response) {
+            this.tagItems = response;
+          }
+          this.tagLoading = false;
+        });
+
+        /*this.tagItems = [
+          { id: 1, title: 'Wiadomości' },
+          { id: 2, title: 'Kryptowaluty' },
+        ];*/
+      }
     }
   }
 </script>

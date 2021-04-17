@@ -8,7 +8,7 @@
       class="px-12 main-toolbar nobg-dark"
       v-if="isLogged"
     >
-      <div class="d-flex align-center mr-4">
+      <router-link to="/" class="d-flex align-center mr-6">
         <v-img
           alt="Blokpres Logo"
           class="shrink mr-2"
@@ -17,7 +17,7 @@
           transition="scale-transition"
           width="36"
         />
-      </div>
+      </router-link>
 
       
       <v-tabs
@@ -49,6 +49,7 @@
             v-on="on"
             class="ml-1"
             title="Twój profil"
+            color="orange"
           >
             <v-icon>mdi-account-circle</v-icon>
           </v-btn>
@@ -117,7 +118,7 @@ export default {
 <style>
 .fade-enter-active,
 .fade-leave-active {
-  transition-duration: 0.3s;
+  transition-duration: 0.2s;
   transition-property: opacity;
   transition-timing-function: ease;
 }
