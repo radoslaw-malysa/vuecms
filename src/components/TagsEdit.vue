@@ -2,7 +2,7 @@
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-card-title class="justify-space-between">
-          <span class="headline" v-text="(id == 0) ? 'Nowy użytkownik' : 'Użytkownik'"></span>
+          <span class="headline" v-text="(id == 0) ? 'Nowy tag' : 'Tag'"></span>
           <v-btn text icon @click="$emit('close-edit')">
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -13,31 +13,38 @@
             v-model="valid"
             lazy-validation
           >
-            <v-text-field label="E-mail" type="email" v-model="email" filled required :rules="emailRules" :change="emailBackendError = false" :loading="loading" prepend-inner-icon="alternate_email"></v-text-field>
-            <v-text-field label="Hasło" :type="show1 ? 'text' : 'password'" v-model="passwd" filled :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" @click:append="show1 = !show1" :loading="loading" prepend-inner-icon="password"></v-text-field>
+            <v-text-field label="Nazwa" type="text" v-model="title" filled required :rules="titleRules" :change="emailBackendError = false" 
+              :loading="loading"
+              prepend-inner-icon="tag"
+            ></v-text-field>
+            <v-text-field label="Slug" type="text" v-model="slug" filled 
+              :loading="loading"
+              prepend-inner-icon="link"
+            ></v-text-field>
             <v-select
-              v-model="id_group"
-              :items="config.usersGroups"
+              v-model="catalog_tag"
+              :items="config.categories"
               item-text="title"
               item-value="id"
-              label="Grupa robocza"
-              required
+              label="W katalogu"
               filled
-              :rules="[v => !!v || 'Wybierz grupę dla użytkownika']"
               :loading="loading"
-              prepend-inner-icon="group"
+              prepend-inner-icon="local_offer"
             ></v-select>
             <v-select
-              v-model="state"
-              :items="config.usersStates"
+              v-model="menu_tag"
+              :items="config.categories"
               item-text="title"
               item-value="id"
-              label="Status"
-              required
+              label="W menu"
               filled
               :loading="loading"
-              prepend-inner-icon="verified"
+              prepend-inner-icon="menu"
             ></v-select>
+            <v-text-field label="Kolejność" type="text" v-model="ord" filled 
+              :loading="loading"
+              prepend-inner-icon="low_priority"
+            ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -55,39 +62,20 @@ import cms from '../api/cms'
 export default {
   props: ['id', 'dialog'],
   data: () => ({
-    tableName: 'users',
+    tableName: 'tags',
     valid: true,
     loading: false,
     
-    email: null,
-    emailRules: [
-      v => !!v || 'E-mail jest wymagany',
-      v => /.+@.+\..+/.test(v) || 'E-mail jest nieprawidłowy',
+    title: null,
+    titleRules: [
+      v => !!v || 'Nazwa jest wymagana'
     ],
 
-    passwd: null,
-    show1: false,
-    passwordRules: [ 
-      v => !!v || 'Password is required', 
-      v => (v && v.length >= 5) || 'Password must have 5+ characters',
-      v => /(?=.*[A-Z])/.test(v) || 'Must have one uppercase character', 
-      v => /(?=.*\d)/.test(v) || 'Must have one number', 
-      v => /([!@$%])/.test(v) || 'Must have one special character [!@#$%]' 
-    ],
-    //passwordRequired: value => !!value || "Your password is required",
-    //passwordMatch: value => value === this.password || "Your passwords don't match",
-    //min: v => v.length >= 14 || "Your password must be at least 14 characters",
-
-    id_group: null,
-    groups: [
-      { id: 1, name: 'Administratorzy' },
-      { id: 2, name: 'Redaktorzy' },
-    ],
-
-    state: '',
-    stateRules: [
-      v => !!v || 'Wybierz status użytkownika'
-    ]
+    slug: null,
+    menu_tag: null,
+    catalog_tag: null,
+    ord: null,
+    active: null
   }),
   computed: {
     ...mapGetters('config', ['config']),
@@ -105,13 +93,17 @@ export default {
   },
   methods: {
     loadItem() {
+      console.log('load item');
       this.loading = true;
       cms.getItem(this.tableName, this.id, {})
       .then(response => {
         if (response.id) {
-          this.email = response.email;
-          this.id_group = response.id_group;
-          this.state = response.state;
+          this.title = response.title;
+          this.slug = response.slug;
+          this.menu_tag = response.menu_tag;
+          this.catalog_tag = response.catalog_tag;
+          this.ord = response.ord;
+          this.active = response.active;
         } else {
           this.$refs.form.reset();
         }

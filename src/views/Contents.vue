@@ -17,7 +17,7 @@
               solo
               flat
               hide-details
-              prepend-inner-icon="mdi-magnify"
+              prepend-inner-icon="search"
               clearable
             ></v-text-field>
             <v-divider
@@ -47,27 +47,20 @@
               :items="tagItems"
               :search-input.sync="searchTag"
               cache-items
-              class="mx-4"
               flat
               hide-no-data
               hide-details
               label="Tag"
+              prepend-inner-icon="tag"
               solo
+              clearable
             ></v-autocomplete>
-            <!--<v-combobox
-              v-model="selectTag"
-              :items="itemsx"
-              label="Tag"
-              solo
-              flat
-              hide-details
-            ></v-combobox>-->
             <v-divider
               class="ml-4"
               vertical
             ></v-divider>
             <v-btn icon class="ml-1" color="primary">
-              <v-icon>mdi-plus</v-icon>
+              <v-icon>add</v-icon>
             </v-btn>
           </v-toolbar>
         </div>
@@ -132,8 +125,8 @@
         hide-default-footer
         :loading="loading"
         loading-text="Pobieram dane..."
-        class="nobg-dark"
         @page-count="pageCount = $event"
+        class="nobg-dark"
       >
         <template v-slot:item.image_url="{ item }">
           <img v-if="item.image_url" :src="imageServer + item.image_url" loading="lazy" class="thu" />
@@ -144,7 +137,8 @@
           <v-chip v-else-if="item.ord == 2" class="mx-2 orange" small >Sponsor</v-chip>
         </template>
         <template v-slot:item.state="{ item }">
-          {{ states[item.state].name }}
+          {{ (item.state) ? contentsStates[item.state].title : '' }}
+          <v-chip v-if="!item.state" class="danger" small >Nieokreślony</v-chip>
         </template>
         <template v-slot:item.actions="{ item }">
           <v-btn
@@ -152,7 +146,7 @@
             @click="editItem(item.id)"
           >
             <v-icon>
-              mdi-pencil
+              edit
             </v-icon>
           </v-btn>
         </template>
@@ -184,8 +178,8 @@
     },
     data: () => ({
       tableName: 'contents',
-      results: [], //from cms
-      totalItems: 0, //from cms
+      results: [], 
+      totalItems: 0,
       itemsPerPage: 50,
       page: 1,
       pageCount: 0,
@@ -198,6 +192,7 @@
       finderTop: 0,
       finderSticked: false,
 
+      //filters
       options: {},
       filters: {
         id_category: 1,
@@ -208,39 +203,27 @@
         id_tag: null
       },
       
-      //title
+      //title ajax find
       q: '',
       qTimeout: null,
 
-      //tag
+      //tag autocomplete
       tagLoading: false,
       tagItems: [],
       searchTag: null,
 
+      //table
       headers: [
         { text: 'Obrazek',  align: 'start', sortable: false, value: 'image_url' },
         { text: 'Tytuł', align: 'start', sortable: true, value: 'title' },
         { text: 'Aktualizacja', align: 'start', sortable: true, value: 'update_time' },
         { text: 'Status', align: 'start', value: 'state' },
-        { text: '', align: 'start', value: 'actions', sortable: false }
+        { text: '', align: 'end', value: 'actions', sortable: false }
       ],
-      states: [
-        { id: 0, name: 'Nieaktywny', color: 'accent' },
-        { id: 1, name: 'Aktywny', color: 'secondary' },
-      ],
-      groups: [
-        { id: 1, name: 'Administratorzy' },
-        { id: 2, name: 'Redaktorzy' },
-      ],
-      
-
-      itemsx: ['Kategoria', 'Foo', 'Bar', 'Fizz', 'Buzz'],
-      selectTag: null,
-      ord: false,
       
     }),
     computed: {
-      ...mapGetters('config', ['config']),
+      ...mapGetters('config', ['config', 'contentsStates']),
       finderHeight() {
         return (this.finderSticked) ? 64 : 56
       },
@@ -264,7 +247,6 @@
     watch: {
       options: {
         handler () {
-          console.log('watch options');
           this.getItems()
         },
         deep: true
@@ -289,7 +271,7 @@
         }
         this.qTimeout = setTimeout(() => {
           this.filters.q = newVal
-        }, 650);
+        }, 550);
       },
       searchTag (val) {
         val && val !== this.filters.id_tag && this.findTag(val)
@@ -347,11 +329,6 @@
           }
           this.tagLoading = false;
         });
-
-        /*this.tagItems = [
-          { id: 1, title: 'Wiadomości' },
-          { id: 2, title: 'Kryptowaluty' },
-        ];*/
       }
     }
   }

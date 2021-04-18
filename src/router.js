@@ -4,6 +4,7 @@ import store from './store'
 import Contents from './views/Contents.vue'
 import Login from './views/Login.vue'
 import Users from './views/Users.vue'
+import Tags from './views/Tags.vue'
 
 Vue.use(Router)
 
@@ -25,6 +26,11 @@ const router = new Router({
       path: '/users',
       name: 'Użytkownicy',
       component: Users
+    },
+    {
+      path: '/tags',
+      name: 'Tagi',
+      component: Tags
     },
   ]
 })

@@ -13,11 +13,11 @@
           >
             <v-text-field
               v-model="q"
-              label="E-mail użytkownika"
+              label="Tag"
               solo
               flat
               hide-details
-              prepend-inner-icon="search"
+              prepend-inner-icon="tag"
               clearable
             ></v-text-field>
             <v-divider
@@ -25,16 +25,34 @@
               vertical
             ></v-divider>
             <v-select
-              v-model="filters.id_group"
-              :items="config.usersGroups"
+              v-model="filters.catalog_tag"
+              :items="config.categories"
               item-text="title"
               item-value="id"
-              label="Grupa robocza"
+              label="W katalogu"
               solo
+              dense
               flat
               hide-details
+              prepend-icon="local_offer"
               clearable
-              prepend-inner-icon="group"
+            ></v-select>
+            <v-divider
+              class="mx-4"
+              vertical
+            ></v-divider>
+            <v-select
+              v-model="filters.menu_tag"
+              :items="config.categories"
+              item-text="title"
+              item-value="id"
+              label="W menu"
+              solo
+              dense
+              flat
+              hide-details
+              prepend-icon="menu"
+              clearable
             ></v-select>
             <v-divider
               class="ml-4"
@@ -54,8 +72,8 @@
       class="filter-toolbar nobg-dark my-3 mb-12"
     >
       <v-select
-        v-model="filters.state"
-        :items="config.usersStates"
+        v-model="filters.active"
+        :items="[{id: 1, title: 'Aktywny'},{id: 2, title: 'Nieaktywny'}]"
         item-text="title"
         item-value="id"
         placeholder="Status"
@@ -87,11 +105,14 @@
         class="nobg-dark"
         item-class="css"
       >
-        <template v-slot:item.id_group="{ item }">
-          {{ usersGroups[item.id_group].title }}
+        <template v-slot:item.catalog_tag="{ item }">
+          {{ (item.catalog_tag) ? categories[item.catalog_tag].title : '' }}
         </template>
-        <template v-slot:item.state="{ item }">
-          {{ usersStates[item.state].title }}
+        <template v-slot:item.menu_tag="{ item }">
+          {{ (item.menu_tag) ? categories[item.menu_tag].title : '' }}
+        </template>
+        <template v-slot:item.active="{ item }">
+          {{ (item.active == 1) ? 'Aktywny' : 'Nieaktywny' }}
         </template>
         <template v-slot:item.actions="{ item }">
           <v-btn
@@ -116,21 +137,21 @@
         ></v-pagination>
       </div>
     </v-card>
-    <users-edit v-bind:id="editId" v-bind:dialog="editDialog" v-on:close-edit="editDialog = false" v-on:edit-updated="editUpdated" />
+    <tags-edit v-bind:id="editId" v-bind:dialog="editDialog" v-on:close-edit="editDialog = false" v-on:edit-updated="editUpdated" />
   </v-container>
 </template>
 
 <script>
   import { mapGetters } from 'vuex'
   import cms from '../api/cms'
-  import UsersEdit from '../components/UsersEdit.vue';
+  import TagsEdit from '../components/TagsEdit.vue';
   export default {
-    name: 'Users',
+    name: 'Tags',
     components: {
-      UsersEdit
+      TagsEdit
     },
     data: () => ({
-      tableName: 'users',
+      tableName: 'tags',
       results: [], 
       totalItems: 0,
       itemsPerPage: 50,
@@ -148,7 +169,6 @@
       //filters
       options: {},
       filters: {
-        id_group: null,
         q: '',
         state: ''
       },
@@ -159,10 +179,11 @@
       
       //table
       headers: [
-        { text: 'Email',  align: 'start', sortable: true, value: 'email' },
-        { text: 'Grupa', align: 'start', sortable: true, value: 'id_group' },
-        { text: 'Utworzony', align: 'start', sortable: true, value: 'create_time' },
-        { text: 'Status', align: 'start', value: 'state' },
+        { text: 'Nazwa',  align: 'start', sortable: true, value: 'title' },
+        { text: 'W katalogu', align: 'start', sortable: true, value: 'catalog_tag' },
+        { text: 'W menu', align: 'start', sortable: true, value: 'menu_tag' },
+        { text: 'Kolejność', align: 'start', sortable: true, value: 'ord' },
+        { text: 'Status', align: 'start', value: 'active' },
         { text: '', align: 'end', value: 'actions', sortable: false }
       ],
       
@@ -173,7 +194,7 @@
       
     }),
     computed: {
-      ...mapGetters('config', ['config','usersGroups','usersStates']),
+      ...mapGetters('config', ['config', 'categories']),
       finderHeight() {
         return (this.finderSticked) ? 64 : 56
       },

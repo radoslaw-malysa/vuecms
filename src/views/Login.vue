@@ -35,17 +35,17 @@
 								:rules="emailRules"
 								label="E-mail"
 								name="email"
-								prepend-inner-icon="mdi-account"
+								prepend-inner-icon="person"
 								type="text"
 								:loading="loading"
 							></v-text-field>
 							<v-text-field 
-								prepend-inner-icon="mdi-lock"
+								prepend-inner-icon="lock"
 								label="Hasło" 
 								:type="passType ? 'text' : 'password'" 
 								v-model="passwd" 
 								:rules="passwordRules"
-								:append-icon="passType ? 'mdi-eye' : 'mdi-eye-off'" 
+								:append-icon="passType ? 'visibility' : 'visibility_off'" 
 								@click:append="passType = !passType"
 								required
 								filled

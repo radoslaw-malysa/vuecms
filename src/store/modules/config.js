@@ -14,20 +14,48 @@ const state = () => ({
     contentsStates: [
       { id: 1, title: 'Opublikowany' },
       { id: 2, title: 'Roboczy' },
-      { id: 3, title: 'Kosz' },
+      { id: 3, title: 'Ukryty' },
     ],
     usersGroups: [
       { id: 1, title: 'Administrator' },
       { id: 2, title: 'Redaktor' },
       { id: 3, title: 'Gość' },
-    ]
+    ],
+    usersStates: [
+      { id: 1, title: 'Aktywny' },
+      { id: 2, title: 'Nieaktywny' }
+    ],
   }
 })
 
 const getters = {
   config(state) {
     return state.config
-  }
+  },
+  categories(state) {
+    return state.config.categories.reduce((obj, item) => {
+      obj[item.id] = item
+      return obj
+    }, {})
+  },
+  contentsStates(state) {
+    return state.config.contentsStates.reduce((obj, item) => {
+      obj[item.id] = item
+      return obj
+    }, {})
+  },
+  usersGroups(state) {
+    return state.config.usersGroups.reduce((obj, item) => {
+      obj[item.id] = item
+      return obj
+    }, {})
+  },
+  usersStates(state) {
+    return state.config.usersStates.reduce((obj, item) => {
+      obj[item.id] = item
+      return obj
+    }, {})
+  },
 }
 
 const mutations = {

@@ -29,13 +29,13 @@
 
       <v-spacer></v-spacer>
       <v-btn to="/users" icon class="ml-5 mr-1" :color="($route.path == '/users') ? 'primary' : ''" title="Użytkownicy">
-        <v-icon>mdi-account-multiple</v-icon>
+        <v-icon>people_alt</v-icon>
       </v-btn>
       <v-btn icon class="mx-1" :color="($route.path == '/settigs') ? 'primary' : ''" title="Ustawienia">
-        <v-icon>mdi-cog</v-icon>
+        <v-icon>settings</v-icon>
       </v-btn>
       <v-btn @click="darkMode = !darkMode" icon class="mx-1" title="Ciemny motyw">
-        <v-icon v-text="(darkMode) ? 'mdi-brightness-5' : 'mdi-brightness-4'"></v-icon>
+        <v-icon v-text="(darkMode) ? 'light_mode' : 'brightness_4'"></v-icon>
       </v-btn>
       <v-menu
         bottom
@@ -51,7 +51,7 @@
             title="Twój profil"
             color="orange"
           >
-            <v-icon>mdi-account-circle</v-icon>
+            <v-icon>account_circle</v-icon>
           </v-btn>
         </template>
 
