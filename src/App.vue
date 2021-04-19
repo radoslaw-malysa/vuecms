@@ -19,7 +19,6 @@
         />
       </router-link>
 
-      
       <v-tabs
         :hide-slider="hideSlider"
       >

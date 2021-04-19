@@ -1,10 +1,10 @@
 <template>
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
-        <v-card-title class="justify-space-between">
+        <v-card-title class="justify-space-between pl-14">
           <span class="headline" v-text="(id == 0) ? 'Nowy tag' : 'Tag'"></span>
           <v-btn text icon @click="$emit('close-edit')">
-            <v-icon>mdi-close</v-icon>
+            <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text>
@@ -15,11 +15,11 @@
           >
             <v-text-field label="Nazwa" type="text" v-model="title" filled required :rules="titleRules" :change="emailBackendError = false" 
               :loading="loading"
-              prepend-inner-icon="tag"
+              prepend-icon="tag"
             ></v-text-field>
             <v-text-field label="Slug" type="text" v-model="slug" filled 
               :loading="loading"
-              prepend-inner-icon="link"
+              prepend-icon="link"
             ></v-text-field>
             <v-select
               v-model="catalog_tag"
@@ -29,7 +29,7 @@
               label="W katalogu"
               filled
               :loading="loading"
-              prepend-inner-icon="local_offer"
+              prepend-icon="local_offer"
             ></v-select>
             <v-select
               v-model="menu_tag"
@@ -39,12 +39,23 @@
               label="W menu"
               filled
               :loading="loading"
-              prepend-inner-icon="menu"
+              prepend-icon="menu"
             ></v-select>
             <v-text-field label="Kolejność" type="text" v-model="ord" filled 
               :loading="loading"
-              prepend-inner-icon="low_priority"
+              prepend-icon="low_priority"
             ></v-text-field>
+            <v-select
+              v-model="active"
+              :items="[{id: 1, title: 'Aktywny'},{id: 2, title: 'Nieaktywny'}]"
+              item-text="title"
+              item-value="id"
+              label="Status"
+              required
+              filled
+              :loading="loading"
+              prepend-icon="verified"
+            ></v-select>
           </v-form>
         </v-card-text>
         <v-card-actions>

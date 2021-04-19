@@ -170,12 +170,8 @@
 <script>
   import cms from '../api/cms';
   import { mapGetters } from 'vuex'
-  import UsersEdit from '../components/UsersEdit.vue';
   export default {
     name: 'Contents',
-    components: {
-      UsersEdit
-    },
     data: () => ({
       tableName: 'contents',
       results: [], 
