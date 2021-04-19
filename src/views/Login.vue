@@ -120,6 +120,6 @@ export default {
   background-position: 40% 50%;
 }
 .v-card.no-bg {
-	background-color: transparent;
+	background-color: transparent !important;
 }
 </style>

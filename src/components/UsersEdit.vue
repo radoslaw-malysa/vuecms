@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" persistent max-width="600px">
     <v-card>
-      <v-card-title class="justify-space-between pl-14">
+      <v-card-title class="justify-space-between">
         <span class="headline" v-text="(id == 0) ? 'Nowy użytkownik' : 'Użytkownik'"></span>
         <v-btn text icon @click="$emit('close-edit')">
           <v-icon>close</v-icon>
@@ -13,8 +13,8 @@
           v-model="valid"
           lazy-validation
         >
-          <v-text-field label="E-mail" type="email" v-model="email" filled required :rules="emailRules" :change="emailBackendError = false" :loading="loading" prepend-icon="alternate_email"></v-text-field>
-          <v-text-field label="Hasło" :type="show1 ? 'text' : 'password'" v-model="passwd" filled :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" @click:append="show1 = !show1" :loading="loading" prepend-icon="password"></v-text-field>
+          <v-text-field label="E-mail" type="email" v-model="email" required :rules="emailRules" :change="emailBackendError = false" :loading="loading"></v-text-field>
+          <v-text-field label="Hasło" :type="show1 ? 'text' : 'password'" v-model="passwd" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" @click:append="show1 = !show1" :loading="loading"></v-text-field>
           <v-select
             v-model="id_group"
             :items="config.usersGroups"
@@ -22,10 +22,8 @@
             item-value="id"
             label="Grupa robocza"
             required
-            filled
             :rules="[v => !!v || 'Wybierz grupę dla użytkownika']"
             :loading="loading"
-            prepend-icon="group"
           ></v-select>
           <v-select
             v-model="state"
@@ -34,16 +32,14 @@
             item-value="id"
             label="Status"
             required
-            filled
             :loading="loading"
-            prepend-icon="verified"
           ></v-select>
         </v-form>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn x-large color="blue darken-1" text @click="$emit('close-edit')">Anuluj</v-btn>
-        <v-btn x-large color="primary" @click="saveItem" :disabled="!valid || loading">Zapisz zmiany</v-btn>
+        <v-btn x-large color="secondary" text @click="$emit('close-edit')">Anuluj</v-btn>
+        <v-btn x-large text color="primary" @click="saveItem" :disabled="!valid || loading">Zapisz zmiany</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
