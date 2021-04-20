@@ -1,4 +1,5 @@
-/*import Vue from 'vue'
+
+import Vue from 'vue'
 import App from './AppEdit.vue'
 import router from './routerEdit'
 import store from './store'
@@ -14,9 +15,9 @@ new Vue({
   vuetify,
   render: h => h(App)
 }).$mount('#app')
-*/
 
- 
+
+/*
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -33,4 +34,4 @@ new Vue({
   vuetify,
   render: h => h(App)
 }).$mount('#app')
-
+*/
