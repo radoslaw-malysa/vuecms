@@ -5,6 +5,7 @@
       permanent
       right
       width="360px"
+      class="ed-drawer drv-right-shadow"
     >
       <v-card 
         flat 
@@ -14,7 +15,7 @@
         <v-toolbar
           elevation="0"
           color="transparent"
-          
+          class="py-3x bb"
         >
           <v-select
             name="state"
@@ -26,15 +27,15 @@
             solox
             outlined
             rounded
+            dense
             hide-details
           ></v-select>
           
           <v-btn
-            x-large
             rounded
             depressed
             color="primary"
-            class="ml-2"
+            class="ml-2 medium"
             @click="loadItem"
           >Zapisz</v-btn>
         </v-toolbar>
@@ -45,6 +46,7 @@
             <v-col
               cols="8"
             >
+              <label>Data</label>
               <v-menu
                 ref="dateMenu"
                 v-model="dateMenu"
@@ -58,13 +60,13 @@
                   <v-text-field
                     v-model="update_time_d"
                     name="update_time_d"
-                    label="Data"
                     readonly
                     rounded
                     outlined
                     hide-details
                     v-bind="attrs"
                     v-on="on"
+                    dense
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -78,9 +80,11 @@
               </v-menu>
             </v-col>
             <v-col cols="4">
-              <v-text-field label="Godzina" type="text" 
+              <label>Godzina</label>
+              <v-text-field placeholder="Godzina" type="text" 
                 outlined 
                 rounded
+                dense
                 hide-details=""
                 v-model="update_time_h"
                 name="update_time_h"
@@ -90,18 +94,19 @@
 
           <v-row>
             <v-col>
+              <label>Wyróżnij</label>
               <input type="hidden" name="ord" v-model="ord" />
               <v-chip
                 filter
-                large
-                class="my-2 mr-2 mid-chip"
+                
+                class="mr-2 medium"
                 :color="(ord == 1) ? 'primary' : ''"
                 @click=toggleOrd(1)
               >Przypięty</v-chip>
               <v-chip
                 filter
-                large
-                class="my-2 mr-2 mid-chip"
+                
+                class="medium"
                 :color="(ord == 2) ? 'primary' : ''"
                 @click=toggleOrd(2)
               >Sponsorowany</v-chip>
@@ -110,15 +115,16 @@
 
           <v-row>
             <v-col>
+              <label>Kategoria</label>
               <v-select
                 name="id_category"
                 :items="config.categories"
                 item-text="title"
                 item-value="id"
                 v-model="id_category"
-                label="Kategoria"
                 outlined
                 rounded
+                dense
                 hide-details
               ></v-select>
             </v-col>
@@ -126,12 +132,14 @@
 
           <v-row>
             <v-col>
+              <label>Tagi</label>
               <v-text-field 
                 placeholder="Tag" 
                 prepend-inner-icon="add"
                 type="text" 
                 outlined 
                 rounded
+                dense
                 hide-details=""
               ></v-text-field>
             </v-col>
@@ -154,7 +162,7 @@
               auto-grow
               rows="1"
               row-height="20"
-              class="text-h5x font-weight-boldx"
+              class="textarea-title"
             ></v-textarea>
           </div>
         </div>

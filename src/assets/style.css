@@ -173,3 +173,37 @@ img.thu {
     color: #1976d2;
     font-weight: 500;
 }
+
+/*edit*/
+.drv-right-shadow {
+    box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+}
+.drv-right-shadow .v-navigation-drawer__border {
+    display: none !important;
+}
+.ed-drawer label {
+    display: block;
+    padding-left: 8px;
+    padding-bottom: 8px;
+    font-weight: 700;
+}
+.v-chip.v-size--default.medium {
+    border-radius: 20px;
+    font-size: 16px;
+    height: 40px;
+}
+
+.ed .theme--light.v-text-field > .v-input__control > .v-input__slot:before {
+    border-color: rgba(0, 0, 0, 0.12);
+}
+.bb, .transparent.bb {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+.textarea-title textarea {
+    font-weight: 700;
+    font-size: 24px;
+}
+.v-btn.v-size--default.medium {
+    border-radius: 20px;
+    height: 40px;
+}
