@@ -90,22 +90,6 @@
 
           <v-row>
             <v-col>
-              <v-select
-                name="id_category"
-                :items="config.categories"
-                item-text="title"
-                item-value="id"
-                v-model="id_category"
-                label="Kategoria"
-                outlined
-                rounded
-                hide-details
-              ></v-select>
-            </v-col>
-          </v-row>
-
-          <v-row>
-            <v-col>
               <input type="hidden" name="ord" v-model="ord" />
               <v-chip
                 filter
@@ -121,6 +105,22 @@
                 :color="(ord == 2) ? 'primary' : ''"
                 @click=toggleOrd(2)
               >Sponsorowany</v-chip>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col>
+              <v-select
+                name="id_category"
+                :items="config.categories"
+                item-text="title"
+                item-value="id"
+                v-model="id_category"
+                label="Kategoria"
+                outlined
+                rounded
+                hide-details
+              ></v-select>
             </v-col>
           </v-row>
 
