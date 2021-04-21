@@ -233,7 +233,7 @@
         return this.items.length
       },
       imageServer() {
-        return (this.filters.id_category == 1) ? 'http://blokpres/thumbs/180x120/' : 'http://blokpres/thumbs/60x60/'
+        return (this.filters.id_category == 1) ? this.config.serverUrl + '/thumbs/180x120/' : this.config.serverUrl + 'http://blokpres/thumbs/60x60/'
       }
     },
     mounted() {

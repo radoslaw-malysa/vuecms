@@ -38,6 +38,7 @@
             class="ml-2 medium"
             @click="loadItem"
           >Zapisz</v-btn>
+
         </v-toolbar>
       
         <v-card-text class="py-8">
@@ -133,18 +134,40 @@
           <v-row>
             <v-col>
               <label>Tagi</label>
-              <v-text-field 
-                placeholder="Tag" 
+              <v-autocomplete
+                v-model="tagAdd"
+                item-text="title"
+                item-value="id"
+                return-object
+                :loading="tagLoading"
+                :items="tagItems"
+                :search-input.sync="searchTag"
+                cache-items
+                hide-no-data
+                hide-details
+                placeholder="Tag"
                 prepend-inner-icon="add"
-                type="text" 
-                outlined 
+                outlined
                 rounded
                 dense
-                hide-details=""
-              ></v-text-field>
+              ></v-autocomplete>
+              <div class="pt-2">
+                <v-chip-group
+                  column
+                >
+                  <v-chip
+                    v-for="tag in tags"
+                    :key="tag.id"
+                    close
+                    @click:close="delTag(tag.id)"
+                  >
+                    {{ tag.title }}
+                    <input type="hidden" name="tags[]" :value="tag.id" />
+                  </v-chip>
+                </v-chip-group>
+              </div>
             </v-col>
           </v-row>
-
           
         </v-card-text>
       </v-card>
@@ -182,7 +205,7 @@
           </div>
         </div>
 
-        <div class="d-flex">
+        <div class="d-flex mb-4">
           <div class="ed-aside"></div>
           <div class="ed-content flex-grow-1">
             <v-textarea
@@ -196,21 +219,45 @@
           </div>
         </div>
 
+
         <div class="d-flex">
-          <div class="ed-aside"></div>
+          <div class="ed-aside d-flex flex-column">
+            <v-btn
+              icon
+              large
+              title="Zdjęcie główne"
+              :color="(imageExist) ? 'primary' : 'secondary'" 
+            >
+              <v-icon>image</v-icon>
+            </v-btn>
+            <v-btn
+              icon
+              large
+              title="Video"
+              :color="(videoExist) ? 'primary' : 'secondary'"
+            >
+              <v-icon>slideshow</v-icon>
+            </v-btn>
+          </div>
           <div class="ed-content flex-grow-1">
+            <v-card>
+              <v-img
+                max-height="500"
+                max-width="750"
+                :src="config.serverUrl + '/thumbs/750x500/' + image_url"
+              ></v-img>
+            </v-card>
+            <v-card class="content-video" v-html="video" >
+              
+            </v-card>
+
             <v-text-field 
               name="image_caption"
               label="Podpis obrazka" 
               type="text" 
               v-model="image_caption"
+              class="mt-3"
             ></v-text-field>
-          </div>
-        </div>
-
-        <div class="d-flex">
-          <div class="ed-aside"></div>
-          <div class="ed-content flex-grow-1">
             <v-text-field 
               name="image_alt"
               label="Alt" 
@@ -220,6 +267,21 @@
           </div>
         </div>
 
+
+        <div class="d-flex">
+          <div class="ed-aside">
+            <v-btn
+              icon
+              large
+              title="Dodaj galerię zdjęć"
+            >
+              <v-icon>add_a_photo</v-icon>
+            </v-btn>
+          </div>
+          <div class="ed-content flex-grow-1">
+            
+          </div>
+        </div>
 
       </div>
     </v-container>
@@ -233,7 +295,7 @@ export default {
   name: 'Contents',
   data: () => ({
     tableName: 'contents',
-    id: '8',
+    id: '11',
     id_category: null,
     title: null,
     subtitle: null,
@@ -241,15 +303,41 @@ export default {
     image_url: null,
     image_alt: null,
     image_caption: null,
+    video: null,
     state: null,
     ord: 0,
     update_time_d: null,
     update_time_h: null,
 
+    //tag autocomplete
+    tagLoading: false,
+    tagItems: [],
+    searchTag: null,
+    tagAdd: {},
+    tags: [{id: 8, slug: 'social-apps', title: 'Social Apps'}, {id: 9, slug: 'dapp-browsers', title: 'DApp Browsers'}],
+
     dateMenu: false
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates']),
+    imageExist() {
+      return this.image_url != null && this.image_url != ''
+    },
+    videoExist() {
+      return this.video != null && this.video != ''
+    }
+
+  },
+  watch: {
+    searchTag (val) {
+      val && val !== this.idTagAdd && this.findTag(val)
+    },
+    tagAdd (val) {
+      this.tags.push(val);
+    },
+    video (val) {
+      console.log(val)
+    }
   },
   mounted() {
     this.loadItem();
@@ -268,6 +356,7 @@ export default {
             this.image_url = response.image_url;
             this.image_alt = response.image_alt;
             this.image_caption = response.image_caption;
+            this.video = response.video;
             this.state = response.state;
             this.ord = response.ord;
             this.update_time_d = new Date(response.update_time).toISOString().substr(0, 10);
@@ -285,6 +374,20 @@ export default {
     },
     toggleOrd(clickedOrd) {
       this.ord = (clickedOrd == this.ord) ? 0 : clickedOrd
+    },
+    findTag(q) {
+      this.tagLoading = true;
+      cms.autocomplete('tags', q)
+      .then(response => {
+        if (response) {
+          this.tagItems = response;
+        }
+        this.tagLoading = false;
+      });
+    },
+    delTag(id) {
+      let i = this.tags.map(function(item) { return item.id; }).indexOf(id);
+      this.tags.splice(i, 1);
     }
   }
 }
