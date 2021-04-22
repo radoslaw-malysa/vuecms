@@ -205,7 +205,7 @@
           </div>
         </div>
 
-        <div class="d-flex mb-4">
+        <div class="d-flex mb-6">
           <div class="ed-aside"></div>
           <div class="ed-content flex-grow-1">
             <v-textarea
@@ -220,7 +220,7 @@
         </div>
 
 
-        <div class="d-flex">
+        <div class="d-flex mb-6">
           <div class="ed-aside d-flex flex-column">
             <v-btn
               icon
@@ -256,7 +256,7 @@
               label="Podpis obrazka" 
               type="text" 
               v-model="image_caption"
-              class="mt-3"
+              class="mt-6"
             ></v-text-field>
             <v-text-field 
               name="image_alt"
@@ -264,6 +264,16 @@
               type="text" 
               v-model="image_alt"
             ></v-text-field>
+          </div>
+        </div>
+
+        <div class="d-flex">
+          <div class="ed-aside">x
+          </div>
+          <div class="ed-content flex-grow-1" style="width:750px;">
+            <div v-html="content">
+
+            </div>
           </div>
         </div>
 
@@ -300,6 +310,7 @@ export default {
     title: null,
     subtitle: null,
     clickbait: null,
+    content: null,
     image_url: null,
     image_alt: null,
     image_caption: null,
@@ -353,6 +364,7 @@ export default {
             this.title = response.title;
             this.subtitle = response.subtitle;
             this.clickbait = response.clickbait;
+            this.content = response.content;
             this.image_url = response.image_url;
             this.image_alt = response.image_alt;
             this.image_caption = response.image_caption;
