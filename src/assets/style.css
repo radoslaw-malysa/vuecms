@@ -209,3 +209,36 @@ img.thu {
     top: 0;
 }
 
+.media-placeholder {
+    /*border: 1px solid transparent !important;
+    transition: border-color 0.2s;*/
+    background-color: rgba(0,0,0,0.12) !important;
+    position: relative;
+}
+/*.media-placeholder:hover {
+    border: 1px solid rgba(0,0,0,0.56) !important;
+}*/
+.image-placeholder:before {
+    font-family: "Material Icons";
+    font-feature-settings: "Liga";
+    content: 'image';
+    position: absolute;
+    top: 50%;
+    margin-top: -32px;
+    right: 50%;
+    margin-right: -32px; 
+    font-size: 64px;
+    color: rgba(0,0,0,0.12);
+}
+.video-placeholder:before {
+    font-family: "Material Icons";
+    font-feature-settings: "Liga";
+    content: 'slideshow';
+    position: absolute;
+    top: 50%;
+    margin-top: -32px;
+    right: 50%;
+    margin-right: -32px; 
+    font-size: 64px;
+    color: rgba(0,0,0,0.12);
+}

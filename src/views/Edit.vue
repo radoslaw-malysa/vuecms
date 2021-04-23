@@ -51,7 +51,7 @@
             icon
             x-large
             title="Zdjęcie główne"
-            :color="(imageExist) ? 'primary' : 'secondary'" 
+            :color="btnImageColor" 
             @click="showVideo = false"
           >
             <v-icon>image</v-icon>
@@ -60,7 +60,7 @@
             icon
             x-large
             title="Video"
-            :color="(videoExist) ? 'primary' : 'grey lighten-2'"
+            :color="btnVideoColor"
             @click="showVideo = true"
           >
             <v-icon>slideshow</v-icon>
@@ -68,43 +68,121 @@
         </div>
         <div class="ed-content content-width flex-grow-1 relative">
           
-          <v-card elevation="1" v-show="!showVideo" key="1">
-            <v-img
-              max-height="500"
-              max-width="750"
-              :src="config.serverUrl + '/thumbs/750x500/' + image_url"
-            ></v-img>
-          </v-card>
           <v-card 
-            v-html="video" 
-            v-show="showVideo"
-            key="2"
-            class="main-video"
+            v-show="!showVideo" 
+            key="1"
+            elevation="0"
+            class="media-placeholder image-placeholder"
           >
+            <v-responsive :aspect-ratio="1.5">
+              <v-card-text class="pa-0">
+                <v-img
+                  v-if="image_url"
+                  aspect-ratio="1.5"
+                  max-height="500"
+                  max-width="750"
+                  :src="config.serverUrl + '/thumbs/750x500/' + image_url"
+                ></v-img>
+              </v-card-text>
+              <v-btn class="media-edit-btn" fab small color="gray" elevation="0">
+                <v-icon>photo_camera</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="image_url"
+                class="media-clear-btn"
+                fab
+                small
+                color="gray"
+                elevation="0"
+                @click="image_url = null"
+              >
+                <v-icon>clear</v-icon>
+              </v-btn>
+            </v-responsive>
           </v-card>
 
-          <v-btn
-            class="media-edit-btn"
-            fab
-            small
-            color="gray"
+          <v-card 
+            v-show="showVideo"
+            key="2"
             elevation="0"
+            class="main-video media-placeholder video-placeholder"
           >
-            <v-icon dark>
-              photo_camera
-            </v-icon>
-          </v-btn>
-          <v-btn
-            class="media-clear-btn"
-            fab
-            small
-            color="gray"
-            elevation="0"
-          >
-            <v-icon dark>
-              clear
-            </v-icon>
-          </v-btn>
+            <v-responsive :aspect-ratio="16/9">
+              <v-card-text v-html="video" class="pa-0"></v-card-text>
+              
+              <v-menu
+                v-model="insertVideoMenu"
+                :close-on-content-click="false"
+                :nudge-width="500"
+                offset-x
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn class="media-edit-btn" fab small color="gray" elevation="0" 
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon>code</v-icon>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-toolbar
+                    flat
+                  >
+                    <v-toolbar-title>Umieść film</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      icon
+                      @click="insertVideoMenu = false"
+                    >
+                      <v-icon>close</v-icon>
+                    </v-btn>
+                  </v-toolbar>
+                  <v-card-text class="py-0">
+                    <v-textarea
+                      name="video"
+                      placeholder="Tutaj wstaw kod embed video (iframe)"
+                      v-model="videoTmp"
+                      hide-details
+                      rows="6"
+                      class="pt-0 mt-0"
+                    ></v-textarea>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+
+                    <v-btn
+                      text
+                      large
+                      @click="insertVideoMenu = false"
+                    >
+                      Anuluj
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      text
+                      large
+                      @click="video = videoTmp; insertVideoMenu = false"
+                    >
+                      OK
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-menu>
+
+              <v-btn
+                v-if="video"
+                class="media-clear-btn"
+                fab
+                small
+                color="gray"
+                elevation="0"
+                @click="video = videoTmp = null"
+              >
+                <v-icon>clear</v-icon>
+              </v-btn>
+            </v-responsive>
+          </v-card>
+
 
           <v-text-field 
             name="image_caption"
@@ -130,19 +208,7 @@
           <editor
             :inline=true
             v-model="content"
-            :init="{
-              height: 500,
-              menubar: false,
-              plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount'
-              ],
-              toolbar:
-                'undo redo | formatselect | bold italic backcolor | \
-                alignleft aligncenter alignright alignjustify | \
-                bullist numlist outdent indent | removeformat | help'
-            }"
+            :init="tinyInit"
           />
         </div>
       </div>
@@ -206,7 +272,6 @@
           </v-toolbar>
         
           <v-card-text class="py-8">
-
             <v-row>
               <v-col
                 cols="8"
@@ -338,6 +403,19 @@
       </div>
     </div>
 
+    <v-btn
+      depressed
+      fab
+      icon
+      large
+      fixed
+      top
+      left
+      @click="abort"
+    >
+      <v-icon>arrow_back</v-icon>
+    </v-btn>
+
 
 
   </v-container>
@@ -372,6 +450,10 @@ export default {
     //main image
     showVideo: false,
 
+    //main video
+    videoTmp: null,
+    insertVideoMenu: false,
+
     //tag autocomplete
     tagLoading: false,
     tagItems: [],
@@ -383,13 +465,42 @@ export default {
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates']),
-    imageExist() {
-      return this.image_url != null && this.image_url != ''
+    btnImageColor() {
+      if (!this.showVideo) {
+        return 'primary'
+      } else {
+        return (this.image_url) ? 'secondary' : 'grey lighten-2'
+      }
     },
-    videoExist() {
-      return this.video != null && this.video != ''
+    btnVideoColor() {
+      if (this.showVideo) {
+        return 'primary'
+      } else {
+        return (this.video) ? 'secondary' : 'grey lighten-2'
+      }
+    },
+    tinyInit() {
+      return {
+        height: 500,
+        menubar: false,
+        plugins: [
+          'advlist autolink lists link image charmap print preview anchor',
+          'searchreplace visualblocks code fullscreen',
+          'insertdatetime media table paste code responsivefilemanager '
+        ],
+        toolbar:
+          'undo redo | formatselect | bold italic backcolor | \
+          alignleft aligncenter alignright alignjustify | \
+          bullist numlist outdent indent | removeformat | responsivefilemanager',
+        image_advtab: true,
+        external_filemanager_path: this.config.serverUrl + '/filemanager/',
+        filemanager_title: 'Media',
+        external_plugins: {
+          'responsivefilemanager': this.config.serverUrl + '/js/tinymce/plugins/responsivefilemanager/plugin.min.js',
+          'filemanager': this.config.serverUrl + '/filemanager/plugin.min.js'
+        }
+      }
     }
-
   },
   watch: {
     searchTag (val) {
@@ -423,6 +534,7 @@ export default {
             this.image_alt = response.image_alt;
             this.image_caption = response.image_caption;
             this.video = response.video;
+            this.videoTmp = response.video;
             this.state = response.state;
             this.ord = response.ord;
             this.update_time_d = new Date(response.update_time).toISOString().substr(0, 10);
@@ -464,7 +576,7 @@ export default {
     },
     resizeVideos() {
       const articleWidth = document.querySelector('.content-width').offsetWidth;
-      const videos = document.querySelectorAll("iframe[src*='youtube']");
+      const videos = document.querySelectorAll("iframe[src*='youtube'], iframe[src*='vimeo']");
 
       [].map.call(videos, function(item) {
         item.removeAttribute('width');
@@ -472,6 +584,9 @@ export default {
         item.style.width = articleWidth + 'px';
         item.style.height = articleWidth * parseFloat(9/16) + 'px';
       });
+    },
+    abort() {
+
     }
   }
 }
