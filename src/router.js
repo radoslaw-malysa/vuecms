@@ -5,6 +5,7 @@ import Contents from './views/Contents.vue'
 import Login from './views/Login.vue'
 import Users from './views/Users.vue'
 import Tags from './views/Tags.vue'
+import Edit from './views/Edit.vue'
 
 Vue.use(Router)
 
@@ -15,7 +16,7 @@ const router = new Router({
     {
       path: '/',
       name: 'Treści',
-      component: Contents
+      component: Contents,
     },
     {
       path: '/login',
@@ -32,16 +33,22 @@ const router = new Router({
       name: 'Tagi',
       component: Tags
     },
+    {
+      path: '/contents/:id',
+      name: 'Artykuł',
+      component: Edit,
+      props: true
+    },
   ]
 })
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/login'];
+  const publicPages = ['/login','/'];
   const authRequired = !publicPages.includes(to.path);
   //const profile = localStorage.getItem('profile');
   
   if (authRequired && !store.getters['profile/isLogged']) {
-    return next('/login');
+    //return next('/login');
   }
 
   next();

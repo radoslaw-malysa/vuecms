@@ -181,8 +181,8 @@
       pageCount: 0,
 
       loading: false,
-      editDialog: false,
-      editId: 0,
+      //editDialog: false,
+      //editId: 0,
 
       //finder bar stick
       finderTop: 0,
@@ -233,7 +233,7 @@
         return this.items.length
       },
       imageServer() {
-        return (this.filters.id_category == 1) ? this.config.serverUrl + '/thumbs/180x120/' : this.config.serverUrl + 'http://blokpres/thumbs/60x60/'
+        return (this.filters.id_category == 1 || this.filters.id_category == 3) ? this.config.serverUrl + '/thumbs/180x120/' : this.config.serverUrl + '/thumbs/60x60/'
       }
     },
     mounted() {
@@ -291,8 +291,15 @@
         });
       },
       editItem(id) {
-        this.editId = id;
-        this.editDialog = true;
+        //this.editId = id;
+        //this.editDialog = true;
+
+        let editRoute = this.$router.resolve({ 
+          name: 'Artykuł',
+          params: { id: id },
+        });
+        console.log(editRoute.href);
+        window.open(editRoute.href, '_blank');
       },
       editUpdated() {
         this.editDialog = false;
@@ -325,7 +332,8 @@
           }
           this.tagLoading = false;
         });
-      }
+      },
+      
     }
   }
 </script>

@@ -6,7 +6,7 @@
       flat
       outlined
       class="px-12 main-toolbar nobg-dark"
-      v-if="isLogged"
+      v-if="showMainBar"
     >
       <router-link to="/" class="d-flex align-center mr-6">
         <v-img
@@ -62,9 +62,9 @@
       </v-menu>
     </v-app-bar>
 
-    <v-main v-bind:class="{ esyfloresy: !isLogged }">
+    <v-main v-bind:class="{ esyfloresy: currentRoute == 'Logowanie' }">
       <transition name="fade" mode="out-in">
-      <router-view/>
+      <router-view ref="ruter" />
       </transition>
       <snack />
     </v-main>
@@ -86,6 +86,12 @@ export default {
     ...mapGetters('profile', ['isLogged','user']),
     hideSlider() {
       return (this.$route.path == '/' || this.$route.path == '/tags') ? false : true
+    },
+    currentRoute() {
+      return this.$route.name
+    },
+    showMainBar() {
+      return (this.currentRoute != 'Logowanie' && this.currentRoute != 'Artykuł') ? true : false;
     }
   },
   watch: {

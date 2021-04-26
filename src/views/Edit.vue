@@ -84,7 +84,7 @@
                   :src="config.serverUrl + '/thumbs/750x500/' + image_url"
                 ></v-img>
               </v-card-text>
-              <v-btn class="media-edit-btn" fab small color="gray" elevation="0">
+              <v-btn class="media-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog">
                 <v-icon>photo_camera</v-icon>
               </v-btn>
               <v-btn
@@ -197,6 +197,8 @@
             type="text" 
             v-model="image_alt"
           ></v-text-field>
+          <input id="image-input" type="text" value="" />
+          {{ imageInput }}
         </div>
       </div>
 
@@ -235,7 +237,7 @@
 
 
     <div class="pl-12 ed-drawer">
-      <div class="sticked">
+      <div class="sticked-top">
         <v-card 
           flat 
           tile
@@ -330,7 +332,7 @@
                   filter
                   
                   class="mr-2 medium"
-                  :color="(ord == 1) ? 'primary' : ''"
+                  :color="(ord == 3) ? 'primary' : ''"
                   @click=toggleOrd(1)
                 >Przypięty</v-chip>
                 <v-chip
@@ -417,7 +419,23 @@
     </v-btn>
 
 
-
+    <v-dialog
+      v-model="dialogMedia"
+      max-width="94vw"
+      transition="fade"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          <span>Media</span>
+          <v-spacer></v-spacer>
+          <v-btn text icon @click="dialogMedia = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text v-html="dialogMediaContent" class="pa-0"></v-card-text>
+      </v-card>
+    </v-dialog>
+    
   </v-container>
 </template>
 
@@ -425,14 +443,16 @@
 import { mapGetters } from 'vuex'
 import cms from '../api/cms'
 import Editor from '@tinymce/tinymce-vue'
+
+
 export default {
   name: 'Contents',
+  props: ['id'],
   components: {
     'editor': Editor
   },
   data: () => ({
     tableName: 'contents',
-    id: '11',
     id_category: null,
     title: null,
     subtitle: null,
@@ -449,6 +469,10 @@ export default {
 
     //main image
     showVideo: false,
+    dialogMedia: false,
+    dialogMediaContent: '',
+
+    imageInput: 'xxx',
 
     //main video
     videoTmp: null,
@@ -513,10 +537,15 @@ export default {
       this.$nextTick(() => {
         this.resizeVideos();
       });
+    },
+    imageInput (val) {
+      this.dialogMedia = false;
+      console.log('imageInput: ' + val);
     }
   },
   mounted() {
     this.loadItem();
+    responsive_filemanager_callback(1);
   },  
   methods: {
     loadItem() {
@@ -584,6 +613,15 @@ export default {
         item.style.width = articleWidth + 'px';
         item.style.height = articleWidth * parseFloat(9/16) + 'px';
       });
+    },
+    openMediaDialog() {
+      if (this.dialogMediaContent == '') {
+        this.dialogMediaContent = '<iframe width="100%" style="height:80vh;" frameborder="0" src="' + this.config.serverUrl + '/filemanager/dialog.php?relative_url=1&type=0&field_id=image-input" data-alloy-tabstop="true" tabindex="-1"></iframe>';
+      }
+
+      //window.addEventListener('message', onMessage);
+      this.dialogMedia = true;
+
     },
     abort() {
 

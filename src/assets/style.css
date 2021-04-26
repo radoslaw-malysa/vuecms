@@ -204,7 +204,7 @@ img.thu {
     border-radius: 20px;
     height: 40px;
 }
-.sticked {
+.sticked-top {
     position: sticky !important;
     top: 0;
 }
