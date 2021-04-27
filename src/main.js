@@ -7,6 +7,7 @@ import vuetify from './plugins/vuetify';
 import './assets/style.css';
 import './assets/article.css';
 
+
 Vue.config.productionTip = false
 
 var vm = new Vue({
@@ -16,11 +17,16 @@ var vm = new Vue({
   render: h => h(App)
 }).$mount('#app')
 
-console.log(vm.$refs.ruter);
-console.log(vm.$children[0].$children[0].$children[0].$children[0].imageInput);
-setTimeout(function() {
-vm.$children[0].$children[0].$children[0].$children[0].imageInput = 'bbb';
-}, 2000);
+
+/*responsive filemanager*/
+window.responsive_filemanager_callback = (field_id) => { 
+  //setTimeout(function() {
+  vm.$children[0].$children[0].$children[0].$children[0].image_url = document.getElementById(field_id).value;
+  vm.$children[0].$children[0].$children[0].$children[0].dialogMedia = false;
+  //}, 2000);
+};
+
+
 /* 
 import Vue from 'vue'
 import App from './AppEdit.vue'

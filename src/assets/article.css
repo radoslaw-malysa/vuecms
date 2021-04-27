@@ -22,6 +22,29 @@
   max-height: 70vh;
 }
 
+.article-content blockquote:not(.twitter-tweet) {
+  position: relative;
+  margin: 12px 20px 15px;
+  padding: 0 90px;
+  font-weight: 500;
+}
+.article-content blockquote:not(.twitter-tweet):before {
+  content: ",,";
+  position: absolute;
+  color: Gray;
+  font: 700 80px/30px Times,sans-serif;
+  top: -8px;
+  left: 38px;
+}
+
+.article-cms blockquote.twitter-tweet {
+  border-color: rgb(196, 207, 214);
+  border-radius: 12px;
+  border-width: 1px;
+  border-style: solid;
+  padding: 8px;
+}
+
 @media screen and (min-width:60em) {
   .article-content {
     font-size: 1.25rem;

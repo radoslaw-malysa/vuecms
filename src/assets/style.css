@@ -175,6 +175,28 @@ img.thu {
 }
 
 /*edit*/
+.ed {
+    position: relative;
+}
+.ed:before, .ed:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background-color:rgba(0, 0, 0, 0.12);
+}
+.ed:before {
+    left: 65px;
+}
+.ed:after {
+    right: -35px;
+}
+.theme--dark .ed:before, .theme--dark .ed:after {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
 .drv-right-shadow {
     box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
 }
@@ -196,8 +218,14 @@ img.thu {
 .ed .theme--light.v-text-field > .v-input__control > .v-input__slot:before {
     border-color: rgba(0, 0, 0, 0.12);
 }
+.ed .theme--dark.v-text-field > .v-input__control > .v-input__slot:before {
+    border-color: rgba(255, 255, 255, 0.24);
+}
 .bb, .transparent.bb {
     border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+.theme--dark .bb, .theme--dark .transparent.bb {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.24) !important;
 }
 
 .v-btn.v-size--default.medium {
@@ -208,6 +236,16 @@ img.thu {
     position: sticky !important;
     top: 0;
 }
+.abort-btn {
+    position: fixed;
+    top: 1rem;
+    margin-left: -0.5rem;
+    background-color: #fff;
+    z-index: 5;
+}
+.theme--dark .abort-btn {
+    background-color: rgb(18, 18, 18);
+}
 
 .media-placeholder {
     /*border: 1px solid transparent !important;
@@ -215,9 +253,9 @@ img.thu {
     background-color: rgba(0,0,0,0.12) !important;
     position: relative;
 }
-/*.media-placeholder:hover {
-    border: 1px solid rgba(0,0,0,0.56) !important;
-}*/
+.theme--dark .media-placeholder {
+    background-color: rgba(255,255,255,0.12) !important;
+}
 .image-placeholder:before {
     font-family: "Material Icons";
     font-feature-settings: "Liga";
@@ -241,4 +279,11 @@ img.thu {
     margin-right: -32px; 
     font-size: 64px;
     color: rgba(0,0,0,0.12);
+}
+.theme--dark .image-placeholder:before, .theme--dark .video-placeholder:before {
+    color: rgba(255, 255, 255, 0.24);
+}
+.mce-edit-focus {
+    outline: 0 !important;
+    border: none;
 }

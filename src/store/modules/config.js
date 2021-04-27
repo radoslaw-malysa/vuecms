@@ -26,6 +26,15 @@ const state = () => ({
       { id: 1, title: 'Aktywny' },
       { id: 2, title: 'Nieaktywny' }
     ],
+    contentsTemplates: [
+      { id_category: 1, view: 'wiadomosci/article.php' },
+      { id_category: 2, view: 'kryptowaluty/article.php' },
+      { id_category: 3, view: 'poradniki/article.php' },
+      { id_category: 4, view: 'ludzie/article.php' },
+      { id_category: 5, view: 'firmy/article.php' },
+      { id_category: 6, view: 'produkty/article.php' },
+      { id_category: 7, view: 'poradniki/article.php' }
+    ]
   }
 })
 
@@ -57,7 +66,9 @@ const getters = {
       return obj
     }, {})
   },
-  
+  categoryTemplate: (state) => (id_category) => {
+    return (id_category) ? state.config.contentsTemplates.find(el => el.id_category === id_category) : ''
+  }
 }
 
 const mutations = {
