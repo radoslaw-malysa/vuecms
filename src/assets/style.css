@@ -287,3 +287,28 @@ img.thu {
     outline: 0 !important;
     border: none;
 }
+
+.editor-wrap {
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    position: relative;
+    padding-bottom: 0;
+}
+.theme--dark .editor-wrap {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+}
+/*.editor-wrap.focused {
+    
+}*/
+.editor-content {
+    transition: min-height 0.25s, padding-bottom 0.25s;
+    min-height: 0;
+    outline: none;
+}
+.editor-wrap.focused .editor-content {
+    min-height: 140px;
+    padding-bottom: 40px;
+}
+.mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
+    left: 1px;
+    top: 14px;
+}

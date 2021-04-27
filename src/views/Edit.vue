@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid class="d-flex justify-center pt-0">
+  <v-container fluid class="d-flex justify-center pt-0 pb-0">
     <form id="form-contents" action="" method="post" class="d-flex">
-      <div class="ed d-inline-block pt-12">
+      <div class="ed d-inline-block py-12">
         <div class="d-flex">
           <div class="ed-aside">
             <v-btn
@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <div class="d-flex mb-4">
+        <div class="d-flex">
           <div class="ed-aside d-flex flex-column">
             <v-btn
               icon
@@ -216,16 +216,16 @@
           </div>
         </div>
 
-
         <div class="d-flex">
           <div class="ed-aside">
           </div>
-          <div class="ed-content article-content article-cms flex-grow-1" style="width:750px;">
+          <div id="editor-wrap" class="ed-content article-content article-cms editor-wrap flex-grow-1" style="width:750px;">
             <editor
               id="editor-content"
               :inline=true
               v-model="content"
               :init="tinyInit"
+              class="editor-content"
             />
           </div>
         </div>
@@ -514,7 +514,9 @@ export default {
       return {
         width: 750,
         language: 'pl',
+        placeholder: 'Treść artykułu...',
         menubar: false,
+        object_resizing: false,
         browser_spellcheck: true,
         media_filter_html: false,
         media_live_embeds: true,
@@ -529,7 +531,7 @@ export default {
           'media table paste code responsivefilemanager '
         ],
         toolbar: [
-          'undo redo | formatselect | bold italic blockquote | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+          'undo redo | h2 h3 h4 | bold italic blockquote | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent',
           'table | link image media | responsivefilemanager | removeformat code' ],
         image_advtab: true,
         external_filemanager_path: this.config.serverUrl + '/filemanager/',
@@ -537,6 +539,35 @@ export default {
         external_plugins: {
           'responsivefilemanager': this.config.serverUrl + '/js/tinymce/plugins/responsivefilemanager/plugin.min.js',
           'filemanager': this.config.serverUrl + '/filemanager/plugin.min.js'
+        },
+        setup: (editor) => {
+          editor.on("focus", () => {
+            document.getElementById("editor-wrap").classList.add("focused");
+          });
+          editor.on("blur", () => {
+            document.getElementById("editor-wrap").classList.remove("focused");
+          });
+          editor.ui.registry.addContextToolbar("editimage", {
+            predicate: (node) => {
+              return node.nodeName.toLowerCase() === "img";
+            },
+            items: "editimage removeimage",
+            position: "node",
+            scope: "node"
+          });
+          editor.ui.registry.addButton("editimage", {
+            icon: "edit-block",
+            onAction: () => {
+              editor.execCommand("mceImage");
+            }
+          });
+          editor.ui.registry.addButton("removeimage", {
+            icon: "remove",
+            onAction: () => {
+              const node = tinymce.activeEditor.selection.getNode();
+              node.remove();
+            }
+          });
         }
       }
     },
