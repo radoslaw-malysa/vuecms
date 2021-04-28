@@ -409,9 +409,31 @@
                         @click:close="delTag(tag.id)"
                       >
                         {{ tag.title }}
-                        <input type="hidden" name="tags[]" :value="tag.id" />
+                        <!--<input type="hidden" name="tags[]" :value="tag.id" />-->
                       </v-chip>
                     </v-chip-group>
+                  </div>
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col>
+                  <label>Slug</label>
+                  <v-textarea 
+                    id="slug"
+                    placeholder="Slug" 
+                    outlined 
+                    rounded
+                    dense
+                    hide-details
+                    v-model="slug"
+                    name="slug"
+                    rows="2"
+                    class="slim"
+                    
+                  ></v-textarea>
+                  <div class="text-right">
+                    <v-btn text rounded @click="copySlug">Skopiuj</v-btn>
                   </div>
                 </v-col>
               </v-row>
@@ -448,7 +470,7 @@
 import { mapGetters } from 'vuex'
 import cms from '../api/cms'
 import Editor from '@tinymce/tinymce-vue'
-
+import slugify from '../api/slugify'
 
 export default {
   name: 'Contents',
@@ -459,6 +481,7 @@ export default {
   data: () => ({
     tableName: 'contents',
     id_category: null,
+    slug: null,
     title: null,
     subtitle: null,
     clickbait: null,
@@ -601,6 +624,7 @@ export default {
         cms.getItem(this.tableName, this.id, {})
         .then(response => {
           if (response.id) {
+            this.slug = response.slug;
             this.id_category = response.id_category;
             this.title = response.title;
             this.subtitle = response.subtitle;
@@ -646,6 +670,7 @@ export default {
       }
 
       fd.content = this.content;
+      fd.tags = this.tags; //fd.tags = this.tags.map((item) => item.id )
 
       console.log(fd);
       
@@ -698,6 +723,13 @@ export default {
     },
     abort() {
       window.close();
+    },
+    copySlug() {
+      let copyInput = document.getElementById('slug');
+      copyInput.select();
+      copyInput.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      this.$store.commit('snack/open', {text: 'Slug skopiowany do schowka'});
     }
   }
 }
@@ -726,14 +758,17 @@ export default {
     top: 0.5rem;
     left: 3.5rem;
   }
+  .v-textarea.slim textarea {
+    margin-top: 0 !important;
+  }
   @media (min-width: 1264px) {
     .ed {
       width: 850px;
     }
-    .ed .v-text-field input, .v-text-field textarea {
+    .ed .v-text-field input, .ed .v-text-field textarea {
       font-size: 1.25rem;
     }
-    .textarea-title textarea {
+    .ed .v-text-field.textarea-title textarea {
       font-weight: 700;
       font-size: 24px;
     }
