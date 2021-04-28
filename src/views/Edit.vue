@@ -30,6 +30,31 @@
         </div>
 
         <div class="d-flex">
+          <div class="ed-aside relative">
+            <v-btn
+              icon
+              x-large
+              title="Slug - adres strony"
+              class="absolute-top-left"
+              @click="showSlug = !showSlug"
+              :color="(showSlug) ? 'primary' : 'grey lighten-2'"
+            >
+              <v-icon>link</v-icon>
+            </v-btn>
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-expand-transition>
+            <v-text-field
+              name="slug"
+              v-model="slug"
+              label="Slug"
+              v-show="showSlug"
+            ></v-text-field>
+            </v-expand-transition>
+          </div>
+        </div>
+
+        <div class="d-flex">
           <div class="ed-aside"></div>
           <div class="ed-content flex-grow-1">
             <v-textarea
@@ -415,28 +440,6 @@
                   </div>
                 </v-col>
               </v-row>
-
-              <v-row>
-                <v-col>
-                  <label>Slug</label>
-                  <v-textarea 
-                    id="slug"
-                    placeholder="Slug" 
-                    outlined 
-                    rounded
-                    dense
-                    hide-details
-                    v-model="slug"
-                    name="slug"
-                    rows="2"
-                    class="slim"
-                    
-                  ></v-textarea>
-                  <div class="text-right">
-                    <v-btn text rounded @click="copySlug">Skopiuj</v-btn>
-                  </div>
-                </v-col>
-              </v-row>
               
             </v-card-text>
           </v-card>
@@ -495,6 +498,9 @@ export default {
     update_time_d: null,
     update_time_h: null,
 
+    //slug
+    showSlug: false,
+
     //main image
     showVideo: false,
     dialogMedia: false,
@@ -519,6 +525,9 @@ export default {
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates', 'categoryTemplate']),
+    dark() {
+      return (localStorage.getItem("dark")) ? true : false
+    },
     btnImageColor() {
       if (!this.showVideo) {
         return 'primary'
@@ -537,6 +546,7 @@ export default {
       return {
         width: 750,
         language: 'pl',
+        skin: (this.dark) ? 'oxide-dark' : 'oxide',
         placeholder: 'Treść artykułu...',
         menubar: false,
         object_resizing: false,
@@ -639,6 +649,8 @@ export default {
             this.ord = response.ord;
             this.update_time_d = new Date(response.update_time).toISOString().substr(0, 10);
             this.update_time_h = new Date(response.update_time).toISOString().substr(11, 5);
+            
+            this.tags = response.tags;
           } else {
             this.$refs.form.reset();
           }

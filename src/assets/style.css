@@ -175,6 +175,11 @@ img.thu {
 }
 
 /*edit*/
+.absolute-top-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 .ed {
     position: relative;
 }
