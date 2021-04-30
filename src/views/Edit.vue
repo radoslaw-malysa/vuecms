@@ -647,8 +647,8 @@ export default {
             this.videoTmp = response.video;
             this.state = response.state;
             this.ord = response.ord;
-            this.update_time_d = new Date(response.update_time).toISOString().substr(0, 10);
-            this.update_time_h = new Date(response.update_time).toISOString().substr(11, 5);
+            this.update_time_d = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(0, 10) : new Date().toISOString().substr(0, 10);
+            this.update_time_h = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(11, 5) : new Date().toISOString().substr(11, 5);
             
             this.tags = response.tags;
           } else {
@@ -660,7 +660,6 @@ export default {
             this.resizeVideos();
           });
           
-
           this.loading = false;
         });
       } else {
@@ -683,15 +682,14 @@ export default {
 
       fd.content = this.content;
       fd.tags = this.tags; //fd.tags = this.tags.map((item) => item.id )
-
-      console.log(fd);
       
       cms.update(this.tableName, this.id, fd)
       .then(response => {
+        console.log(response);
         if (response.id) {
-          this.$store.commit('snack/open', {text: 'Artykuł pomyślnie zapisany'});
+          this.$store.commit('snack/open', {text: 'Artykuł pomyślnie zapisany', color: 'success'});
         } else {
-          this.$store.commit('snack/open', {text: 'Nie udało się zapisać zmian', color: 'error'});
+          this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
         }
         this.loading = false;
       });
