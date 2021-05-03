@@ -20,6 +20,7 @@
             <v-textarea
               name="title"
               v-model="title"
+              @change="titleToSlug(false)"
               label="Tytuł"
               auto-grow
               rows="1"
@@ -49,6 +50,8 @@
               v-model="slug"
               label="Slug"
               v-show="showSlug"
+              append-icon="sync"
+              @click:append="titleToSlug(true)"
             ></v-text-field>
             </v-expand-transition>
           </div>
@@ -241,7 +244,7 @@
           </div>
         </div>
 
-        <div class="d-flex">
+        <div class="d-flex mb-6">
           <div class="ed-aside">
           </div>
           <div id="editor-wrap" class="ed-content article-content article-cms editor-wrap flex-grow-1" style="width:750px;">
@@ -255,7 +258,15 @@
           </div>
         </div>
 
-        <div class="d-flex">
+        <div class="d-flex mb-6">
+          <div class="ed-aside">
+          </div>
+          <div class="ed-content flex-grow-1">
+            <contents-contents :inputData.sync="parentData" />
+          </div>
+        </div>
+
+        <div class="d-flex" style="margin-bottom: 250px;">
           <div class="ed-aside">
             <v-btn
               icon
@@ -416,12 +427,14 @@
                     :search-input.sync="searchTag"
                     cache-items
                     hide-no-data
+                    hide-selected
                     hide-details
                     placeholder="Tag"
                     prepend-inner-icon="add"
                     outlined
                     rounded
                     dense
+                    
                   ></v-autocomplete>
                   <div class="pt-2">
                     <v-chip-group
@@ -474,12 +487,14 @@ import { mapGetters } from 'vuex'
 import cms from '../api/cms'
 import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
+import ContentsContents from '../components/ContentsContents.vue'
 
 export default {
   name: 'Contents',
   props: ['id'],
   components: {
-    'editor': Editor
+    'editor': Editor,
+    ContentsContents
   },
   data: () => ({
     tableName: 'contents',
@@ -511,6 +526,10 @@ export default {
     //main video
     videoTmp: null,
     insertVideoMenu: false,
+
+    //contents_contents
+    contentsContents: 'xxx',
+    parentData: 'Dupa',
 
     //tag autocomplete
     tagLoading: false,
@@ -734,6 +753,11 @@ export default {
     abort() {
       window.close();
     },
+    titleToSlug(force) {
+      if (!this.slug || force) {
+        this.slug = slugify(this.title)
+      }
+    },
     copySlug() {
       let copyInput = document.getElementById('slug');
       copyInput.select();
@@ -784,3 +808,4 @@ export default {
     }
   }
 </style>
+<!--https://stackoverflow.com/questions/55808628/how-to-clear-v-autocomplete-multiple-search-input-after-selecting-the-checkbox-->

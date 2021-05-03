@@ -175,6 +175,9 @@ img.thu {
 }
 
 /*edit*/
+.v-autocomplete__content.v-menu__content {
+    border-radius: 8px;
+}
 .absolute-top-left {
     position: absolute;
     top: 0;

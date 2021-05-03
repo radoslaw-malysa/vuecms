@@ -38,7 +38,14 @@ export default {
     .catch(() => badResponse());
   },
   delete(table, id) {
-    console.log(table, id);
+    return fetch(apiUrl + '/delete/' + table + '/' + id + '?t=' + new Date().getTime(), {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      }
+    })
+    .then(response => response.json())
+    .catch(() => badResponse());
   },
   getConfig() {
     console.log('getting config');

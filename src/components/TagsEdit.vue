@@ -13,30 +13,29 @@
             v-model="valid"
             lazy-validation
           >
-            <v-text-field label="Nazwa" type="text" v-model="title" required :rules="titleRules" :change="emailBackendError = false" 
-              :loading="loading"
+            <v-text-field label="Nazwa" type="text" v-model="title" name="title" required :rules="requiredRules" @change="titleToSlug(false)" 
             ></v-text-field>
-            <v-text-field label="Slug" type="text" v-model="slug" 
-              :loading="loading"
+            <v-text-field label="Slug" type="text" v-model="slug" name="slug" 
+              append-icon="sync"
+              @click:append="titleToSlug(true)"
             ></v-text-field>
             <v-select
               v-model="catalog_tag"
               :items="config.categories"
               item-text="title"
               item-value="id"
+              clearable
               label="W katalogu"
-              :loading="loading"
             ></v-select>
             <v-select
               v-model="menu_tag"
               :items="config.categories"
               item-text="title"
               item-value="id"
+              clearable
               label="W menu"
-              :loading="loading"
             ></v-select>
             <v-text-field label="Kolejność" type="text" v-model="ord" 
-              :loading="loading"
             ></v-text-field>
             <v-select
               v-model="active"
@@ -44,15 +43,32 @@
               item-text="title"
               item-value="id"
               label="Status"
-              required
-              :loading="loading"
+              required :rules="requiredRules"
             ></v-select>
           </v-form>
         </v-card-text>
         <v-card-actions>
+          <v-menu v-if="id" offset-y :disabled="!valid || loading">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="warning"
+                x-large
+                text
+                v-bind="attrs"
+                v-on="on"
+              >
+                Usuń
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item @click="deleteItem">
+                <v-list-item-title>Potwierdzam usunięcie</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
           <v-spacer></v-spacer>
           <v-btn x-large color="secondary" text @click="$emit('close-edit')">Anuluj</v-btn>
-          <v-btn x-large text color="primary" @click="saveItem" :disabled="!valid || loading">Zapisz zmiany</v-btn>
+          <v-btn x-large text color="primary" @click="saveItem" :loading="loading" :disabled="!valid || loading">Zapisz</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -61,6 +77,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import cms from '../api/cms'
+import slugify from '../api/slugify'
 export default {
   props: ['id', 'dialog'],
   data: () => ({
@@ -69,15 +86,15 @@ export default {
     loading: false,
     
     title: null,
-    titleRules: [
-      v => !!v || 'Nazwa jest wymagana'
+    requiredRules: [
+      v => !!v || 'To pole jest wymagane'
     ],
 
     slug: null,
-    menu_tag: null,
-    catalog_tag: null,
-    ord: null,
-    active: null
+    menu_tag: 0,
+    catalog_tag: 0,
+    ord: '0',
+    active: 0
   }),
   computed: {
     ...mapGetters('config', ['config']),
@@ -113,13 +130,23 @@ export default {
       });
     },
     saveItem() {
+      console.log({
+          slug: this.slug,
+          title: this.title,
+          menu_tag: this.menu_tag,
+          catalog_tag: this.catalog_tag,
+          ord: this.ord,
+          active: this.active
+        });
+      if (this.$refs.form.validate()) {
       if (this.id == 0) {
         cms.create(this.tableName, {
-          email: this.email,
-          passwd: this.passwd,
-          name: this.name,
-          id_group: this.id_group,
-          state: this.state
+          slug: this.slug,
+          title: this.title,
+          menu_tag: this.menu_tag,
+          catalog_tag: this.catalog_tag,
+          ord: this.ord,
+          active: this.active
         })
         .then(response => {
           if (response.id) {
@@ -130,23 +157,38 @@ export default {
         });
       } else {
         cms.update(this.tableName, this.id, {
-          id: this.id,
-          email: this.email,
-          passwd: this.passwd,
-          name: this.name,
-          id_group: this.id_group,
-          state: this.state
+          slug: this.slug,
+          title: this.title,
+          menu_tag: this.menu_tag,
+          catalog_tag: this.catalog_tag,
+          ord: this.ord,
+          active: this.active
         })
         .then(response => {
           if (response.id) {
             this.$emit('edit-updated');
           } else {
-            console.log('error');
+            this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
           }
         });
       }
-      
-    }
+      }
+    },
+    deleteItem() {
+      cms.delete(this.tableName, this.id)
+      .then(response => {
+        if (response.error) {
+          this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
+        } else {
+          this.$emit('edit-updated');
+        }
+      });
+    },
+    titleToSlug(force) {
+      if (!this.slug || force) {
+        this.slug = slugify(this.title)
+      }
+    },
   }
 }
 </script>
