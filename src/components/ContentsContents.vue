@@ -2,56 +2,91 @@
   <div>
     <v-autocomplete
       v-model="selected"
-      :disabled="isLoading"
       :items="items"
       :loading="isLoading"
       :search-input.sync="search"
+      @change="onChange"
+      hide-details
       chips
-      color="blue-grey lighten-2"
-      label="Kryptowaluty"
+      no-data-text="Zacznij pisać..."
+      :label="label"
       item-text="title"
       item-value="id"
-      multiple
+      
       return-object
     >
       <template v-slot:selection="data">
         <v-chip
           v-bind="data.attrs"
           close
-          @click:close="remove(data.item)"
+          @click:close="remove(data.item.id)"
         >
           <v-avatar left>
-            <v-img :src="data.item.avatar"></v-img>
+            <v-img :src="imageServer + data.item.image_url"></v-img>
           </v-avatar>
           {{ data.item.title }}
         </v-chip>
       </template>
       <template v-slot:item="data">
           <v-list-item-avatar>
-            <img :src="data.item.avatar">
+            <img :src="imageServer + data.item.image_url">
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title v-html="data.item.title"></v-list-item-title>
           </v-list-item-content>
       </template>
     </v-autocomplete>
-
-    <input
-      v-show="false"
-      type="text"
-      v-model="innerValue"
-    />
+    <div>
+      <v-chip-group
+        column
+      >
+        <v-chip
+          v-for="item in selection"
+          :key="item.id"
+          close
+          @click:close="remove(item.id)"
+        >
+          <v-avatar left>
+            <v-img :src="imageServer + item.image_url"></v-img>
+          </v-avatar>
+          {{ item.title }}
+        </v-chip>
+      </v-chip-group>
+    </div>
   </div>
 </template>
 
 <script>
 import cms from '../api/cms'
+import { mapGetters } from 'vuex'
 export default {
   name: "ContentsContents",
   props: {
-    inputData: String
+    inputData: Array,
+    id_category: Number
+  },
+  data () {
+    return {
+      isLoading: false,
+      search: null,
+      selected: null, //selected item
+      items: [], //select list items: [{ id: 31, title: 'Biedronka', image_url: 'biedronka.jpg' }], 
+      selection_: []
+    }
   },
   computed: {
+    ...mapGetters('config', ['config', 'categories']),
+    imageServer() {
+      return this.config.serverUrl + '/thumbs/60x60/'
+    },
+    selection:{
+      get(){
+        return this.inputData
+      },
+      set(val){
+        this.$emit('update:inputData', val)
+      }
+    },
     innerValue:{
       get(){
         return this.inputData
@@ -59,56 +94,42 @@ export default {
       set(val){
         this.$emit('update:inputData', val)
       }
-    }
-  },
-
-  data () {
-    return {
-      autoUpdate: true,
-      selected: [{id: 7667, image_url: "eden_doniger.jpg", title: "Eden Doniger"}],
-      isLoading: false,
-      name: 'Midnight Crew',
-      search: null,
-      items: [
-        { id: 1, title: 'Sandra Adams', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
-        { id: 2, title: 'Ali Connors', avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg' },
-        { id: 3, title: 'Trevor Hansen', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' },
-        { id: 4, title: 'Tucker Smith', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' },
-        { id: 5, title: 'Britta Holt', avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg' },
-        { id: 6, title: 'Jane Smith ', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
-        { id: 7, title: 'John Smith', avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg' },
-        { id: 8, title: 'Sandra Williams', avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg' },
-      ],
-      title: 'The summer breeze',
-    }
-  },
-
-    watch: {
-      search (val) {
-        val && val !== this.select && this.queryItems(val)
-      },
     },
-
-    methods: {
-      queryItems (q) {
-        this.isLoading = true;
-        cms.autocomplete('contents', q)
-        .then(res => {
-          this.items = res
-        })
-        .catch(err => {
-          console.log(err)
-        })
-        .finally(() => (this.isLoading = false))
-      },
-      remove (item) {
-        const index = this.selected.indexOf(item.title)
-        if (index >= 0) this.selected.splice(index, 1)
-      },
-      test () {
-        console.log(this.selected);
+    label() {
+      return this.categories[this.id_category].title
+    }
+  },
+  watch: {
+    search (val) {
+      val && val !== this.select && this.queryItems(val)
+    },
+  },
+  methods: {
+    queryItems (q) {
+      this.isLoading = true;
+      cms.autocomplete('contents', q, { id_category: this.id_category })
+      .then(res => {
+        this.items = res
+      })
+      .catch(err => {
+        console.log(err)
+      })
+      .finally(() => (this.isLoading = false))
+    },
+    onChange (e) {
+      if (typeof e === 'object') {
+        this.selection.push(e);
+        //this.selected = null;
       }
+      this.$nextTick(() => {
+        this.selected = null
+      });
     },
+    remove (id) {
+      let i = this.selection.map(function(it) { return it.id; }).indexOf(id);
+      if (i >= 0) this.selection.splice(i, 1);
+    }
+  },
 };
 </script>
 <!-- 

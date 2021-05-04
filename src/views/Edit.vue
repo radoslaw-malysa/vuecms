@@ -244,7 +244,7 @@
           </div>
         </div>
 
-        <div class="d-flex mb-6">
+        <div class="d-flex mb-12">
           <div class="ed-aside">
           </div>
           <div id="editor-wrap" class="ed-content article-content article-cms editor-wrap flex-grow-1" style="width:750px;">
@@ -261,9 +261,13 @@
         <div class="d-flex mb-6">
           <div class="ed-aside">
           </div>
-          <div class="ed-content flex-grow-1">
-            <contents-contents :inputData.sync="parentData" />
+          <div class="ed-content flex-grow-1" style="width: 750px;">
+            <contents-contents :id_category="2" :inputData.sync="contentsContents[2]" />
+            <contents-contents :id_category="4" :inputData.sync="contentsContents[4]" />
+            <contents-contents :id_category="5" :inputData.sync="contentsContents[5]" />
+            <contents-contents :id_category="6" :inputData.sync="contentsContents[6]" />
           </div>
+          
         </div>
 
         <div class="d-flex" style="margin-bottom: 250px;">
@@ -528,8 +532,13 @@ export default {
     insertVideoMenu: false,
 
     //contents_contents
-    contentsContents: 'xxx',
-    parentData: 'Dupa',
+    contentsContents: {
+      2: [],
+      4: [],
+      5: [],
+      6: []
+    },
+    parentData: [],
 
     //tag autocomplete
     tagLoading: false,
@@ -670,6 +679,11 @@ export default {
             this.update_time_h = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(11, 5) : new Date().toISOString().substr(11, 5);
             
             this.tags = response.tags;
+
+            if (typeof response.contents_contents[2] === 'object') { this.contentsContents[2] = response.contents_contents[2] }
+            if (typeof response.contents_contents[4] === 'object') { this.contentsContents[4] = response.contents_contents[4] }
+            if (typeof response.contents_contents[5] === 'object') { this.contentsContents[5] = response.contents_contents[5] }
+            if (typeof response.contents_contents[6] === 'object') { this.contentsContents[6] = response.contents_contents[6] }
           } else {
             this.$refs.form.reset();
           }
@@ -701,6 +715,14 @@ export default {
 
       fd.content = this.content;
       fd.tags = this.tags; //fd.tags = this.tags.map((item) => item.id )
+
+      let cc = [];
+      if (this.contentsContents[2].length > 0) { cc = cc.concat(this.contentsContents[2].map((item) => item.id)); }
+      if (this.contentsContents[4].length > 0) { cc = cc.concat(this.contentsContents[4].map((item) => item.id)); }
+      if (this.contentsContents[5].length > 0) { cc = cc.concat(this.contentsContents[5].map((item) => item.id)); }
+      if (this.contentsContents[6].length > 0) { cc = cc.concat(this.contentsContents[6].map((item) => item.id)); }
+      fd.contents_contents = cc;
+      //fd.contents_contents = JSON.parse(JSON.stringify(this.contentsContents));
       
       cms.update(this.tableName, this.id, fd)
       .then(response => {
@@ -764,7 +786,7 @@ export default {
       copyInput.setSelectionRange(0, 99999);
       document.execCommand("copy");
       this.$store.commit('snack/open', {text: 'Slug skopiowany do schowka'});
-    }
+    },
   }
 }
 </script>

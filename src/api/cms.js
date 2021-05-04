@@ -50,8 +50,8 @@ export default {
   getConfig() {
     console.log('getting config');
   },
-  autocomplete(table, q) {
-    return fetch(apiUrl + '/autocomplete/' + table + '/' + q + '?t=' + new Date().getTime(), {
+  autocomplete(table, q, params) {
+    return fetch(apiUrl + '/autocomplete/' + table + '/' + q + '?t=' + new Date().getTime() + ((params) ? '&' + objToQuery(params) : ''), {
       method: 'GET'
     })
     .then(response => response.json())

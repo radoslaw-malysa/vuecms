@@ -291,6 +291,9 @@ img.thu {
 .theme--dark .image-placeholder:before, .theme--dark .video-placeholder:before {
     color: rgba(255, 255, 255, 0.24);
 }
+.theme--dark .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
+    color: rgba(255,255,255,.7);
+}
 .mce-edit-focus {
     outline: 0 !important;
     border: none;
