@@ -15,18 +15,6 @@
       
       return-object
     >
-      <template v-slot:selection="data">
-        <v-chip
-          v-bind="data.attrs"
-          close
-          @click:close="remove(data.item.id)"
-        >
-          <v-avatar left>
-            <v-img :src="imageServer + data.item.image_url"></v-img>
-          </v-avatar>
-          {{ data.item.title }}
-        </v-chip>
-      </template>
       <template v-slot:item="data">
           <v-list-item-avatar>
             <img :src="imageServer + data.item.image_url">
@@ -41,8 +29,8 @@
         column
       >
         <v-chip
-          v-for="item in selection"
-          :key="item.id"
+          v-for="(item, i) in selection"
+          :key="i"
           close
           @click:close="remove(item.id)"
         >
@@ -133,6 +121,19 @@ export default {
 };
 </script>
 <!-- 
+<template v-slot:selection="data">
+        <v-chip
+          v-bind="data.attrs"
+          close
+          @click:close="remove(data.item.id)"
+        >
+          <v-avatar left>
+            <v-img :src="imageServer + data.item.image_url"></v-img>
+          </v-avatar>
+          {{ data.item.title }}
+        </v-chip>
+      </template>
+
 http://www.codestudyblog.com/questions/sf/0421191856.html
 https://github.com/vuetifyjs/vuetify/issues/6635
 -->
