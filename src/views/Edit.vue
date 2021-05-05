@@ -86,7 +86,7 @@
           </div>
         </div>
 
-        <div class="d-flex">
+        <div class="d-flex mb-6">
           <div class="ed-aside d-flex flex-column">
             <v-btn
               icon
@@ -234,13 +234,65 @@
             ></v-text-field>
             <v-text-field 
               name="image_alt"
-              label="Alt" 
+              label="Alt obrazka" 
               type="text" 
               v-model="image_alt"
             ></v-text-field>
             <input id="image-input" type="hidden" />
             <input name="image_url" type="hidden" v-model="image_url" />
             <input name="video" type="hidden" v-model="video" />
+          </div>
+        </div>
+
+        <div class="d-flex" :class="{'mb-12': relatedSelected.length > 0}">
+          <div class="ed-aside relative">
+            <div class="absolute-top-left">
+              <v-menu offset-x :close-on-content-click="false">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    icon
+                    large
+                    title="Dodaj linki"
+                  >
+                    <v-icon>add_link</v-icon>
+                  </v-btn>
+                </template>
+                <v-list
+                  flat
+                  one-line
+                >
+                  <v-list-item-group
+                    v-model="relatedSelected"
+                    multiple
+                  >
+                    <v-list-item v-for="(item, i) in relatedSettings" :key="i" :value="item.id">
+                      <template v-slot:default="{ active }">
+                        <v-list-item-action>
+                          <v-checkbox :input-value="active"></v-checkbox>
+                        </v-list-item-action>
+                        <v-list-item-content>
+                          <v-list-item-title>{{ item.title }}</v-list-item-title>
+                        </v-list-item-content>
+                      </template>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-menu>
+            </div>
+          </div>
+          <div class="flex-grow-1" style="width:750px;">
+            <v-row>
+              <v-col cols="6" v-for="(item, i) in relatedSettingsSeleted" :key="i">
+                <v-text-field 
+                  :label="item.title" 
+                  type="text" 
+                  v-model="related[item.id]"
+                  hide-details
+                ></v-text-field>
+              </v-col>
+            </v-row>
           </div>
         </div>
 
@@ -421,51 +473,16 @@
               <v-row>
                 <v-col>
                   <label>Tagi</label>
-                  <v-autocomplete
-                    v-model="tagAdd"
-                    item-text="title"
-                    item-value="id"
-                    return-object
-                    :loading="tagLoading"
-                    :items="tagItems"
-                    :search-input.sync="searchTag"
-                    cache-items
-                    hide-no-data
-                    hide-selected
-                    hide-details
-                    placeholder="Tag"
-                    prepend-inner-icon="add"
-                    outlined
-                    rounded
-                    dense
-                    
-                  ></v-autocomplete>
-                  <div class="pt-2">
-                    <v-chip-group
-                      column
-                    >
-                      <v-chip
-                        v-for="tag in tags"
-                        :key="tag.id"
-                        close
-                        @click:close="delTag(tag.id)"
-                      >
-                        {{ tag.title }}
-                        <!--<input type="hidden" name="tags[]" :value="tag.id" />-->
-                      </v-chip>
-                    </v-chip-group>
-                  </div>
+                  <content-tags :inputData.sync="tags" />
                 </v-col>
               </v-row>
-              
+              <button type="button" @click="test">test</button>
             </v-card-text>
           </v-card>
         </div>
       </div>
     </form>
     
-
-
     <v-dialog
       v-model="dialogMedia"
       max-width="94vw"
@@ -492,13 +509,15 @@ import cms from '../api/cms'
 import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
 import ContentsContents from '../components/ContentsContents.vue'
+import ContentTags from '../components/ContentTags.vue'
 
 export default {
   name: 'Contents',
   props: ['id'],
   components: {
     'editor': Editor,
-    ContentsContents
+    ContentsContents,
+    ContentTags
   },
   data: () => ({
     tableName: 'contents',
@@ -531,6 +550,23 @@ export default {
     videoTmp: null,
     insertVideoMenu: false,
 
+    //related
+    related: {},
+    relatedSettings: [
+      { id: 'www', title: 'WWW' },
+      { id: 'email', title: 'E-mail' },
+      { id: 'phone', title: 'Telefon' },
+      { id: 'address', title: 'Adres' },
+      { id: 'twitter', title: 'Twitter' },
+      { id: 'facebook', title: 'Facebook' },
+      { id: 'medium', title: 'Medium' },
+      { id: 'youtube', title: 'Youtube' },
+      { id: 'telegram', title: 'Telegram' },
+      { id: 'instagram', title: 'Instagram' },
+      { id: 'reddit', title: 'Reddit' },
+    ],
+    relatedSelected: [],
+
     //contents_contents
     contentsContents: {
       2: [],
@@ -538,24 +574,17 @@ export default {
       5: [],
       6: []
     },
-    parentData: [],
 
-    //tag autocomplete
-    tagLoading: false,
-    tagItems: [],
-    searchTag: null,
-    tagAdd: {},
-    tags: [{id: 8, slug: 'social-apps', title: 'Social Apps'}, {id: 9, slug: 'dapp-browsers', title: 'DApp Browsers'}],
+    //tags
+    tags: [],
+    
 
     dateMenu: false,
-
-    loading: false
+    loading: false,
+    dark: false
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates', 'categoryTemplate']),
-    dark() {
-      return (localStorage.getItem("dark")) ? true : false
-    },
     btnImageColor() {
       if (!this.showVideo) {
         return 'primary'
@@ -634,15 +663,17 @@ export default {
     },
     view() {
       return (this.id_category) ? this.categoryTemplate(this.id_category).view : null
+    },
+    relatedSettingsSeleted() {
+      return this.relatedSettings.filter(item => this.relatedSelected.includes(item.id) );
+      /*this.relatedSettings.forEach(item => {
+        if (this.relatedSelected.includes(item.id)) {
+          sel.push(item)
+        }
+      });*/
     }
   },
   watch: {
-    searchTag (val) {
-      val && val !== this.idTagAdd && this.findTag(val)
-    },
-    tagAdd (val) {
-      this.tags.push(val);
-    },
     video () {
       this.$nextTick(() => {
         this.resizeVideos();
@@ -654,6 +685,7 @@ export default {
   },
   mounted() {
     this.loadItem();
+    this.dark = localStorage.getItem("dark");
   },  
   methods: {
     loadItem() {
@@ -678,7 +710,20 @@ export default {
             this.update_time_d = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(0, 10) : new Date().toISOString().substr(0, 10);
             this.update_time_h = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(11, 5) : new Date().toISOString().substr(11, 5);
             
+            //tags
             this.tags = response.tags;
+
+            //related
+            this.related = [];
+            if (response.related) {
+              let rel = JSON.parse(response.related);
+              if (typeof rel === 'object') {
+                rel.forEach(item => {
+                  this.related[item.id] = item.url;
+                  this.relatedSelected.push(item.id);
+                });
+              }
+            }
 
             if (typeof response.contents_contents[2] === 'object') { this.contentsContents[2] = response.contents_contents[2] }
             if (typeof response.contents_contents[4] === 'object') { this.contentsContents[4] = response.contents_contents[4] }
@@ -723,6 +768,14 @@ export default {
       if (this.contentsContents[6].length > 0) { cc = cc.concat(this.contentsContents[6].map((item) => item.id)); }
       fd.contents_contents = cc;
       //fd.contents_contents = JSON.parse(JSON.stringify(this.contentsContents));
+
+      //related
+      /*let related = [];
+      this.relatedSettingsSeleted.forEach(item => {
+        related.push({ id: item.id, url: this.related[item.id] })
+      });*/
+      let related = this.relatedSettingsSeleted.map(item => { return { id: item.id, url: this.related[item.id] } })
+      fd.related = (related.length > 0) ? related : '';
       
       cms.update(this.tableName, this.id, fd)
       .then(response => {
@@ -737,20 +790,6 @@ export default {
     },
     toggleOrd(clickedOrd) {
       this.ord = (clickedOrd == this.ord) ? 0 : clickedOrd
-    },
-    findTag(q) {
-      this.tagLoading = true;
-      cms.autocomplete('tags', q)
-      .then(response => {
-        if (response) {
-          this.tagItems = response;
-        }
-        this.tagLoading = false;
-      });
-    },
-    delTag(id) {
-      let i = this.tags.map(function(item) { return item.id; }).indexOf(id);
-      this.tags.splice(i, 1);
     },
     resizeVideos() {
       const articleWidth = document.querySelector('.content-width').offsetWidth;
@@ -770,7 +809,6 @@ export default {
 
       //window.addEventListener('message', onMessage);
       this.dialogMedia = true;
-
     },
     abort() {
       window.close();
@@ -787,6 +825,14 @@ export default {
       document.execCommand("copy");
       this.$store.commit('snack/open', {text: 'Slug skopiowany do schowka'});
     },
+    test() {
+      let related = [];
+      for (const [key, value] of Object.entries(this.related)) {
+        related.push({ id: key, url: value })
+      }
+      
+      console.log(related)
+    }
   }
 }
 </script>
