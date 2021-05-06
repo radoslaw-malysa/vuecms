@@ -84,14 +84,14 @@ export default {
 			return (this.errorMessage) ? true : false
 		}
 	},
-	created() {
+	/*created() {
     this.getSession()
     .then(() => {
 			if (this.isLogged) {
         this.$router.push({ path: '/' })
       }
     });
-  },
+  },*/
 	methods: {
 		...mapActions('profile', ['login', 'getSession']),
 		loginUser() {
@@ -115,7 +115,7 @@ export default {
 
 <style>
 .esyfloresy {
-  background-image: url(/img/bg.svg);
+  background-image: url(/images/bg.svg);
   background-size: 200vw;
   background-position: 40% 50%;
 }

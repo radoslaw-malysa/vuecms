@@ -59,7 +59,7 @@
               class="ml-4"
               vertical
             ></v-divider>
-            <v-btn icon class="ml-1" color="primary">
+            <v-btn icon class="ml-1" color="primary" @click="editItem(0)">
               <v-icon>add</v-icon>
             </v-btn>
           </v-toolbar>
@@ -86,7 +86,7 @@
         class="mr-2 state-select"
       ></v-select>
 
-      <v-select
+      <!--<v-select
         v-model="filters.id_user"
         :items="config.usersGroups"
         item-text="title"
@@ -98,7 +98,7 @@
         rounded
         hide-details
         class="mr-2 user-select"
-      ></v-select>
+      ></v-select>-->
 
       <v-chip
         outlined
@@ -275,7 +275,6 @@
     },
     methods: {
       getItems() {
-        console.log(new Date().getTime());
         this.loading = true;
         let params = {...this.options, ...this.filters};
         cms.getItems(this.tableName, params)
@@ -286,6 +285,9 @@
           } else {
             this.results = [];
             this.totalItems = 0;
+            if (response.error == 403) {
+              this.$router.push({ path: '/login' })
+            }
           }
           this.loading = false;
         });
@@ -298,8 +300,11 @@
           name: 'Artykuł',
           params: { id: id },
         });
-        console.log(editRoute.href);
-        window.open(editRoute.href, '_blank');
+
+        let url = editRoute.href;
+        if (id == 0) { url += '?id_category=' + this.filters.id_category; }
+        
+        window.open(url, '_blank');
       },
       editUpdated() {
         this.editDialog = false;
@@ -321,7 +326,6 @@
       },
       toggleSponsored() {
         this.filters.ord = (this.filters.ord == 2) ? '' : 2
-        console.log(this.filters.ord);
       },
       findTag(q) {
         this.tagLoading = true;

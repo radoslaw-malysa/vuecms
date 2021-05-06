@@ -2,7 +2,7 @@ import cms from '../../api/cms'
 
 const state = () => ({
   config: {
-    serverUrl: 'http://blokpres',
+    serverUrl: '',
     categories: [
       { id: 1, title: 'Wiadomości' },
       { id: 2, title: 'Kryptowaluty' },
@@ -67,7 +67,7 @@ const getters = {
     }, {})
   },
   categoryTemplate: (state) => (id_category) => {
-    return (id_category) ? state.config.contentsTemplates.find(el => el.id_category === id_category) : ''
+    return (id_category) ? state.config.contentsTemplates.find(el => el.id_category === id_category) : state.config.contentsTemplates.find(el => el.id_category == 1)
   }
 }
 

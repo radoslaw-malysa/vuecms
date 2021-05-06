@@ -21,8 +21,13 @@ export default {
   },
   
   logout() {
-    localStorage.removeItem('profile');
-    return true;
+    return fetch(apiUrl + '/logout?t=' + new Date().getTime(), {
+      method: 'GET'
+    })
+    .then(response => response.json())
+    .catch(() => badResponse());
+    //localStorage.removeItem('profile');
+    //return true;
   },
   restore() {
     const profile = localStorage.getItem('profile');

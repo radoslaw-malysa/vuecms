@@ -476,7 +476,6 @@
                   <content-tags :inputData.sync="tags" />
                 </v-col>
               </v-row>
-              <button type="button" @click="test">test</button>
             </v-card-text>
           </v-card>
         </div>
@@ -662,7 +661,7 @@ export default {
       }
     },
     view() {
-      return (this.id_category) ? this.categoryTemplate(this.id_category).view : null
+      return (this.id_category) ? this.categoryTemplate(this.id_category).view : this.categoryTemplate(1).view
     },
     relatedSettingsSeleted() {
       return this.relatedSettings.filter(item => this.relatedSelected.includes(item.id) );
@@ -689,7 +688,7 @@ export default {
   },  
   methods: {
     loadItem() {
-      if (this.id) {
+      if (this.id > 0) {
         this.loading = true;
         cms.getItem(this.tableName, this.id, {})
         .then(response => {
@@ -741,9 +740,19 @@ export default {
           this.loading = false;
         });
       } else {
+        //update
         let d = new Date();
         this.update_time_d = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().substr(0, 10);
         this.update_time_h = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().substr(11, 5);
+
+        //id category
+        const urlParams = new URLSearchParams(window.location.search);
+        const id_cat = urlParams.get('id_category');
+        if (id_cat) {
+          this.id_category = parseInt(id_cat);
+        }
+        //state
+        this.state = 2;
       }
     },
     saveItem() {
@@ -777,16 +786,29 @@ export default {
       let related = this.relatedSettingsSeleted.map(item => { return { id: item.id, url: this.related[item.id] } })
       fd.related = (related.length > 0) ? related : '';
       
-      cms.update(this.tableName, this.id, fd)
-      .then(response => {
-        console.log(response);
-        if (response.id) {
-          this.$store.commit('snack/open', {text: 'Artykuł pomyślnie zapisany', color: 'success'});
-        } else {
-          this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
-        }
-        this.loading = false;
-      });
+      if (this.id > 0) {
+        cms.update(this.tableName, this.id, fd)
+        .then(response => {
+          if (response.id) {
+            this.$store.commit('snack/open', {text: 'Artykuł pomyślnie zapisany', color: 'success'});
+          } else {
+            this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
+          }
+          this.loading = false;
+        });
+      } else {
+        cms.create(this.tableName, fd)
+        .then(response => {
+          if (response.id) {
+            //this.id = response.id;
+            //this.$store.commit('snack/open', {text: 'Artykuł pomyślnie zapisany', color: 'success'});
+            this.$router.push({ path: '/contents/' + response.id });
+          } else {
+            this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
+          }
+          this.loading = false;
+        });
+      }
     },
     toggleOrd(clickedOrd) {
       this.ord = (clickedOrd == this.ord) ? 0 : clickedOrd
