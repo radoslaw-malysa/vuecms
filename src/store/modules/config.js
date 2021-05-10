@@ -2,7 +2,7 @@ import cms from '../../api/cms'
 
 const state = () => ({
   config: {
-    serverUrl: '',
+    serverUrl: 'http://blokpres',
     categories: [
       { id: 1, title: 'Wiadomości' },
       { id: 2, title: 'Kryptowaluty' },

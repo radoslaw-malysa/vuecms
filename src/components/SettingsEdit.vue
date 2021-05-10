@@ -1,8 +1,8 @@
 <template>
-    <v-dialog v-model="dialog" persistent max-width="500px">
+    <v-dialog v-model="dialog" persistent max-width="660px">
       <v-card>
         <v-card-title class="justify-space-between">
-          <span class="headline" v-text="(id == 0) ? 'Nowy tag' : 'Tag'"></span>
+          <span class="headline" v-text="(id == 0) ? 'Nowy parametr' : 'Parametr'"></span>
           <v-btn text icon @click="$emit('close-edit')">
             <v-icon>close</v-icon>
           </v-btn>
@@ -15,36 +15,36 @@
           >
             <v-text-field label="Nazwa" type="text" v-model="title" name="title" required :rules="requiredRules" @change="titleToSlug(false)" 
             ></v-text-field>
-            <v-text-field label="Slug" type="text" v-model="slug" name="slug" 
+            <v-text-field label="Slug" type="text" v-model="name" name="name" 
               append-icon="sync"
               @click:append="titleToSlug(true)"
             ></v-text-field>
+
             <v-select
-              v-model="catalog_tag"
-              :items="config.categories"
+              v-model="type"
+              :items="types"
               item-text="title"
               item-value="id"
-              clearable
-              label="W katalogu"
+              label="Typ"
             ></v-select>
-            <v-select
-              v-model="menu_tag"
-              :items="config.categories"
-              item-text="title"
-              item-value="id"
-              clearable
-              label="W menu"
-            ></v-select>
-            <v-text-field label="Kolejność" type="text" v-model="ord" 
-            ></v-text-field>
-            <v-select
-              v-model="active"
-              :items="[{id: 1, title: 'Aktywny'},{id: 2, title: 'Nieaktywny'}]"
-              item-text="title"
-              item-value="id"
-              label="Status"
-              required :rules="requiredRules"
-            ></v-select>
+            
+            <v-text-field v-if="type == 'text' || type == 'number'" label="Wartość" type="text" v-model="content"></v-text-field>
+            <v-textarea
+              v-else-if="type == 'longtext'"
+              counter="1024"
+              label="Wartość"
+              :rules="lengthRules"
+              v-model="content"
+            ></v-textarea>
+            <editor
+              v-else-if="type == 'richtext'"
+              id="editor-content"
+              :inline=false
+              v-model="content"
+              :init="tinyInit"
+              class="editor-content"
+            />
+            
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -76,34 +76,83 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import Editor from '@tinymce/tinymce-vue'
 import cms from '../api/cms'
 import slugify from '../api/slugify'
 export default {
   props: ['id', 'dialog'],
+  components: {
+    'editor': Editor
+  },
   data: () => ({
-    tableName: 'tags',
+    tableName: 'settings',
     valid: true,
     loading: false,
+    types: [
+      { id: 'text', title: 'Krótki tekst' },
+      { id: 'longtext', title: 'Długi tekst' },
+      { id: 'richtext', title: 'Sformatowany tekst' },
+      { id: 'number', title: 'Liczba' },
+    ],
     
     title: null,
     requiredRules: [
       v => !!v || 'To pole jest wymagane'
     ],
+    lengthRules: [v => v.length <= 1024 || 'Maksymalnie 1024 znaki'],
 
-    slug: null,
-    menu_tag: 0,
-    catalog_tag: 0,
-    ord: '0',
-    active: 0
+    name: null,
+    content: '',
+    type: 'text',
+    dark: false
   }),
   computed: {
     ...mapGetters('config', ['config']),
+    tinyInit() {
+      return {
+        height: 280,
+        language: 'pl',
+        skin: (localStorage.getItem("dark") == 'true') ? 'oxide-dark' : 'oxide',
+        placeholder: 'Treść...',
+        menubar: false,
+        object_resizing: false,
+        browser_spellcheck: true,
+        media_filter_html: false,
+        media_live_embeds: true,
+        extended_valid_elements: 'script[language|type|src|class],iframe[type|width|height|src|allow|allowfullscreen|style|frameborder|id|scrolling]',
+        relative_urls : false,
+        remove_script_host : true,
+        document_base_url : "/",
+        convert_urls : true,
+        branding: false,
+        plugins: [
+          'advlist autolink lists link image charmap preview anchor',
+          'searchreplace visualblocks code fullscreen',
+          'media table paste code responsivefilemanager '
+        ],
+        toolbar: [
+          'undo redo | h2 h3 h4 | bold italic blockquote | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | table | link image media | responsivefilemanager | removeformat code' ],
+        image_advtab: true,
+        external_filemanager_path: this.config.serverUrl + '/filemanager/',
+        filemanager_title: 'Media',
+        external_plugins: {
+          'responsivefilemanager': this.config.serverUrl + '/js/tinymce/plugins/responsivefilemanager/plugin.min.js',
+          'filemanager': this.config.serverUrl + '/filemanager/plugin.min.js'
+        },
+      }
+    },
+  },
+  mounted() {
+    this.dark = localStorage.getItem("dark");
+    console.log(localStorage.getItem("dark"))
   },
   watch: {
     dialog: function (newVal) {
       if (newVal == true) {
         if (this.id != 0) {
           this.loadItem();
+        } else {
+          this.type = 'text';
         }
       } else {
         this.$refs.form.reset();
@@ -117,11 +166,9 @@ export default {
       .then(response => {
         if (response.id) {
           this.title = response.title;
-          this.slug = response.slug;
-          this.menu_tag = response.menu_tag;
-          this.catalog_tag = response.catalog_tag;
-          this.ord = response.ord;
-          this.active = response.active;
+          this.name = response.name;
+          this.content = response.content;
+          this.type = response.type;
         } else {
           this.$refs.form.reset();
         }
@@ -132,12 +179,10 @@ export default {
       if (this.$refs.form.validate()) {
       if (this.id == 0) {
         cms.create(this.tableName, {
-          slug: this.slug,
+          name: this.name,
           title: this.title,
-          menu_tag: this.menu_tag,
-          catalog_tag: this.catalog_tag,
-          ord: this.ord,
-          active: this.active
+          content: this.content,
+          type: this.type
         })
         .then(response => {
           if (response.id) {
@@ -148,14 +193,13 @@ export default {
         });
       } else {
         cms.update(this.tableName, this.id, {
-          slug: this.slug,
+          name: this.name,
           title: this.title,
-          menu_tag: this.menu_tag,
-          catalog_tag: this.catalog_tag,
-          ord: this.ord,
-          active: this.active
+          content: this.content,
+          type: this.type
         })
         .then(response => {
+          console.log(response)
           if (response.id) {
             this.$emit('edit-updated');
           } else {
@@ -176,8 +220,8 @@ export default {
       });
     },
     titleToSlug(force) {
-      if (!this.slug || force) {
-        this.slug = slugify(this.title)
+      if (!this.name || force) {
+        this.name = slugify(this.title)
       }
     },
   }

@@ -178,10 +178,18 @@ img.thu {
 .v-autocomplete__content.v-menu__content {
     border-radius: 8px;
 }
-.absolute-top-left {
+.absolute-slug {
     position: absolute;
-    top: 0;
+    top: 0rem;
     left: 0;
+}
+.absolute-affiliate {
+    position: absolute;
+    top: 0rem;
+    left: 0;
+}
+.affiliate-ed input {
+    color: Orange !important;
 }
 .ed {
     position: relative;
@@ -247,7 +255,7 @@ img.thu {
 .abort-btn {
     position: fixed;
     top: 1rem;
-    margin-left: -0.5rem;
+    left: 1rem;
     background-color: #fff;
     z-index: 5;
 }

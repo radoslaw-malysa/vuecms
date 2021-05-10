@@ -5,6 +5,7 @@ import Contents from './views/Contents.vue'
 import Login from './views/Login.vue'
 import Users from './views/Users.vue'
 import Tags from './views/Tags.vue'
+import Settings from './views/Settings.vue'
 import Edit from './views/Edit.vue'
 
 Vue.use(Router)
@@ -38,6 +39,11 @@ const router = new Router({
       name: 'Artykuł',
       component: Edit,
       props: true
+    },
+    {
+      path: '/settings',
+      name: 'Ustawienia',
+      component: Settings
     },
   ]
 })

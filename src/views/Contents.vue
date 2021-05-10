@@ -105,8 +105,17 @@
         filter
         :input-value="filters.ord == 2"
         @click="toggleSponsored()"
+        class="mr-2"
       >
         Sponsorowane
+      </v-chip>
+      <v-chip
+        outlined
+        filter
+        :input-value="filters.affiliate_url == 1"
+        @click="toggleAffiliated()"
+      >
+        Afiliacyjne
       </v-chip>
       <v-spacer></v-spacer>
     </v-toolbar>
@@ -133,8 +142,9 @@
         </template>
         <template v-slot:item.title="{ item }">
           {{ item.title }}
-          <v-chip v-if="item.ord == 3" class="mx-2 primary" small >Przypięty</v-chip>
-          <v-chip v-else-if="item.ord == 2" class="mx-2 orange" small >Sponsor</v-chip>
+          <v-chip v-if="item.ord == 3" class="mx-1 primary" small >Przypięty</v-chip>
+          <v-chip v-else-if="item.ord == 2" class="mx-1 accent" small >Sponsor</v-chip>
+          <v-chip v-if="item.affiliate_url" class="mx-1 orange" small :title="item.affiliate_url">Afiliacyjny</v-chip>
         </template>
         <template v-slot:item.state="{ item }">
           {{ (item.state) ? contentsStates[item.state].title : '' }}
@@ -196,7 +206,8 @@
         ord: '',
         state: '',
         id_user: '',
-        id_tag: null
+        id_tag: null,
+        affiliate_url: ''
       },
       
       //title ajax find
@@ -326,6 +337,9 @@
       },
       toggleSponsored() {
         this.filters.ord = (this.filters.ord == 2) ? '' : 2
+      },
+      toggleAffiliated() {
+        this.filters.affiliate_url = (this.filters.affiliate_url == 1) ? '' : 1
       },
       findTag(q) {
         this.tagLoading = true;

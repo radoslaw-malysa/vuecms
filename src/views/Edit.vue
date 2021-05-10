@@ -1,20 +1,48 @@
 <template>
-  <v-container fluid class="d-flex justify-center pt-0 pb-0">
+  <v-container fluid class="d-flex justify-center pt-0 pb-0 relative">
+    <v-btn
+      depressed
+      large
+      fab
+      icon            
+      @click="abort"
+      class="abort-btn"
+      title="Anuluj zmiany i zamknij"
+    >
+      <v-icon>arrow_back</v-icon>
+    </v-btn>
     <form id="form-contents" action="" method="post" class="d-flex">
+      
       <div class="ed d-inline-block py-12">
         <div class="d-flex">
-          <div class="ed-aside">
+          <div class="ed-aside relative">
             <v-btn
-              depressed
-              large
-              fab
-              icon            
-              @click="abort"
-              class="abort-btn"
-              title="Anuluj zmiany i zamknij"
+              icon
+              x-large
+              title="Link afiliacyjny"
+              class="absolute-affiliate"
+              @click="toggleAffiliate"
+              :color="(isAffiliate) ? 'orange' : 'grey lighten-2'"
             >
-              <v-icon>arrow_back</v-icon>
+              <v-icon>thumb_up</v-icon>
             </v-btn>
+          </div>
+          <div class="ed-content flex-grow-1 affiliate-ed">
+            <v-expand-transition>
+            <v-text-field
+              name="affiliate_url"
+              v-model="affiliate_url"
+              label="Link afiliacyjny"
+              v-show="showAffiliate"
+              color="primary"
+            ></v-text-field>
+            </v-expand-transition>
+          </div>
+        </div>
+        
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
           </div>
           <div class="ed-content flex-grow-1">
             <v-textarea
@@ -36,7 +64,7 @@
               icon
               x-large
               title="Slug - adres strony"
-              class="absolute-top-left"
+              class="absolute-slug"
               @click="showSlug = !showSlug"
               :color="(showSlug) ? 'primary' : 'grey lighten-2'"
             >
@@ -446,7 +474,7 @@
                     filter
                     
                     class="medium"
-                    :color="(ord == 2) ? 'primary' : ''"
+                    :color="(ord == 2) ? 'accent' : ''"
                     @click=toggleOrd(2)
                   >Sponsorowany</v-chip>
                 </v-col>
@@ -530,6 +558,7 @@ export default {
     image_alt: null,
     image_caption: null,
     video: null,
+    affiliate_url: '',
     state: null,
     ord: 0,
     update_time_d: null,
@@ -537,7 +566,8 @@ export default {
 
     //slug
     showSlug: false,
-
+    //affiliate
+    showAffiliate: false,
     //main image
     showVideo: false,
     dialogMedia: false,
@@ -580,7 +610,7 @@ export default {
 
     dateMenu: false,
     loading: false,
-    dark: false
+    //dark: false
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates', 'categoryTemplate']),
@@ -602,7 +632,7 @@ export default {
       return {
         width: 750,
         language: 'pl',
-        skin: (this.dark) ? 'oxide-dark' : 'oxide',
+        skin: (localStorage.getItem("dark") == 'true') ? 'oxide-dark' : 'oxide',
         placeholder: 'Treść artykułu...',
         menubar: false,
         object_resizing: false,
@@ -670,6 +700,9 @@ export default {
           sel.push(item)
         }
       });*/
+    },
+    isAffiliate() {
+      return this.affiliate_url != null && this.affiliate_url != ''
     }
   },
   watch: {
@@ -684,7 +717,7 @@ export default {
   },
   mounted() {
     this.loadItem();
-    this.dark = localStorage.getItem("dark");
+    //this.dark = localStorage.getItem("dark");
   },  
   methods: {
     loadItem() {
@@ -703,6 +736,10 @@ export default {
             this.image_alt = response.image_alt;
             this.image_caption = response.image_caption;
             this.video = response.video;
+            if (response.affiliate_url) {
+              this.affiliate_url = response.affiliate_url;
+              this.showAffiliate = true;
+            }
             this.videoTmp = response.video;
             this.state = response.state;
             this.ord = response.ord;
@@ -846,6 +883,11 @@ export default {
       copyInput.setSelectionRange(0, 99999);
       document.execCommand("copy");
       this.$store.commit('snack/open', {text: 'Slug skopiowany do schowka'});
+    },
+    toggleAffiliate() {
+      if (!this.isAffiliate) {
+        this.showAffiliate = !this.showAffiliate
+      }
     },
     test() {
       let related = [];

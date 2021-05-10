@@ -24,6 +24,7 @@
       >
         <v-tab to="/">Treści</v-tab>
         <v-tab to="/tags" value="/tags">Tagi</v-tab>
+        <v-tab to="/settings" value="/settings">Ustawienia</v-tab>
       </v-tabs>
 
       <v-spacer></v-spacer>
@@ -85,7 +86,7 @@ export default {
   computed: {
     ...mapGetters('profile', ['isLogged','user']),
     hideSlider() {
-      return (this.$route.path == '/' || this.$route.path == '/tags') ? false : true
+      return (this.$route.path == '/' || this.$route.path == '/tags' || this.$route.path == '/settings') ? false : true
     },
     currentRoute() {
       return this.$route.name
