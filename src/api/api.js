@@ -1,5 +1,5 @@
-const apiUrl = 'http://blokpres/cms';
-//const apiUrl = '/cms';
+//const apiUrl = 'http://blokpres/cms';
+const apiUrl = '/cms';
 
 const authHeader = () => {
   let profile = JSON.parse(localStorage.getItem('profile'));
