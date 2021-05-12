@@ -75,6 +75,9 @@ body {
 .theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
     background: #242424;
 }
+.nobg {
+    background-color: transparent !important;
+}
 .theme--dark .nobg-dark {
     background-color: transparent !important;
 }
@@ -178,12 +181,12 @@ img.thu {
 .v-autocomplete__content.v-menu__content {
     border-radius: 8px;
 }
-.absolute-slug {
+.absolute-bottom-left {
     position: absolute;
-    top: 0rem;
+    bottom: 0rem;
     left: 0;
 }
-.absolute-affiliate {
+.absolute-top-left {
     position: absolute;
     top: 0rem;
     left: 0;

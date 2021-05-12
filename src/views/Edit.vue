@@ -14,31 +14,6 @@
     <form id="form-contents" action="" method="post" class="d-flex">
       
       <div class="ed d-inline-block py-12">
-        <div class="d-flex">
-          <div class="ed-aside relative">
-            <v-btn
-              icon
-              x-large
-              title="Link afiliacyjny"
-              class="absolute-affiliate"
-              @click="toggleAffiliate"
-              :color="(isAffiliate) ? 'orange' : 'grey lighten-2'"
-            >
-              <v-icon>thumb_up</v-icon>
-            </v-btn>
-          </div>
-          <div class="ed-content flex-grow-1 affiliate-ed">
-            <v-expand-transition>
-            <v-text-field
-              name="affiliate_url"
-              v-model="affiliate_url"
-              label="Link afiliacyjny"
-              v-show="showAffiliate"
-              color="primary"
-            ></v-text-field>
-            </v-expand-transition>
-          </div>
-        </div>
         
         <div class="d-flex">
           <div class="ed-aside">
@@ -64,7 +39,7 @@
               icon
               x-large
               title="Slug - adres strony"
-              class="absolute-slug"
+              class="absolute-top-left"
               @click="showSlug = !showSlug"
               :color="(showSlug) ? 'primary' : 'grey lighten-2'"
             >
@@ -113,6 +88,8 @@
             ></v-textarea>
           </div>
         </div>
+
+        <content-links :inputData.sync="links" />
 
         <div class="d-flex mb-6">
           <div class="ed-aside d-flex flex-column">
@@ -272,6 +249,7 @@
           </div>
         </div>
 
+
         <div class="d-flex" :class="{'mb-12': relatedSelected.length > 0}">
           <div class="ed-aside relative">
             <div class="absolute-top-left">
@@ -281,10 +259,10 @@
                     v-bind="attrs"
                     v-on="on"
                     icon
-                    large
+                    x-large
                     title="Dodaj linki"
                   >
-                    <v-icon>add_link</v-icon>
+                    <v-icon>facebook</v-icon>
                   </v-btn>
                 </template>
                 <v-list
@@ -347,7 +325,6 @@
             <contents-contents :id_category="5" :inputData.sync="contentsContents[5]" />
             <contents-contents :id_category="6" :inputData.sync="contentsContents[6]" />
           </div>
-          
         </div>
 
         <div class="d-flex" style="margin-bottom: 250px;">
@@ -364,11 +341,7 @@
             
           </div>
         </div>
-
       </div>
-
-
-
 
 
       <div class="pl-12 ed-drawer">
@@ -537,6 +510,7 @@ import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
 import ContentsContents from '../components/ContentsContents.vue'
 import ContentTags from '../components/ContentTags.vue'
+import ContentLinks from '../components/ContentLinks.vue'
 
 export default {
   name: 'Contents',
@@ -544,7 +518,8 @@ export default {
   components: {
     'editor': Editor,
     ContentsContents,
-    ContentTags
+    ContentTags,
+    ContentLinks
   },
   data: () => ({
     tableName: 'contents',
@@ -582,10 +557,6 @@ export default {
     //related
     related: {},
     relatedSettings: [
-      { id: 'www', title: 'WWW' },
-      { id: 'email', title: 'E-mail' },
-      { id: 'phone', title: 'Telefon' },
-      { id: 'address', title: 'Adres' },
       { id: 'twitter', title: 'Twitter' },
       { id: 'facebook', title: 'Facebook' },
       { id: 'medium', title: 'Medium' },
@@ -607,6 +578,8 @@ export default {
     //tags
     tags: [],
     
+    //links
+    links: [],
 
     dateMenu: false,
     loading: false,
@@ -701,9 +674,6 @@ export default {
         }
       });*/
     },
-    isAffiliate() {
-      return this.affiliate_url != null && this.affiliate_url != ''
-    }
   },
   watch: {
     video () {
@@ -761,6 +731,13 @@ export default {
               }
             }
 
+            //links
+            this.links = [];
+            if (response.links) {
+              let lin = JSON.parse(response.links);
+              this.links = lin;
+            }
+
             if (typeof response.contents_contents[2] === 'object') { this.contentsContents[2] = response.contents_contents[2] }
             if (typeof response.contents_contents[4] === 'object') { this.contentsContents[4] = response.contents_contents[4] }
             if (typeof response.contents_contents[5] === 'object') { this.contentsContents[5] = response.contents_contents[5] }
@@ -806,6 +783,7 @@ export default {
 
       fd.content = this.content;
       fd.tags = this.tags; //fd.tags = this.tags.map((item) => item.id )
+      fd.links = this.links;
 
       let cc = [];
       if (this.contentsContents[2].length > 0) { cc = cc.concat(this.contentsContents[2].map((item) => item.id)); }
@@ -883,11 +861,6 @@ export default {
       copyInput.setSelectionRange(0, 99999);
       document.execCommand("copy");
       this.$store.commit('snack/open', {text: 'Slug skopiowany do schowka'});
-    },
-    toggleAffiliate() {
-      if (!this.isAffiliate) {
-        this.showAffiliate = !this.showAffiliate
-      }
     },
     test() {
       let related = [];

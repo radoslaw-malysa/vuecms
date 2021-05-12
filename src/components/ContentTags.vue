@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined flat class="transparentx" style="border-radius: 28px">
+  <v-card outlined flat class="nobg" style="border-radius: 28px">
     <v-card-text class="pt-0 px-1">
       <v-autocomplete
         v-model="selected"
