@@ -302,7 +302,7 @@
           </div>
         </div>
 
-        <div class="d-flex mb-12">
+        <div class="d-flex">
           <div class="ed-aside">
           </div>
           <div id="editor-wrap" class="ed-content article-content article-cms editor-wrap flex-grow-1" style="width:750px;">
@@ -313,6 +313,18 @@
               :init="tinyInit"
               class="editor-content"
             />
+          </div>
+        </div>
+
+        <div class="d-flex mb-10 mt-6">
+          <div class="ed-aside relative">
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-text-field
+              name="author"
+              v-model="author"
+              label="Autor"
+            ></v-text-field>
           </div>
         </div>
 
@@ -533,7 +545,7 @@ export default {
     image_alt: null,
     image_caption: null,
     video: null,
-    affiliate_url: '',
+    author: '',
     state: null,
     ord: 0,
     update_time_d: null,
@@ -711,6 +723,7 @@ export default {
               this.showAffiliate = true;
             }
             this.videoTmp = response.video;
+            this.author = response.author;
             this.state = response.state;
             this.ord = response.ord;
             this.update_time_d = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(0, 10) : new Date().toISOString().substr(0, 10);
@@ -816,7 +829,7 @@ export default {
         .then(response => {
           if (response.id) {
             //this.id = response.id;
-            //this.$store.commit('snack/open', {text: 'Artykuł pomyślnie zapisany', color: 'success'});
+            this.$store.commit('snack/open', {text: 'Artykuł pomyślnie zapisany', color: 'success'});
             this.$router.push({ path: '/contents/' + response.id });
           } else {
             this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});

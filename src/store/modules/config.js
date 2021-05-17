@@ -10,7 +10,7 @@ const state = () => ({
       { id: 4, title: 'Ludzie' },
       { id: 5, title: 'Firmy' },
       { id: 6, title: 'Produkty' },
-      { id: 7, title: 'O nas' }
+      { id: 7, title: 'Blokpres' }
     ],
     contentsStates: [
       { id: 1, title: 'Opublikowany' },
