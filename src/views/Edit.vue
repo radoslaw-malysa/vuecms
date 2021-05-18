@@ -491,7 +491,6 @@
               </v-row>
             </v-card-text>
           </v-card>
-          <v-btn type="button" @click="test">test</v-btn>
         </div>
       </div>
     </form>
@@ -571,12 +570,16 @@ export default {
     related: {},
     relatedSettings: [
       { id: 'twitter', title: 'Twitter' },
+      { id: 'linkedin', title: 'LinkedIn' },
       { id: 'facebook', title: 'Facebook' },
       { id: 'medium', title: 'Medium' },
       { id: 'youtube', title: 'Youtube' },
       { id: 'telegram', title: 'Telegram' },
       { id: 'instagram', title: 'Instagram' },
       { id: 'reddit', title: 'Reddit' },
+      { id: 'github', title: 'Github' },
+      { id: 'blog', title: 'Blog' },
+      { id: 'www', title: 'WWW' }
     ],
     relatedSelected: [],
 
