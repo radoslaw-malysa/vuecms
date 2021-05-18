@@ -491,6 +491,7 @@
               </v-row>
             </v-card-text>
           </v-card>
+          <v-btn type="button" @click="test">test</v-btn>
         </div>
       </div>
     </form>
@@ -823,6 +824,7 @@ export default {
             this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
           }
           this.loading = false;
+          this.parentRefresh();
         });
       } else {
         cms.create(this.tableName, fd)
@@ -835,6 +837,7 @@ export default {
             this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
           }
           this.loading = false;
+          this.parentRefresh();
         });
       }
     },
@@ -875,13 +878,8 @@ export default {
       document.execCommand("copy");
       this.$store.commit('snack/open', {text: 'Slug skopiowany do schowka'});
     },
-    test() {
-      let related = [];
-      for (const [key, value] of Object.entries(this.related)) {
-        related.push({ id: key, url: value })
-      }
-      
-      console.log(related)
+    parentRefresh() {
+      window.opener.formRefresh();
     }
   }
 }

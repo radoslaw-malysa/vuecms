@@ -26,6 +26,12 @@ window.responsive_filemanager_callback = (field_id) => {
   //}, 2000);
 };
 
+//refresh contents table from opened window
+window.formRefresh = () => {
+  if (typeof vm.$children[0].$children[0].$children[1].$children[0].getItems() !== "undefined") {
+    vm.$children[0].$children[0].$children[1].$children[0].getItems();
+  }
+}
 
 /* 
 import Vue from 'vue'
