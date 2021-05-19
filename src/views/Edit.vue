@@ -639,7 +639,7 @@ export default {
           'media table paste code responsivefilemanager '
         ],
         toolbar: [
-          'undo redo | h2 h3 h4 | bold italic blockquote | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent',
+          'undo redo | styleselect | bold italic blockquote | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent',
           'table | link image media | responsivefilemanager | removeformat code' ],
         image_advtab: true,
         external_filemanager_path: this.config.serverUrl + '/filemanager/',
