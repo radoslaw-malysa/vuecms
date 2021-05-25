@@ -1,7 +1,7 @@
 /*article*/
 .article-content, 
 .article-content p {
-  font-size: 1.125rem;
+  font-size: 1rem;
   line-height: 1.5;
   word-break: break-word;
 }
@@ -11,20 +11,50 @@
 }
 .article-content h2 {
   line-height: 1.25;
+  word-break: break-word;
+  padding: 22px 0 8px;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.article-content h3 {
+  line-height: 1.25;
+  word-break: break-word;
+  padding: 22px 0 8px;
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+.article-content h4 {
+  margin: 0;
+  line-height: 1.25;
+  word-break: break-word;
+  padding: 22px 0 8px;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.article-content ul, .article-content ol {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-inline-start: 20px;
 }
 .article-content iframe {
   margin: 5px -1rem;
 }
-.article-content img {
+.zajawka {
+  margin-left: -1rem;
+  margin-right: -1rem;
+  position: relative;
+  padding-right: 22px;
+}
+.zajawka .ico {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+.zajawka img {
   display: block;
   margin: 15px 0;
   max-width: 100%;
   max-height: 70vh;
-}
-
-.article-content ul {
-  margin-top: 1.25rem;
-  margin-bottom: 1.25rem;
 }
 
 .article-content blockquote:not(.twitter-tweet) {
@@ -42,21 +72,25 @@
   left: 38px;
 }
 
-.article-cms blockquote.twitter-tweet {
-  border-color: rgb(196, 207, 214);
-  border-radius: 12px;
-  border-width: 1px;
-  border-style: solid;
-  padding: 8px;
-}
-
 @media screen and (min-width:60em) {
   .article-content {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
   }
   .article-content p {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     padding: 15px 0;
+  }
+  .article-content h2 {
+    padding: 25px 0 3px;
+    font-size: 1.5rem;
+  }
+  .article-content h3 {
+    padding: 25px 0 3px;
+    font-size: 1.5rem;
+  }
+  .article-content h4 {
+    padding: 25px 0 3px;
+    font-size: 1.25rem;
   }
   .article-content iframe {
     margin: 10px 0;
