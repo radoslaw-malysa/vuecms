@@ -625,6 +625,7 @@ export default {
         placeholder: 'Treść artykułu...',
         menubar: false,
         object_resizing: false,
+        entity_encoding : 'raw',
         browser_spellcheck: true,
         media_filter_html: false,
         media_live_embeds: true,
