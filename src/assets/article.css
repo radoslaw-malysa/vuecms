@@ -12,6 +12,13 @@
 .article-content p p {
   padding: 0;
 }
+.article-content *:not(.zajawka) a {
+  color: rgb(80, 80, 80);
+  text-decoration: underline;
+}
+.article-content *:not(.zajawka) a:hover {
+  color: #000;
+}
 .article-content h2 {
   line-height: 1.25;
   word-break: break-word;
