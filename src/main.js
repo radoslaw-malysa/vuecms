@@ -28,7 +28,8 @@ window.responsive_filemanager_callback = (field_id) => {
 
 //refresh contents table from opened window
 window.formRefresh = () => {
-  if (typeof vm.$children[0].$children[0].$children[1].$children[0].getItems() !== "undefined") {
+  console.log(typeof vm.$children[0].$children[0].$children[1].$children[0].getItems);
+  if (typeof vm.$children[0].$children[0].$children[1].$children[0].getItems !== "undefined") {
     vm.$children[0].$children[0].$children[1].$children[0].getItems();
   }
 }
