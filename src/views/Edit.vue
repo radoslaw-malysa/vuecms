@@ -489,6 +489,23 @@
                   <content-tags :inputData.sync="tags" />
                 </v-col>
               </v-row>
+
+              <v-row v-if="id_category == 2">
+                <v-col>
+                  <label>Para walutowa</label>
+                  <v-select
+                    name="currency_pair"
+                    :items="config.pairs"
+                    item-text="title"
+                    item-value="id"
+                    v-model="currency_pair"
+                    outlined
+                    rounded
+                    dense
+                    hide-details
+                  ></v-select>
+                </v-col>
+              </v-row>
             </v-card-text>
           </v-card>
         </div>
@@ -550,6 +567,7 @@ export default {
     ord: 0,
     update_time_d: null,
     update_time_h: null,
+    currency_pair: null,
 
     //slug
     showSlug: false,
