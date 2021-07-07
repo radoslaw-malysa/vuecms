@@ -751,7 +751,8 @@ export default {
             this.ord = response.ord;
             this.update_time_d = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(0, 10) : new Date().toISOString().substr(0, 10);
             this.update_time_h = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(11, 5) : new Date().toISOString().substr(11, 5);
-            
+            this.currency_pair = response.currency_pair;
+
             //tags
             this.tags = response.tags;
 
