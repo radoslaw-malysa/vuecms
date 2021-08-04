@@ -121,11 +121,11 @@
               class="media-placeholder image-placeholder"
             >
               
-              <v-responsive :aspect-ratio="4" v-if="isProfileImage">
+              <v-responsive :aspect-ratio="3" v-if="isProfileImage">
                 <v-card-text class="pa-0">
                   <v-img
-                    aspect-ratio="4"
-                    max-height="190"
+                    aspect-ratio="3"
+                    max-height="250"
                     max-width="750"
                     :src="coverImage"
                   >
