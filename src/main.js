@@ -21,7 +21,11 @@ var vm = new Vue({
 /*responsive filemanager*/
 window.responsive_filemanager_callback = (field_id) => { 
   //setTimeout(function() {
-  vm.$children[0].$children[0].$children[0].$children[0].image_url = document.getElementById(field_id).value;
+  if (field_id == 'cover-input') {
+    vm.$children[0].$children[0].$children[0].$children[0].cover_url = document.getElementById(field_id).value;
+  } else {
+    vm.$children[0].$children[0].$children[0].$children[0].image_url = document.getElementById(field_id).value;
+  }
   vm.$children[0].$children[0].$children[0].$children[0].dialogMedia = false;
   //}, 2000);
 };

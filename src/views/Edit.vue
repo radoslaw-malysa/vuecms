@@ -120,7 +120,39 @@
               elevation="0"
               class="media-placeholder image-placeholder"
             >
-              <v-responsive :aspect-ratio="1.5">
+              
+              <v-responsive :aspect-ratio="4" v-if="isProfileImage">
+                <v-card-text class="pa-0">
+                  <v-img
+                    aspect-ratio="4"
+                    max-height="190"
+                    max-width="750"
+                    :src="coverImage"
+                  >
+                    <v-avatar
+                      class="profile-avatar"
+                      color="white"
+                      size="136"
+                    >
+                      <v-img :src="avatarImage"></v-img>
+                    </v-avatar>
+                  </v-img>
+                </v-card-text>
+                <v-btn class="media-edit-btn avatar-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-input')">
+                  <v-icon>photo_camera</v-icon>
+                </v-btn>
+                <v-btn v-if="image_url" class="media-clear-btn avatar-clear-btn" fab small color="gray" elevation="0" @click="image_url = null">
+                  <v-icon>clear</v-icon>
+                </v-btn>
+
+                <v-btn class="cover-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('cover-input')">
+                  <v-icon>photo_camera</v-icon>
+                </v-btn>
+                <v-btn v-if="cover_url" class="cover-clear-btn" fab small color="gray" elevation="0" @click="cover_url = null">
+                  <v-icon>clear</v-icon>
+                </v-btn>
+              </v-responsive>
+              <v-responsive :aspect-ratio="1.5" v-else>
                 <v-card-text class="pa-0">
                   <v-img
                     v-if="image_url"
@@ -130,7 +162,7 @@
                     :src="config.serverUrl + '/thumbs/750x500/' + image_url"
                   ></v-img>
                 </v-card-text>
-                <v-btn class="media-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog">
+                <v-btn class="media-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-input')">
                   <v-icon>photo_camera</v-icon>
                 </v-btn>
                 <v-btn
@@ -145,6 +177,7 @@
                   <v-icon>clear</v-icon>
                 </v-btn>
               </v-responsive>
+
             </v-card>
 
             <v-card 
@@ -245,6 +278,8 @@
             ></v-text-field>
             <input id="image-input" type="hidden" />
             <input name="image_url" type="hidden" v-model="image_url" />
+            <input id="cover-input" type="hidden" />
+            <input name="cover_url" type="hidden" v-model="cover_url" />
             <input name="video" type="hidden" v-model="video" />
           </div>
         </div>
@@ -568,6 +603,7 @@ export default {
     update_time_d: null,
     update_time_h: null,
     currency_pair: null,
+    cover_url: null,
 
     //slug
     showSlug: false,
@@ -709,6 +745,15 @@ export default {
         }
       });*/
     },
+    isProfileImage() {
+      return (this.id_category != 1 && this.id_category != 3 && this.id_category != 7) ? true : false
+    },
+    avatarImage() {
+      return (this.image_url) ? this.config.serverUrl + '/thumbs/136x136/' + this.image_url : this.config.serverUrl + '/images/no_avatar.svg'
+    },
+    coverImage() {
+      return (this.cover_url) ? this.config.serverUrl + '/thumbs/1080x360/' + this.cover_url : null
+    }
   },
   watch: {
     video () {
@@ -752,6 +797,7 @@ export default {
             this.update_time_d = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(0, 10) : new Date().toISOString().substr(0, 10);
             this.update_time_h = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(11, 5) : new Date().toISOString().substr(11, 5);
             this.currency_pair = response.currency_pair;
+            this.cover_url = response.cover_url;
 
             //tags
             this.tags = response.tags;
@@ -878,10 +924,10 @@ export default {
         item.style.height = articleWidth * parseFloat(9/16) + 'px';
       });
     },
-    openMediaDialog() {
-      if (this.dialogMediaContent == '') {
-        this.dialogMediaContent = '<iframe width="100%" style="height:80vh;" frameborder="0" src="' + this.config.serverUrl + '/filemanager/dialog.php?relative_url=1&type=0&field_id=image-input" data-alloy-tabstop="true" tabindex="-1"></iframe>';
-      }
+    openMediaDialog(field_id) {
+      //if (this.dialogMediaContent == '') {
+        this.dialogMediaContent = '<iframe width="100%" style="height:80vh;" frameborder="0" src="' + this.config.serverUrl + '/filemanager/dialog.php?relative_url=1&type=0&field_id=' + field_id + '" data-alloy-tabstop="true" tabindex="-1"></iframe>';
+      //}
 
       //window.addEventListener('message', onMessage);
       this.dialogMedia = true;
