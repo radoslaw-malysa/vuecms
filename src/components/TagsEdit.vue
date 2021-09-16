@@ -45,6 +45,10 @@
               label="Status"
               required :rules="requiredRules"
             ></v-select>
+            <v-textarea
+              label="Opis"
+              v-model="description"
+            ></v-textarea>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -94,7 +98,8 @@ export default {
     menu_tag: 0,
     catalog_tag: 0,
     ord: '0',
-    active: 0
+    active: 0,
+    description: ''
   }),
   computed: {
     ...mapGetters('config', ['config']),
@@ -122,6 +127,7 @@ export default {
           this.catalog_tag = response.catalog_tag;
           this.ord = response.ord;
           this.active = response.active;
+          this.description = response.description;
         } else {
           this.$refs.form.reset();
         }
@@ -137,7 +143,8 @@ export default {
           menu_tag: this.menu_tag,
           catalog_tag: this.catalog_tag,
           ord: this.ord,
-          active: this.active
+          active: this.active,
+          description: this.description
         })
         .then(response => {
           if (response.id) {
@@ -153,7 +160,8 @@ export default {
           menu_tag: this.menu_tag,
           catalog_tag: this.catalog_tag,
           ord: this.ord,
-          active: this.active
+          active: this.active,
+          description: this.description
         })
         .then(response => {
           if (response.id) {
