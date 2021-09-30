@@ -683,7 +683,7 @@ export default {
         browser_spellcheck: true,
         media_filter_html: false,
         media_live_embeds: true,
-        extended_valid_elements: 'script[language|type|src|class],iframe[type|width|height|src|allow|allowfullscreen|style|frameborder|id|scrolling]',
+        extended_valid_elements: 'script[language|type|src|class],iframe[type|width|height|src|allow|allowfullscreen|style|frameborder|id|scrolling],sr-basic-widget[*]',
         relative_urls : false,
         remove_script_host : true,
         document_base_url : "/",
