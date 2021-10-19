@@ -223,6 +223,7 @@
       headers: [
         { text: 'Obrazek',  align: 'start', sortable: false, value: 'image_url' },
         { text: 'Tytuł', align: 'start', sortable: true, value: 'title' },
+        { text: 'Pop.', align: 'start', sortable: true, value: 'visits' },
         { text: 'Aktualizacja', align: 'start', sortable: true, value: 'update_time' },
         { text: 'Status', align: 'start', value: 'state' },
         { text: '', align: 'end', value: 'actions', sortable: false }
