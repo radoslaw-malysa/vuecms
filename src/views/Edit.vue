@@ -695,7 +695,7 @@ export default {
         ],
         toolbar: [
           'undo redo | styleselect | bold italic blockquote | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent',
-          'table | link image media | responsivefilemanager | removeformat code' ],
+          'table | link anchor image media | responsivefilemanager | removeformat code' ],
         image_advtab: true,
         external_filemanager_path: this.config.serverUrl + '/filemanager/',
         filemanager_title: 'Media',
@@ -794,8 +794,8 @@ export default {
             this.author = response.author;
             this.state = response.state;
             this.ord = response.ord;
-            this.update_time_d = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(0, 10) : new Date().toISOString().substr(0, 10);
-            this.update_time_h = (response.update_time != '0000-00-00 00:00:00') ? new Date(response.update_time).toISOString().substr(11, 5) : new Date().toISOString().substr(11, 5);
+            this.update_time_d = (response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(0, 10) : new Date().toISOString().substr(0, 10);
+            this.update_time_h = (response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(11, 5) : new Date().toISOString().substr(11, 5);
             this.currency_pair = response.currency_pair;
             this.cover_url = response.cover_url;
 
