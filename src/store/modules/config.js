@@ -10,7 +10,8 @@ const state = () => ({
       { id: 4, title: 'Ludzie' },
       { id: 5, title: 'Firmy' },
       { id: 6, title: 'Produkty' },
-      { id: 7, title: 'Blokpres' }
+      { id: 7, title: 'Blokpres' },
+      { id: 8, title: 'Redakcja' }
     ],
     contentsStates: [
       { id: 1, title: 'Opublikowany' },
@@ -33,7 +34,8 @@ const state = () => ({
       { id_category: 4, view: 'ludzie/article.php' },
       { id_category: 5, view: 'firmy/article.php' },
       { id_category: 6, view: 'produkty/article.php' },
-      { id_category: 7, view: 'poradniki/article.php' }
+      { id_category: 7, view: 'poradniki/article.php' },
+      { id_category: 8, view: 'redakcja/article.php' }
     ],
     pairs: [
       { id: '', title: '' },

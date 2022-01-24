@@ -351,6 +351,26 @@
           </div>
         </div>
 
+
+
+        
+        
+        <div class="d-flex mt-6">
+          <div class="ed-aside relative">
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-select
+              name="id_author"
+              :items="authors"
+              item-text="title"
+              item-value="id"
+              v-model="id_author"
+              label="Autor"
+              hide-details
+            ></v-select>
+          </div>
+        </div>
+
         <div class="d-flex mb-10 mt-6">
           <div class="ed-aside relative">
           </div>
@@ -358,7 +378,7 @@
             <v-text-field
               name="author"
               v-model="author"
-              label="Autor"
+              label="Autor inny"
             ></v-text-field>
           </div>
         </div>
@@ -604,23 +624,24 @@ export default {
     update_time_h: null,
     currency_pair: null,
     cover_url: null,
+    id_author: null,
 
-    //slug
+    // slug
     showSlug: false,
-    //affiliate
+    // affiliate
     showAffiliate: false,
-    //main image
+    // main image
     showVideo: false,
     dialogMedia: false,
     dialogMediaContent: '',
 
     imageInput: '',
 
-    //main video
+    // main video
     videoTmp: null,
     insertVideoMenu: false,
 
-    //related
+    // related
     related: {},
     relatedSettings: [
       { id: 'twitter', title: 'Twitter' },
@@ -637,7 +658,7 @@ export default {
     ],
     relatedSelected: [],
 
-    //contents_contents
+    // contents_contents
     contentsContents: {
       2: [],
       4: [],
@@ -645,15 +666,18 @@ export default {
       6: []
     },
 
-    //tags
+    // tags
     tags: [],
     
-    //links
+    // links
     links: [],
+
+    // authors
+    authors: [],
 
     dateMenu: false,
     loading: false,
-    //dark: false
+    // dark: false
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates', 'categoryTemplate']),
@@ -767,6 +791,7 @@ export default {
   },
   mounted() {
     this.loadItem();
+    this.loadAuthors();
     //this.dark = localStorage.getItem("dark");
   },  
   methods: {
@@ -798,6 +823,7 @@ export default {
             this.update_time_h = (response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(11, 5) : new Date().toISOString().substr(11, 5);
             this.currency_pair = response.currency_pair;
             this.cover_url = response.cover_url;
+            this.id_author = response.id_author;
 
             //tags
             this.tags = response.tags;
@@ -949,6 +975,12 @@ export default {
     },
     parentRefresh() {
       window.opener.formRefresh();
+    },
+    loadAuthors() {
+      cms.autocomplete('contents', '', { id_category: 8 })
+      .then(res => {
+        this.authors = res
+      });
     }
   }
 }
