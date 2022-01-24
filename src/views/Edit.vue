@@ -366,6 +366,7 @@
               item-value="id"
               v-model="id_author"
               label="Autor"
+              clearable
               hide-details
             ></v-select>
           </div>
