@@ -351,9 +351,6 @@
           </div>
         </div>
 
-
-
-        
         
         <div class="d-flex mt-6">
           <div class="ed-aside relative">
@@ -716,11 +713,11 @@ export default {
         plugins: [
           'advlist autolink lists link image charmap preview anchor',
           'searchreplace visualblocks code fullscreen',
-          'media table paste code responsivefilemanager '
+          'media table textcolor paste code responsivefilemanager '
         ],
         toolbar: [
-          'undo redo | styleselect | bold italic blockquote | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent',
-          'table | link anchor image media | responsivefilemanager | removeformat code' ],
+          'undo redo | styleselect | fontsizeselect | bold italic blockquote | alignleft aligncenter alignright alignjustify | forecolor backcolor',
+          'bullist numlist | outdent indent | table | link anchor image media | responsivefilemanager | removeformat code' ],
         image_advtab: true,
         external_filemanager_path: this.config.serverUrl + '/filemanager/',
         filemanager_title: 'Media',

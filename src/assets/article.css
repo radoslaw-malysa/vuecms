@@ -72,6 +72,15 @@
   left: 38px;
 }
 
+.article-content table {
+  border-color: rgb(156, 156, 156);
+}
+.article-content table td {
+  padding-left: 8px;
+  padding-right: 8px;
+  vertical-align: top;
+}
+
 @media screen and (min-width:60em) {
   .article-content {
     font-size: 1.125rem;
