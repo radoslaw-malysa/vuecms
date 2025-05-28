@@ -1,7 +1,7 @@
 //const apiUrl = 'http://blokpres/cms';
 //const apiUrl = '/cms';
 
-const apiUrl = (window.location.hostname == 'localhost') ? 'http://blokpres/cms' : '/cms';
+const apiUrl = (window.location.hostname == 'localhost') ? 'http://health.local/cms' : '/cms';
 
 const authHeader = () => {
   let profile = JSON.parse(localStorage.getItem('profile'));
