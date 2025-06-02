@@ -37,12 +37,10 @@ const state = () => ({
       { id_category: 7, view: 'poradniki/article.php' },
       { id_category: 8, view: 'redakcja/article.php' }
     ],
-    pairs: [
-      { id: '', title: '' },
-      { id: 'USD', title: 'USD' },
-      { id: 'USDT', title: 'USDT' },
-      { id: 'PLN', title: 'PLN' }
-    ],
+    langs: [
+      { id: 1, title: 'pl' },
+      { id: 2, title: 'en' }
+    ]
   }
 })
 

@@ -5,6 +5,7 @@ import Contents from './views/Contents.vue'
 import Login from './views/Login.vue'
 import Users from './views/Users.vue'
 import Tags from './views/Tags.vue'
+import Pages from './views/Pages.vue'
 import Settings from './views/Settings.vue'
 import Edit from './views/Edit.vue'
 
@@ -33,6 +34,11 @@ const router = new Router({
       path: '/tags',
       name: 'Tagi',
       component: Tags
+    },
+    {
+      path: '/pages',
+      name: 'Strony',
+      component: Pages
     },
     {
       path: '/contents/:id',

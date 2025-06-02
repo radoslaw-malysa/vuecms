@@ -2,7 +2,7 @@
     <v-dialog v-model="dialog" persistent max-width="500px">
       <v-card>
         <v-card-title class="justify-space-between">
-          <span class="headline" v-text="(id == 0) ? 'Nowy tag' : 'Tag'"></span>
+          <span class="headline" v-text="(id == 0) ? 'Nowa strona' : 'Strona'"></span>
           <v-btn text icon @click="$emit('close-edit')">
             <v-icon>close</v-icon>
           </v-btn>
@@ -30,17 +30,14 @@
               required :rules="requiredRules"
             ></v-select>
             <v-select
-              v-model="active"
+              v-model="state"
               :items="[{id: 1, title: 'Aktywny'},{id: 2, title: 'Nieaktywny'}]"
               item-text="title"
               item-value="id"
               label="Status"
               required :rules="requiredRules"
             ></v-select>
-            <v-textarea
-              label="Opis"
-              v-model="description"
-            ></v-textarea>
+            
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -77,7 +74,7 @@ import slugify from '../api/slugify'
 export default {
   props: ['id', 'dialog'],
   data: () => ({
-    tableName: 'tags',
+    tableName: 'pages',
     valid: true,
     loading: false,
     
@@ -88,8 +85,7 @@ export default {
 
     slug: null,
     ord: '0',
-    active: 0,
-    description: '',
+    state: 1,
     id_lang: 1
   }),
   computed: {
@@ -115,8 +111,7 @@ export default {
           this.title = response.title;
           this.slug = response.slug;
           this.ord = response.ord;
-          this.active = response.active;
-          this.description = response.description;
+          this.state = response.state;
           this.id_lang = response.id_lang;
         } else {
           this.$refs.form.reset();
@@ -131,8 +126,7 @@ export default {
           slug: this.slug,
           title: this.title,
           ord: this.ord,
-          active: this.active,
-          description: this.description,
+          state: this.state,
           id_lang: this.id_lang
         })
         .then(response => {
@@ -147,8 +141,7 @@ export default {
           slug: this.slug,
           title: this.title,
           ord: this.ord,
-          active: this.active,
-          description: this.description,
+          state: this.state,
           id_lang: this.id_lang
         })
         .then(response => {

@@ -13,7 +13,7 @@
           >
             <v-text-field
               v-model="q"
-              label="Tag"
+              label="Szukaj tagu"
               solo
               flat
               hide-details
@@ -25,40 +25,21 @@
               vertical
             ></v-divider>
             <v-select
-              v-model="filters.catalog_tag"
-              :items="config.categories"
+              :items="config.langs"
               item-text="title"
               item-value="id"
-              label="W katalogu"
+              v-model="filters.id_lang"
+              label="Język"
               solo
-              dense
               flat
               hide-details
-              prepend-icon="local_offer"
-              clearable
+              dense
             ></v-select>
             <v-divider
               class="mx-4"
               vertical
             ></v-divider>
-            <v-select
-              v-model="filters.menu_tag"
-              :items="config.categories"
-              item-text="title"
-              item-value="id"
-              label="W menu"
-              solo
-              dense
-              flat
-              hide-details
-              prepend-icon="menu"
-              clearable
-            ></v-select>
-            <v-divider
-              class="ml-4"
-              vertical
-            ></v-divider>
-            <v-btn icon class="ml-1" color="primary" @click="editItem(0)">
+            <v-btn icon color="primary" @click="editItem(0)">
               <v-icon>add</v-icon>
             </v-btn>
           </v-toolbar>
@@ -105,14 +86,11 @@
         class="nobg-dark"
         item-class="css"
       >
-        <template v-slot:item.catalog_tag="{ item }">
-          {{ (item.catalog_tag) ? categories[item.catalog_tag].title : '' }}
-        </template>
-        <template v-slot:item.menu_tag="{ item }">
-          {{ (item.menu_tag) ? categories[item.menu_tag].title : '' }}
-        </template>
         <template v-slot:item.active="{ item }">
           {{ (item.active == 1) ? 'Aktywny' : 'Nieaktywny' }}
+        </template>
+        <template v-slot:item.id_lang="{ item }">
+          {{ (item.id_lang == 2) ? 'EN' : 'PL' }}
         </template>
         <template v-slot:item.actions="{ item }">
           <v-btn
@@ -170,7 +148,8 @@
       options: {},
       filters: {
         q: '',
-        state: ''
+        state: '',
+        id_lang: 1
       },
       
       //title ajax find
@@ -180,14 +159,12 @@
       //table
       headers: [
         { text: 'Nazwa',  align: 'start', sortable: true, value: 'title' },
-        { text: 'W katalogu', align: 'start', sortable: true, value: 'catalog_tag' },
-        { text: 'W menu', align: 'start', sortable: true, value: 'menu_tag' },
         { text: 'Kolejność', align: 'start', sortable: true, value: 'ord' },
         { text: 'Status', align: 'start', value: 'active' },
+        { text: 'Język', align: 'start', value: 'id_lang' },
         { text: '', align: 'end', value: 'actions', sortable: false }
       ],
       
-
       itemsx: ['Kategoria', 'Foo', 'Bar', 'Fizz', 'Buzz'],
       selectTag: null,
       ord: false,
@@ -239,7 +216,7 @@
     },
     methods: {
       getItems() {
-        console.log(new Date().getTime());
+        // console.log(new Date().getTime());
         this.loading = true;
         let params = {...this.options, ...this.filters};
         cms.getItems(this.tableName, params)

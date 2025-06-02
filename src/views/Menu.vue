@@ -13,11 +13,11 @@
           >
             <v-text-field
               v-model="q"
-              label="Szukaj w tytule"
+              label="Szukaj tagu"
               solo
               flat
               hide-details
-              prepend-inner-icon="search"
+              prepend-inner-icon="tag"
               clearable
             ></v-text-field>
             <v-divider
@@ -39,42 +39,7 @@
               class="mx-4"
               vertical
             ></v-divider>
-            <!--<v-select
-              :items="config.categories"
-              item-text="title"
-              item-value="id"
-              v-model="filters.id_category"
-              label="Kategoria"
-              solo
-              flat
-              hide-details
-              dense
-            ></v-select>
-            <v-divider
-              class="mx-4"
-              vertical
-            ></v-divider>-->
-            <v-autocomplete
-              v-model="filters.id_tag"
-              item-text="title"
-              item-value="id"
-              :loading="tagLoading"
-              :items="tagItems"
-              :search-input.sync="searchTag"
-              cache-items
-              flat
-              hide-no-data
-              hide-details
-              label="Tag"
-              prepend-inner-icon="tag"
-              solo
-              clearable
-            ></v-autocomplete>
-            <v-divider
-              class="ml-4"
-              vertical
-            ></v-divider>
-            <v-btn icon class="ml-1" color="primary" @click="editItem(0)">
+            <v-btn icon color="primary" @click="editItem(0)">
               <v-icon>add</v-icon>
             </v-btn>
           </v-toolbar>
@@ -88,8 +53,8 @@
       class="filter-toolbar nobg-dark my-3 mb-12"
     >
       <v-select
-        v-model="filters.state"
-        :items="config.contentsStates"
+        v-model="filters.active"
+        :items="[{id: 1, title: 'Aktywny'},{id: 2, title: 'Nieaktywny'}]"
         item-text="title"
         item-value="id"
         placeholder="Status"
@@ -100,44 +65,12 @@
         hide-details
         class="mr-2 state-select"
       ></v-select>
-      
-      <!--<v-select
-        v-model="filters.id_user"
-        :items="config.usersGroups"
-        item-text="title"
-        item-value="id"
-        placeholder="Redaktor"
-        clearable
-        dense
-        outlined
-        rounded
-        hide-details
-        class="mr-2 user-select"
-      ></v-select>-->
-
-      <v-chip
-        outlined
-        filter
-        :input-value="filters.ord == 2"
-        @click="toggleSponsored()"
-        class="mr-2"
-      >
-        Sponsorowane
-      </v-chip>
-      <v-chip
-        outlined
-        filter
-        :input-value="filters.affiliate_url == 1"
-        @click="toggleAffiliated()"
-      >
-        Afiliacyjne
-      </v-chip>
       <v-spacer></v-spacer>
-    </v-toolbar>
+     </v-toolbar>
 
     <v-card
       outlined
-      class="nobg-dark pb-1"
+      class="nobg-dark"
     >
       <v-data-table
         :headers="headers"
@@ -151,19 +84,13 @@
         loading-text="Pobieram dane..."
         @page-count="pageCount = $event"
         class="nobg-dark"
+        item-class="css"
       >
-        <template v-slot:item.image_url="{ item }">
-          <img v-if="item.image_url" :src="imageServer + item.image_url" loading="lazy" class="thu" />
-        </template>
-        <template v-slot:item.title="{ item }">
-          {{ item.title }}
-          <v-chip v-if="item.ord == 3" class="mx-1 primary" small >Przypięty</v-chip>
-          <v-chip v-else-if="item.ord == 2" class="mx-1 accent" small >Sponsor</v-chip>
-          <v-chip v-if="item.affiliate_url" class="mx-1 orange" small :title="item.affiliate_url">Afiliacyjny</v-chip>
+        <template v-slot:item.id_lang="{ item }">
+          {{ (item.id_lang == 2) ? 'EN' : 'PL' }}
         </template>
         <template v-slot:item.state="{ item }">
-          {{ (item.state) ? contentsStates[item.state].title : '' }}
-          <v-chip v-if="!item.state" class="danger" small >Nieokreślony</v-chip>
+          {{ (item.state == 1) ? 'Aktywna' : 'Nieaktywna' }}
         </template>
         <template v-slot:item.actions="{ item }">
           <v-btn
@@ -188,17 +115,21 @@
         ></v-pagination>
       </div>
     </v-card>
-
+    <pages-edit v-bind:id="editId" v-bind:dialog="editDialog" v-on:close-edit="editDialog = false" v-on:edit-updated="editUpdated" />
   </v-container>
 </template>
 
 <script>
-  import cms from '../api/cms';
   import { mapGetters } from 'vuex'
+  import cms from '../api/cms'
+  import MenuEdit from '../components/MenuEdit.vue';
   export default {
-    name: 'Contents',
+    name: 'Menu',
+    components: {
+      MenuEdit
+    },
     data: () => ({
-      tableName: 'contents',
+      tableName: 'menu',
       results: [], 
       totalItems: 0,
       itemsPerPage: 50,
@@ -206,8 +137,8 @@
       pageCount: 0,
 
       loading: false,
-      //editDialog: false,
-      //editId: 0,
+      editDialog: false,
+      editId: 0,
 
       //finder bar stick
       finderTop: 0,
@@ -216,38 +147,31 @@
       //filters
       options: {},
       filters: {
-        id_category: '',
         q: '',
-        ord: '',
         state: '',
-        id_user: '',
-        id_tag: null,
-        affiliate_url: '',
         id_lang: 1
       },
       
       //title ajax find
       q: '',
       qTimeout: null,
-
-      //tag autocomplete
-      tagLoading: false,
-      tagItems: [],
-      searchTag: null,
-
+      
       //table
       headers: [
-        { text: 'Obrazek',  align: 'start', sortable: false, value: 'image_url' },
-        { text: 'Tytuł', align: 'start', sortable: true, value: 'title' },
-        { text: 'Pop.', align: 'start', sortable: true, value: 'visits' },
-        { text: 'Aktualizacja', align: 'start', sortable: true, value: 'update_time' },
+        { text: 'Nazwa',  align: 'start', sortable: true, value: 'title' },
+        { text: 'Kolejność', align: 'start', sortable: true, value: 'ord' },
         { text: 'Status', align: 'start', value: 'state' },
+        { text: 'Język', align: 'start', value: 'id_lang' },
         { text: '', align: 'end', value: 'actions', sortable: false }
       ],
       
+      itemsx: ['Kategoria', 'Foo', 'Bar', 'Fizz', 'Buzz'],
+      selectTag: null,
+      ord: false,
+      
     }),
     computed: {
-      ...mapGetters('config', ['config', 'contentsStates']),
+      ...mapGetters('config', ['config', 'categories']),
       finderHeight() {
         return (this.finderSticked) ? 64 : 56
       },
@@ -259,31 +183,23 @@
       },
       countItems() {
         return this.items.length
-      },
-      imageServer() {
-        return (this.filters.id_category == 1 || this.filters.id_category == 3) ? this.config.serverUrl + '/thumbs/180x120/' : this.config.serverUrl + '/thumbs/60x60/'
       }
     },
     mounted() {
       this.stickFinderInit();
-      //this.getItems();
     },
     watch: {
       options: {
         handler () {
           this.getItems()
         },
-        deep: true
+        deep: true,
       },
       filters: {
         handler () {
           if (this.options.page == 1) {
-            console.log('page=1');
             this.getItems();
-            //this.options.page = 1;
           } else {
-            console.log('page!=1');
-            //this.options.page = 1;
             this.page = 1;
           }
         },
@@ -297,12 +213,10 @@
           this.filters.q = newVal
         }, 550);
       },
-      searchTag (val) {
-        val && val !== this.filters.id_tag && this.findTag(val)
-      },
     },
     methods: {
       getItems() {
+        // console.log(new Date().getTime());
         this.loading = true;
         let params = {...this.options, ...this.filters};
         cms.getItems(this.tableName, params)
@@ -313,26 +227,13 @@
           } else {
             this.results = [];
             this.totalItems = 0;
-            if (response.error == 403) {
-              this.$router.push({ path: '/login' })
-            }
           }
           this.loading = false;
         });
       },
       editItem(id) {
-        //this.editId = id;
-        //this.editDialog = true;
-
-        let editRoute = this.$router.resolve({ 
-          name: 'Artykuł',
-          params: { id: id },
-        });
-
-        let url = editRoute.href;
-        if (id == 0) { url += '?id_category=' + this.filters.id_category; }
-        
-        window.open(url, '_blank');
+        this.editId = id;
+        this.editDialog = true;
       },
       editUpdated() {
         this.editDialog = false;
@@ -352,23 +253,6 @@
           this.finderSticked = false;
         }
       },
-      toggleSponsored() {
-        this.filters.ord = (this.filters.ord == 2) ? '' : 2
-      },
-      toggleAffiliated() {
-        this.filters.affiliate_url = (this.filters.affiliate_url == 1) ? '' : 1
-      },
-      findTag(q) {
-        this.tagLoading = true;
-        cms.autocomplete('tags', q)
-        .then(response => {
-          if (response) {
-            this.tagItems = response;
-          }
-          this.tagLoading = false;
-        });
-      },
-      
     }
   }
 </script>

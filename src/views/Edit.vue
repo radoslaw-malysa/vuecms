@@ -89,8 +89,6 @@
           </div>
         </div>
 
-        <content-links :inputData.sync="links" />
-
         <div class="d-flex mb-6">
           <div class="ed-aside d-flex flex-column">
             <v-btn
@@ -284,59 +282,6 @@
           </div>
         </div>
 
-
-        <div class="d-flex" :class="{'mb-12': relatedSelected.length > 0}">
-          <div class="ed-aside relative">
-            <div class="absolute-top-left">
-              <v-menu offset-x :close-on-content-click="false">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    v-bind="attrs"
-                    v-on="on"
-                    icon
-                    x-large
-                    title="Dodaj linki"
-                  >
-                    <v-icon>facebook</v-icon>
-                  </v-btn>
-                </template>
-                <v-list
-                  flat
-                  one-line
-                >
-                  <v-list-item-group
-                    v-model="relatedSelected"
-                    multiple
-                  >
-                    <v-list-item v-for="(item, i) in relatedSettings" :key="i" :value="item.id">
-                      <template v-slot:default="{ active }">
-                        <v-list-item-action>
-                          <v-checkbox :input-value="active"></v-checkbox>
-                        </v-list-item-action>
-                        <v-list-item-content>
-                          <v-list-item-title>{{ item.title }}</v-list-item-title>
-                        </v-list-item-content>
-                      </template>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
-              </v-menu>
-            </div>
-          </div>
-          <div class="flex-grow-1" style="width:750px;">
-            <v-row>
-              <v-col cols="6" v-for="(item, i) in relatedSettingsSeleted" :key="i">
-                <v-text-field 
-                  :label="item.title" 
-                  type="text" 
-                  v-model="related[item.id]"
-                  hide-details
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </div>
-        </div>
-
         <div class="d-flex">
           <div class="ed-aside">
           </div>
@@ -378,17 +323,6 @@
               v-model="author"
               label="Autor inny"
             ></v-text-field>
-          </div>
-        </div>
-
-        <div class="d-flex mb-6">
-          <div class="ed-aside">
-          </div>
-          <div class="ed-content flex-grow-1" style="width: 750px;">
-            <contents-contents :id_category="2" :inputData.sync="contentsContents[2]" />
-            <contents-contents :id_category="4" :inputData.sync="contentsContents[4]" />
-            <contents-contents :id_category="5" :inputData.sync="contentsContents[5]" />
-            <contents-contents :id_category="6" :inputData.sync="contentsContents[6]" />
           </div>
         </div>
 
@@ -543,22 +477,24 @@
                 </v-col>
               </v-row>
 
-              <v-row v-if="id_category == 2">
+              <v-row>
                 <v-col>
-                  <label>Para walutowa</label>
+                  <label>Język</label>
                   <v-select
-                    name="currency_pair"
-                    :items="config.pairs"
+                    name="id_lang"
+                    :items="langs"
                     item-text="title"
                     item-value="id"
-                    v-model="currency_pair"
+                    v-model="id_lang"
                     outlined
                     rounded
                     dense
                     hide-details
                   ></v-select>
+                  <input type="hidden" name="view" v-model="view" />
                 </v-col>
               </v-row>
+
             </v-card-text>
           </v-card>
         </div>
@@ -590,18 +526,14 @@ import { mapGetters } from 'vuex'
 import cms from '../api/cms'
 import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
-import ContentsContents from '../components/ContentsContents.vue'
 import ContentTags from '../components/ContentTags.vue'
-import ContentLinks from '../components/ContentLinks.vue'
 
 export default {
   name: 'Contents',
   props: ['id'],
   components: {
     'editor': Editor,
-    ContentsContents,
-    ContentTags,
-    ContentLinks
+    ContentTags
   },
   data: () => ({
     tableName: 'contents',
@@ -620,9 +552,9 @@ export default {
     ord: 0,
     update_time_d: null,
     update_time_h: null,
-    currency_pair: null,
     cover_url: null,
     id_author: null,
+    id_lang: null,
 
     // slug
     showSlug: false,
@@ -639,36 +571,8 @@ export default {
     videoTmp: null,
     insertVideoMenu: false,
 
-    // related
-    related: {},
-    relatedSettings: [
-      { id: 'twitter', title: 'Twitter' },
-      { id: 'linkedin', title: 'LinkedIn' },
-      { id: 'facebook', title: 'Facebook' },
-      { id: 'medium', title: 'Medium' },
-      { id: 'youtube', title: 'Youtube' },
-      { id: 'telegram', title: 'Telegram' },
-      { id: 'instagram', title: 'Instagram' },
-      { id: 'reddit', title: 'Reddit' },
-      { id: 'github', title: 'Github' },
-      { id: 'blog', title: 'Blog' },
-      { id: 'www', title: 'WWW' }
-    ],
-    relatedSelected: [],
-
-    // contents_contents
-    contentsContents: {
-      2: [],
-      4: [],
-      5: [],
-      6: []
-    },
-
     // tags
     tags: [],
-    
-    // links
-    links: [],
 
     // authors
     authors: [],
@@ -759,14 +663,6 @@ export default {
     view() {
       return (this.id_category) ? this.categoryTemplate(this.id_category).view : this.categoryTemplate(1).view
     },
-    relatedSettingsSeleted() {
-      return this.relatedSettings.filter(item => this.relatedSelected.includes(item.id) );
-      /*this.relatedSettings.forEach(item => {
-        if (this.relatedSelected.includes(item.id)) {
-          sel.push(item)
-        }
-      });*/
-    },
     isProfileImage() {
       return (this.id_category != 1 && this.id_category != 3 && this.id_category != 7) ? true : false
     },
@@ -775,6 +671,9 @@ export default {
     },
     coverImage() {
       return (this.cover_url) ? this.config.serverUrl + '/thumbs/1080x360/' + this.cover_url : null
+    },
+    langs() {
+      return this.config.langs
     }
   },
   watch: {
@@ -809,46 +708,23 @@ export default {
             this.image_alt = response.image_alt;
             this.image_caption = response.image_caption;
             this.video = response.video;
-            if (response.affiliate_url) {
+            /*if (response.affiliate_url) {
               this.affiliate_url = response.affiliate_url;
               this.showAffiliate = true;
-            }
+            }*/
             this.videoTmp = response.video;
             this.author = response.author;
             this.state = response.state;
             this.ord = response.ord;
             this.update_time_d = (response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(0, 10) : new Date().toISOString().substr(0, 10);
             this.update_time_h = (response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(11, 5) : new Date().toISOString().substr(11, 5);
-            this.currency_pair = response.currency_pair;
             this.cover_url = response.cover_url;
             this.id_author = response.id_author;
+            this.id_lang = (response.id_lang) ? response.id_lang : 1;
 
             //tags
             this.tags = response.tags;
 
-            //related
-            this.related = [];
-            if (response.related) {
-              let rel = JSON.parse(response.related);
-              if (typeof rel === 'object') {
-                rel.forEach(item => {
-                  this.related[item.id] = item.url;
-                  this.relatedSelected.push(item.id);
-                });
-              }
-            }
-
-            //links
-            this.links = [];
-            if (response.links) {
-              let lin = JSON.parse(response.links);
-              this.links = lin;
-            }
-
-            if (typeof response.contents_contents[2] === 'object') { this.contentsContents[2] = response.contents_contents[2] }
-            if (typeof response.contents_contents[4] === 'object') { this.contentsContents[4] = response.contents_contents[4] }
-            if (typeof response.contents_contents[5] === 'object') { this.contentsContents[5] = response.contents_contents[5] }
-            if (typeof response.contents_contents[6] === 'object') { this.contentsContents[6] = response.contents_contents[6] }
           } else {
             this.$refs.form.reset();
           }
@@ -874,6 +750,8 @@ export default {
         }
         //state
         this.state = 2;
+        // lang
+        this.id_lang = 1;
       }
     },
     saveItem() {
@@ -890,23 +768,6 @@ export default {
 
       fd.content = this.content;
       fd.tags = this.tags; //fd.tags = this.tags.map((item) => item.id )
-      fd.links = this.links;
-
-      let cc = [];
-      if (this.contentsContents[2].length > 0) { cc = cc.concat(this.contentsContents[2].map((item) => item.id)); }
-      if (this.contentsContents[4].length > 0) { cc = cc.concat(this.contentsContents[4].map((item) => item.id)); }
-      if (this.contentsContents[5].length > 0) { cc = cc.concat(this.contentsContents[5].map((item) => item.id)); }
-      if (this.contentsContents[6].length > 0) { cc = cc.concat(this.contentsContents[6].map((item) => item.id)); }
-      fd.contents_contents = cc;
-      //fd.contents_contents = JSON.parse(JSON.stringify(this.contentsContents));
-
-      //related
-      /*let related = [];
-      this.relatedSettingsSeleted.forEach(item => {
-        related.push({ id: item.id, url: this.related[item.id] })
-      });*/
-      let related = this.relatedSettingsSeleted.map(item => { return { id: item.id, url: this.related[item.id] } })
-      fd.related = (related.length > 0) ? related : '';
       
       if (this.id > 0) {
         cms.update(this.tableName, this.id, fd)

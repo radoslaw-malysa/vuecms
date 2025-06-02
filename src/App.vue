@@ -24,6 +24,7 @@
       >
         <v-tab to="/">Treści</v-tab>
         <v-tab to="/tags" value="/tags">Tagi</v-tab>
+        <v-tab to="/pages" value="/pages">Strony</v-tab>
         <v-tab to="/settings" value="/settings">Ustawienia</v-tab>
       </v-tabs>
 
