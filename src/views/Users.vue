@@ -160,6 +160,7 @@
       //table
       headers: [
         { text: 'Email',  align: 'start', sortable: true, value: 'email' },
+        { text: 'Nazwa',  align: 'start', sortable: true, value: 'title' },
         { text: 'Grupa', align: 'start', sortable: true, value: 'id_group' },
         { text: 'Utworzony', align: 'start', sortable: true, value: 'create_time' },
         { text: 'Status', align: 'start', value: 'state' },

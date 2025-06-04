@@ -836,7 +836,7 @@ export default {
       window.opener.formRefresh();
     },
     loadAuthors() {
-      cms.autocomplete('contents', '', { id_category: 8 })
+      cms.autocomplete('users', '', { })
       .then(res => {
         this.authors = res
       });

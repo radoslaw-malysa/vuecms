@@ -14,6 +14,8 @@
           lazy-validation
         >
           <v-text-field label="E-mail" type="email" v-model="email" required :rules="emailRules" :change="emailBackendError = false" :loading="loading"></v-text-field>
+          <v-text-field label="Nazwa" type="text" v-model="title" required :rules="requiredRules"></v-text-field>
+          <v-text-field label="Awatar" type="text" v-model="image_url"></v-text-field>
           <v-text-field label="Hasło" :type="show1 ? 'text' : 'password'" v-model="passwd" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" @click:append="show1 = !show1" :loading="loading"></v-text-field>
           <v-select
             v-model="id_group"
@@ -60,6 +62,12 @@ export default {
       v => !!v || 'E-mail jest wymagany',
       v => /.+@.+\..+/.test(v) || 'E-mail jest nieprawidłowy',
     ],
+    requiredRules: [
+      v => !!v || 'To pole jest wymagane'
+    ],
+
+    title: '',
+    image_url: '',
 
     passwd: null,
     show1: false,
@@ -108,6 +116,8 @@ export default {
           this.email = response.email;
           this.id_group = response.id_group;
           this.state = response.state;
+          this.title = response.title;
+          this.image_url = response.image_url;
         } else {
           this.$refs.form.reset();
         }
@@ -121,7 +131,9 @@ export default {
           passwd: this.passwd,
           name: this.name,
           id_group: this.id_group,
-          state: this.state
+          state: this.state,
+          title: this.title,
+          image_url: this.image_url
         })
         .then(response => {
           if (response.id) {
@@ -137,7 +149,9 @@ export default {
           passwd: this.passwd,
           name: this.name,
           id_group: this.id_group,
-          state: this.state
+          state: this.state,
+          title: this.title,
+          image_url: this.image_url
         })
         .then(response => {
           if (response.id) {
