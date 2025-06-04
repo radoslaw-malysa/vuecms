@@ -81,14 +81,14 @@ export default {
     valid: true,
     loading: false,
     
-    title: null,
+    title: '',
     requiredRules: [
       v => !!v || 'To pole jest wymagane'
     ],
 
-    slug: null,
+    slug: '',
     ord: '0',
-    active: 0,
+    active: 1,
     description: '',
     id_lang: 1
   }),
@@ -102,7 +102,8 @@ export default {
           this.loadItem();
         }
       } else {
-        this.$refs.form.reset();
+        // this.$refs.form.reset();
+        this.resetItem()
       }
     }
   },
@@ -119,7 +120,8 @@ export default {
           this.description = response.description;
           this.id_lang = response.id_lang;
         } else {
-          this.$refs.form.reset();
+          // this.$refs.form.reset();
+          this.resetItem()
         }
         this.loading = false;
       });
@@ -170,6 +172,12 @@ export default {
           this.$emit('edit-updated');
         }
       });
+    },
+    resetItem() {
+      this.title = ''
+      this.slug = ''
+      this.ord = 0
+      this.description = ''
     },
     titleToSlug(force) {
       if (!this.slug || force) {

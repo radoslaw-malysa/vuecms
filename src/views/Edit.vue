@@ -664,7 +664,7 @@ export default {
       return (this.id_category) ? this.categoryTemplate(this.id_category).view : this.categoryTemplate(1).view
     },
     isProfileImage() {
-      return (this.id_category != 1 && this.id_category != 3 && this.id_category != 7) ? true : false
+      return (this.id_category == 666) ? true : false
     },
     avatarImage() {
       return (this.image_url) ? this.config.serverUrl + '/thumbs/136x136/' + this.image_url : this.config.serverUrl + '/images/no_avatar.svg'
