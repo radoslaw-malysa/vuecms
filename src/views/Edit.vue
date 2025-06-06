@@ -14,6 +14,67 @@
     <form id="form-contents" action="" method="post" class="d-flex">
       
       <div class="ed d-inline-block py-12">
+
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
+          </div>
+          <div class="ed-content flex-grow-1">
+
+            <v-card
+              class="mx-auto"
+              color="#f5f5f7"
+              outlined
+            >
+              <v-card-title>
+                <v-icon
+                  large
+                  left
+                >
+                  auto_awesome
+                </v-icon>
+                <v-textarea
+                  name="subtitle"
+                  v-model="aiSubject"
+                  label="O czym chcesz napisać?"
+                  auto-grow
+                  rows="1"
+                  row-height="20"
+                  @focus="aiShow=true"
+                  @blur="aiSubjectBlur"
+                ></v-textarea>
+              </v-card-title>
+              <v-expand-transition>
+                <v-card-text v-show="aiShow">
+                  <div class="d-flex">
+                    <div>
+                      <v-text-field 
+                        placeholder="Ile słów?" 
+                        type="text" 
+                        outlined 
+                        rounded
+                        dense
+                        hide-details
+                        v-model="aiWordsLimit"
+                        name="aiWordsLimit"
+                        suffix="słów"
+                        class="w-i-words"
+                      ></v-text-field>
+                    </div>
+                    <div>
+                      <v-chip
+                        filter
+                        class="medium"
+                        :color="(aiImage) ? 'primary' : ''"
+                        @click=aiImageToggle
+                      >Wygeneruj obrazek</v-chip>
+                    </div>
+                  </div>
+                </v-card-text>
+              </v-expand-transition>
+            </v-card>
+          </div>
+        </div>
         
         <div class="d-flex">
           <div class="ed-aside">
@@ -580,6 +641,12 @@ export default {
     dateMenu: false,
     loading: false,
     // dark: false
+
+    // ai
+    aiShow: false,
+    aiSubject: '',
+    aiWordsLimit: 500,
+    aiImage: false
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates', 'categoryTemplate']),
@@ -840,6 +907,12 @@ export default {
       .then(res => {
         this.authors = res
       });
+    },
+    aiSubjectBlur() {
+      this.aiShow = !!this.aiSubject
+    },
+    aiImageToggle() {
+      this.aiImage = !this.aiImage
     }
   }
 }
@@ -870,6 +943,9 @@ export default {
   }
   .v-textarea.slim textarea {
     margin-top: 0 !important;
+  }
+  .w-i-words {
+    width: 130px;
   }
   @media (min-width: 1264px) {
     .ed {
