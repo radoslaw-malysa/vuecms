@@ -13,66 +13,14 @@
     </v-btn>
     <form id="form-contents" action="" method="post" class="d-flex">
       
-      <div class="ed d-inline-block py-12">
+      <div class="ed d-inline-block py-10">
 
-        <div class="d-flex">
+        <div class="d-flex mb-6">
           <div class="ed-aside">
             &nbsp;
           </div>
           <div class="ed-content flex-grow-1">
-
-            <v-card
-              class="mx-auto"
-              color="#f5f5f7"
-              outlined
-            >
-              <v-card-title>
-                <v-icon
-                  large
-                  left
-                >
-                  auto_awesome
-                </v-icon>
-                <v-textarea
-                  name="subtitle"
-                  v-model="aiSubject"
-                  label="O czym chcesz napisać?"
-                  auto-grow
-                  rows="1"
-                  row-height="20"
-                  @focus="aiShow=true"
-                  @blur="aiSubjectBlur"
-                ></v-textarea>
-              </v-card-title>
-              <v-expand-transition>
-                <v-card-text v-show="aiShow">
-                  <div class="d-flex">
-                    <div>
-                      <v-text-field 
-                        placeholder="Ile słów?" 
-                        type="text" 
-                        outlined 
-                        rounded
-                        dense
-                        hide-details
-                        v-model="aiWordsLimit"
-                        name="aiWordsLimit"
-                        suffix="słów"
-                        class="w-i-words"
-                      ></v-text-field>
-                    </div>
-                    <div>
-                      <v-chip
-                        filter
-                        class="medium"
-                        :color="(aiImage) ? 'primary' : ''"
-                        @click=aiImageToggle
-                      >Wygeneruj obrazek</v-chip>
-                    </div>
-                  </div>
-                </v-card-text>
-              </v-expand-transition>
-            </v-card>
+            <create-article />
           </div>
         </div>
         
@@ -89,7 +37,7 @@
               auto-grow
               rows="1"
               row-height="20"
-              class="textarea-title"
+              class="textarea-title text-lg-h6"
             ></v-textarea>
           </div>
         </div>
@@ -588,13 +536,15 @@ import cms from '../api/cms'
 import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
 import ContentTags from '../components/ContentTags.vue'
+import CreateArticle from '../components/CreateArticle.vue'
 
 export default {
   name: 'Contents',
   props: ['id'],
   components: {
     'editor': Editor,
-    ContentTags
+    ContentTags,
+    CreateArticle
   },
   data: () => ({
     tableName: 'contents',
@@ -910,9 +860,6 @@ export default {
     },
     aiSubjectBlur() {
       this.aiShow = !!this.aiSubject
-    },
-    aiImageToggle() {
-      this.aiImage = !this.aiImage
     }
   }
 }
@@ -921,6 +868,12 @@ export default {
 <style>
   .relative {
     position: relative;
+  }
+  .gap-2 {
+    gap: 8px;
+  }
+  .items-center {
+    align-items: center;
   }
   .ed {
     width: 90%;
@@ -944,20 +897,19 @@ export default {
   .v-textarea.slim textarea {
     margin-top: 0 !important;
   }
-  .w-i-words {
-    width: 130px;
-  }
+  
   @media (min-width: 1264px) {
     .ed {
       width: 850px;
     }
-    .ed .v-text-field input, .ed .v-text-field textarea {
+    /*.ed .v-text-field input, 
+    .ed .v-text-field textarea {
       font-size: 1.25rem;
     }
     .ed .v-text-field.textarea-title textarea {
       font-weight: 700;
       font-size: 24px;
-    }
+    }*/
   }
 </style>
 <!--https://stackoverflow.com/questions/55808628/how-to-clear-v-autocomplete-multiple-search-input-after-selecting-the-checkbox-->
