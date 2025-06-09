@@ -15,7 +15,7 @@
       
       <div class="ed d-inline-block py-10">
 
-        <div class="d-flex mb-6">
+        <div class="d-flex mb-8">
           <div class="ed-aside">
             &nbsp;
           </div>
@@ -37,7 +37,7 @@
               auto-grow
               rows="1"
               row-height="20"
-              class="textarea-title text-lg-h6"
+              class="textarea-title f3-l fw7"
             ></v-textarea>
           </div>
         </div>
@@ -80,6 +80,7 @@
               rows="1"
               row-height="20"
               counter="76"
+              class="f5-l"
             ></v-textarea>
           </div>
         </div>
@@ -94,6 +95,7 @@
               auto-grow
               rows="1"
               row-height="20"
+              class="f5-l"
             ></v-textarea>
           </div>
         </div>
@@ -698,10 +700,10 @@ export default {
     },
     aiArticle () {
       console.log(this.aiArticle)
-      this.title = this.aiArticle.tytul;
-      this.clickbait = this.aiArticle.tytul;
-      this.subtitle = this.aiArticle.wprowadzenie;
-      this.content = this.aiArticle.tresc_html;
+      this.title = this.aiArticle.title;
+      this.clickbait = this.aiArticle.title;
+      this.subtitle = this.aiArticle.lead;
+      this.content = this.aiArticle.content_html;
 
       this.$nextTick(() => {
         this.titleToSlug(true)
@@ -866,9 +868,6 @@ export default {
         this.authors = res
       });
     },
-    aiSubjectBlur() {
-      this.aiShow = !!this.aiSubject
-    }
   }
 }
 </script>
@@ -909,6 +908,15 @@ export default {
   @media (min-width: 1264px) {
     .ed {
       width: 850px;
+    }
+    .f3-l {
+      font-size: 1.5rem;
+    }
+    .f5-l {
+      font-size: 1.125rem;
+    }
+    .fw7 {
+      font-weight: 700;
     }
     /*.ed .v-text-field input, 
     .ed .v-text-field textarea {

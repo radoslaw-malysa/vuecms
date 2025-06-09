@@ -31,13 +31,14 @@
           ></v-text-field>
         </div>
         <v-chip
-          outlinedx
-          v-model="createImage"
+          :outlined = "!createImage"
           medium
           class="chip-mid"
-          color="#E8EAF6"
+          :color="createImage ? '#E8EAF6' : ''"
+          :textColor="createImage ? 'primary' : ''"
+          @click="createImage = !createImage"
         >
-          <v-icon left color="primary">
+          <v-icon left :color="createImage ? 'primary' : '#616161'">
             wallpaper
           </v-icon>
           Wygeneruj obrazek
@@ -55,7 +56,8 @@
           depressed
           small
           color="primary"
-          :disabled="!query"
+          :disabled="!query || loading"
+          :loading="loading"
           @click="sendQuery"
         >
           <v-icon>arrow_upward</v-icon>
@@ -75,19 +77,22 @@ export default {
   data: () => ({
     query: '',
     wordsLimit: 500,
-    createImage: false
+    createImage: true,
+    loading: false
   }),
   computed: {
     
   },
   methods: {
     sendQuery() {
+      this.loading = true;
       ai.query(this.query, {
         wordsLimit: this.wordsLimit,
         createImage: this.createImage
       })
       .then(res => {
-        this.$emit('update:aiArticle', res)
+        this.$emit('update:aiArticle', res);
+        this.loading = false;
       })
     }
   }
