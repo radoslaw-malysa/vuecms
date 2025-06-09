@@ -20,7 +20,7 @@
             &nbsp;
           </div>
           <div class="ed-content flex-grow-1">
-            <create-article v-bind:aiArticle.sync="aiArticle" />
+            <create-article :aiArticle.sync="aiArticle" />
           </div>
         </div>
         
@@ -698,6 +698,14 @@ export default {
     },
     aiArticle () {
       console.log(this.aiArticle)
+      this.title = this.aiArticle.tytul;
+      this.clickbait = this.aiArticle.tytul;
+      this.subtitle = this.aiArticle.wprowadzenie;
+      this.content = this.aiArticle.tresc_html;
+
+      this.$nextTick(() => {
+        this.titleToSlug(true)
+      });
     }
     /*imageInput () {
       this.dialogMedia = false;
