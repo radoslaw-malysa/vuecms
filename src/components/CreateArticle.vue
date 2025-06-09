@@ -6,15 +6,13 @@
   >
     <v-card-title class="pb-0">
       <v-textarea
-        name="subtitle"
-        v-model="aiSubject"
+        name="query"
+        v-model="query"
         label="O czym chcesz napisać?"
-        hint="Np.: Ile kroków dziennie robić, żeby schudnąć?"
+        hint="Np.: Jakie korzyści płyną z regularnego czytania książek?"
         auto-grow
         rows="1"
         row-height="20"
-        @focus="aiShow=true"
-        @blur="aiSubjectBlur"
       ></v-textarea>
     </v-card-title>
     <v-expand-transition>
@@ -27,14 +25,14 @@
             rounded
             dense
             hide-details
-            v-model="aiWordsLimit"
-            name="aiWordsLimit"
+            v-model="wordsLimit"
+            name="wordsLimit"
             suffix="słów"
           ></v-text-field>
         </div>
         <v-chip
           outlinedx
-          v-model="aiImage"
+          v-model="createImage"
           medium
           class="chip-mid"
           color="#E8EAF6"
@@ -55,9 +53,10 @@
         <v-btn
           fab
           depressed
-          dark
           small
           color="primary"
+          :disabled="!query"
+          @click="sendQuery"
         >
           <v-icon>arrow_upward</v-icon>
         </v-btn>
@@ -66,21 +65,31 @@
   </v-card>
 </template>
 <script>
+import ai from '../api/ai'
 
 export default {
   name: 'CreateArticle',
-  props: ['id'],
+  props: {
+    aiArticle: Object,
+  },
   data: () => ({
-    aiShow: false,
-    aiSubject: '',
-    aiWordsLimit: 500,
-    aiImage: false
+    query: '',
+    wordsLimit: 500,
+    createImage: false
   }),
   computed: {
     
   },
   methods: {
-    
+    sendQuery() {
+      ai.query(this.query, {
+        wordsLimit: this.wordsLimit,
+        createImage: this.createImage
+      })
+      .then(res => {
+        this.$emit('update:aiArticle', res)
+      })
+    }
   }
 };
 </script>

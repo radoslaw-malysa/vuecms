@@ -20,7 +20,7 @@
             &nbsp;
           </div>
           <div class="ed-content flex-grow-1">
-            <create-article />
+            <create-article v-bind:aiArticle.sync="aiArticle" />
           </div>
         </div>
         
@@ -593,10 +593,7 @@ export default {
     // dark: false
 
     // ai
-    aiShow: false,
-    aiSubject: '',
-    aiWordsLimit: 500,
-    aiImage: false
+    aiArticle: {}
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates', 'categoryTemplate']),
@@ -699,6 +696,9 @@ export default {
         this.resizeVideos();
       });
     },
+    aiArticle () {
+      console.log(this.aiArticle)
+    }
     /*imageInput () {
       this.dialogMedia = false;
     }*/
