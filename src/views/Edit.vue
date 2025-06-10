@@ -20,7 +20,7 @@
             &nbsp;
           </div>
           <div class="ed-content flex-grow-1">
-            <create-article :aiArticle.sync="aiArticle" />
+            <create-article :aiArticle.sync="aiArticle" :image_url.sync="image_url" />
           </div>
         </div>
         
@@ -165,10 +165,10 @@
                 <v-card-text class="pa-0">
                   <v-img
                     v-if="image_url"
-                    aspect-ratio="1.5"
-                    max-height="500"
+                    aspect-ratio="1"
+                    max-height="750"
                     max-width="750"
-                    :src="config.serverUrl + '/thumbs/750x500/' + image_url"
+                    :src="config.serverUrl + '/thumbs/800x800/' + image_url"
                   ></v-img>
                 </v-card-text>
                 <v-btn class="media-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-input')">
@@ -595,7 +595,8 @@ export default {
     // dark: false
 
     // ai
-    aiArticle: {}
+    aiArticle: {},
+    aiImage: ''
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates', 'categoryTemplate']),

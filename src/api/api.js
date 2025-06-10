@@ -27,4 +27,8 @@ const objToQuery = (obj) => {
   return Object.keys(obj).map(key => key + '=' + obj[key]).join('&');
 }
 
-export { apiUrl, authHeader, badResponse, objToQuery }
+const toFormData = (o) => {
+  return Object.entries(o).reduce((d,e) => (d.append(...e),d), new FormData())
+}
+
+export { apiUrl, authHeader, badResponse, objToQuery, toFormData }

@@ -73,6 +73,7 @@ export default {
   name: 'CreateArticle',
   props: {
     aiArticle: Object,
+    image_url: String
   },
   data: () => ({
     query: '',
@@ -86,13 +87,31 @@ export default {
   methods: {
     sendQuery() {
       this.loading = true;
-      ai.query(this.query, {
+      ai.query({
+        query: this.query,
         wordsLimit: this.wordsLimit,
         createImage: this.createImage
       })
       .then(res => {
         this.$emit('update:aiArticle', res);
         this.loading = false;
+        
+        if (this.createImage && res.image_create_prompt) {
+          console.log(1)
+          ai.createImage({
+            query: res.image_create_prompt
+          })
+          .then(res => {
+            console.log(res);
+
+            if (res.url) {
+        
+              this.$emit('update:image_url', res.url);
+            } else {
+              console.log(res.message);
+            }
+          });
+        }
       })
     }
   }
