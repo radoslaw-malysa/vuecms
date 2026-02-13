@@ -15,12 +15,78 @@
       
       <div class="ed d-inline-block py-10">
 
-        <div class="d-flex mb-8">
-          <div class="ed-aside">
-            &nbsp;
-          </div>
-          <div class="ed-content flex-grow-1">
-            <create-article :aiArticle.sync="aiArticle" :image_url.sync="image_url" />
+        <div class="d-flex mb-6">
+          <div class="ed-aside"></div>
+          <div class="ed-content flex-grow-1 d-flex">
+            <div>
+              <label>Data wydarzenia</label>
+              <v-menu
+                ref="eventDateMenu"
+                v-model="eventDateMenu"
+                :close-on-content-click="false"
+                :return-value.sync="event_date"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="event_date"
+                    name="event_date"
+                    readonly
+                    rounded
+                    outlined
+                    hide-details
+                    v-bind="attrs"
+                    v-on="on"
+                    dense
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="event_date"
+                  locale="pl"
+                  no-title
+                  scrollable
+                  @input="eventDateMenu = false; $refs.eventDateMenu.save(event_date)"
+                >
+                </v-date-picker>
+              </v-menu>
+            </div>
+            <div class="px-1">&nbsp;</div>
+            <div>
+              <label>Zakończenie wydarzenia</label>
+              <v-menu
+                ref="eventDateEndMenu"
+                v-model="eventDateEndMenu"
+                :close-on-content-click="false"
+                :return-value.sync="event_date_end"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="event_date_end"
+                    name="event_date_end"
+                    readonly
+                    rounded
+                    outlined
+                    hide-details
+                    v-bind="attrs"
+                    v-on="on"
+                    dense
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="event_date_end"
+                  locale="pl"
+                  no-title
+                  scrollable
+                  @input="eventDateEndMenu = false; $refs.eventDateEndMenu.save(event_date_end)"
+                >
+                </v-date-picker>
+              </v-menu>
+            </div>
           </div>
         </div>
         
@@ -99,6 +165,8 @@
             ></v-textarea>
           </div>
         </div>
+
+        
 
         <div class="d-flex mb-6">
           <div class="ed-aside d-flex flex-column">
@@ -279,12 +347,6 @@
               v-model="image_caption"
               class="mt-6"
             ></v-text-field>
-            <v-text-field 
-              name="image_alt"
-              label="Alt obrazka" 
-              type="text" 
-              v-model="image_alt"
-            ></v-text-field>
             <input id="image-input" type="hidden" />
             <input name="image_url" type="hidden" v-model="image_url" />
             <input id="cover-input" type="hidden" />
@@ -397,7 +459,7 @@
                 <v-col
                   cols="8"
                 >
-                  <label>Data</label>
+                  <label>Data aktualizacji</label>
                   <v-menu
                     ref="dateMenu"
                     v-model="dateMenu"
@@ -465,24 +527,6 @@
 
               <v-row>
                 <v-col>
-                  <label>Kategoria</label>
-                  <v-select
-                    name="id_category"
-                    :items="config.categories"
-                    item-text="title"
-                    item-value="id"
-                    v-model="id_category"
-                    outlined
-                    rounded
-                    dense
-                    hide-details
-                  ></v-select>
-                  <input type="hidden" name="view" v-model="view" />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col>
                   <label>Tagi</label>
                   <content-tags :inputData.sync="tags" />
                 </v-col>
@@ -538,15 +582,13 @@ import cms from '../api/cms'
 import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
 import ContentTags from '../components/ContentTags.vue'
-import CreateArticle from '../components/CreateArticle.vue'
 
 export default {
   name: 'Contents',
   props: ['id'],
   components: {
     'editor': Editor,
-    ContentTags,
-    CreateArticle
+    ContentTags
   },
   data: () => ({
     tableName: 'contents',
@@ -557,7 +599,6 @@ export default {
     clickbait: null,
     content: null,
     image_url: null,
-    image_alt: null,
     image_caption: null,
     video: null,
     author: '',
@@ -568,6 +609,8 @@ export default {
     cover_url: null,
     id_author: null,
     id_lang: null,
+    event_date: null,
+    event_date_end: null,
 
     // slug
     showSlug: false,
@@ -591,12 +634,10 @@ export default {
     authors: [],
 
     dateMenu: false,
+    eventDateMenu: false,
+    eventDateEndMenu: false,
     loading: false,
     // dark: false
-
-    // ai
-    aiArticle: {},
-    aiImage: ''
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates', 'categoryTemplate']),
@@ -699,17 +740,6 @@ export default {
         this.resizeVideos();
       });
     },
-    aiArticle () {
-      console.log(this.aiArticle)
-      this.title = this.aiArticle.title;
-      this.clickbait = this.aiArticle.title;
-      this.subtitle = this.aiArticle.lead;
-      this.content = this.aiArticle.content_html;
-
-      this.$nextTick(() => {
-        this.titleToSlug(true)
-      });
-    }
     /*imageInput () {
       this.dialogMedia = false;
     }*/
@@ -736,10 +766,6 @@ export default {
             this.image_alt = response.image_alt;
             this.image_caption = response.image_caption;
             this.video = response.video;
-            /*if (response.affiliate_url) {
-              this.affiliate_url = response.affiliate_url;
-              this.showAffiliate = true;
-            }*/
             this.videoTmp = response.video;
             this.author = response.author;
             this.state = response.state;
@@ -749,6 +775,8 @@ export default {
             this.cover_url = response.cover_url;
             this.id_author = response.id_author;
             this.id_lang = (response.id_lang) ? response.id_lang : 1;
+            this.event_date = response.event_date;
+            this.event_date_end = response.event_date_end;
 
             //tags
             this.tags = response.tags;
