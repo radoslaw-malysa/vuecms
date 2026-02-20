@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined flat class="nobg" style="border-radius: 28px">
+  <v-card outlined flat class="nobg" style="border-radius: 16px">
     <v-card-text class="pt-0 px-1">
       <v-autocomplete
         v-model="selected"
@@ -18,26 +18,33 @@
         class="lajt"
       >
       </v-autocomplete>
-      <v-chip-group
-        column
-        class="pt-1"
+      <draggable
+        v-model="selection"
+        animation="200"
+        ghost-class="ghost-chip"
+        class="chip-container"
       >
         <v-chip
           v-for="(item, i) in selection"
           :key="i"
           close
           @click:close="remove(item.id)"
+          class="ma-1 draggable-chip"
         >
           {{ item.title }}
         </v-chip>
-      </v-chip-group>
+      </draggable>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 import cms from '../api/cms'
+import draggable from 'vuedraggable';
 export default {
+  components: {
+    draggable,
+  },
   name: "ContentTags",
   props: {
     inputData: Array,
@@ -103,3 +110,27 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 50px;
+  padding-top: 4px;
+}
+
+.draggable-chip {
+  cursor: grab;
+}
+
+.draggable-chip:active {
+  cursor: grabbing;
+}
+
+/* Appearance of the "ghost" (the empty space where the chip will land) */
+.ghost-chip {
+  opacity: 0.5;
+  background: #c8ebfb !important;
+  border: 1px dashed #2196F3 !important;
+}
+</style>

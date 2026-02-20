@@ -52,7 +52,18 @@
                 </v-date-picker>
               </v-menu>
             </div>
-            <div class="px-1">&nbsp;</div>
+            <div class="px-1">
+               <label>Godzina</label>
+                <v-text-field placeholder="Godzina" type="time" 
+                    outlined 
+                    rounded
+                    dense
+                    hide-details=""
+                    v-model="event_time"
+                    name="event_time"
+                  ></v-text-field>
+            </div>
+            <div class="px-1 flex-grow-1">&nbsp;</div>
             <div>
               <label>Zakończenie wydarzenia</label>
               <v-menu
@@ -175,16 +186,25 @@
               x-large
               title="Zdjęcie główne"
               :color="btnImageColor" 
-              @click="showVideo = false"
+              @click="showVideo = 1"
             >
               <v-icon>image</v-icon>
             </v-btn>
             <v-btn
               icon
               x-large
+              title="Zdjęcie do slajdera"
+              :color="btnPanoramaColor" 
+              @click="showVideo = 2"
+            >
+              <v-icon>panorama</v-icon>
+            </v-btn>
+            <v-btn
+              icon
+              x-large
               title="Video"
               :color="btnVideoColor"
-              @click="showVideo = true"
+              @click="showVideo = 3"
             >
               <v-icon>slideshow</v-icon>
             </v-btn>
@@ -192,51 +212,19 @@
           <div class="ed-content content-width flex-grow-1 relative">
             
             <v-card 
-              v-show="!showVideo" 
+              v-show="showVideo == 1" 
               key="1"
               elevation="0"
               class="media-placeholder image-placeholder"
             >
-              
-              <v-responsive :aspect-ratio="3" v-if="isProfileImage">
-                <v-card-text class="pa-0">
-                  <v-img
-                    aspect-ratio="3"
-                    max-height="250"
-                    max-width="750"
-                    :src="coverImage"
-                  >
-                    <v-avatar
-                      class="profile-avatar"
-                      color="white"
-                      size="136"
-                    >
-                      <v-img :src="avatarImage"></v-img>
-                    </v-avatar>
-                  </v-img>
-                </v-card-text>
-                <v-btn class="media-edit-btn avatar-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-input')">
-                  <v-icon>photo_camera</v-icon>
-                </v-btn>
-                <v-btn v-if="image_url" class="media-clear-btn avatar-clear-btn" fab small color="gray" elevation="0" @click="image_url = null">
-                  <v-icon>clear</v-icon>
-                </v-btn>
-
-                <v-btn class="cover-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('cover-input')">
-                  <v-icon>photo_camera</v-icon>
-                </v-btn>
-                <v-btn v-if="cover_url" class="cover-clear-btn" fab small color="gray" elevation="0" @click="cover_url = null">
-                  <v-icon>clear</v-icon>
-                </v-btn>
-              </v-responsive>
-              <v-responsive :aspect-ratio="1.5" v-else>
+              <v-responsive :aspect-ratio="1.5">
                 <v-card-text class="pa-0">
                   <v-img
                     v-if="image_url"
                     aspect-ratio="1"
                     max-height="750"
                     max-width="750"
-                    :src="config.serverUrl + '/thumbs/800x800/' + image_url"
+                    :src="config.serverUrl + '/thumbs/1024x1024/' + image_url"
                   ></v-img>
                 </v-card-text>
                 <v-btn class="media-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-input')">
@@ -254,12 +242,44 @@
                   <v-icon>clear</v-icon>
                 </v-btn>
               </v-responsive>
-
             </v-card>
 
             <v-card 
-              v-show="showVideo"
+              v-show="showVideo == 2" 
               key="2"
+              elevation="0"
+              class="media-placeholder image-placeholder"
+            >
+              <v-responsive :aspect-ratio="2">
+                <v-card-text class="pa-0">
+                  <v-img
+                    v-if="image_2_url"
+                    aspect-ratio="2"
+                    max-height="375"
+                    max-width="750"
+                    :src="config.serverUrl + '/thumbs/1024x1024/' + image_2_url"
+                  ></v-img>
+                </v-card-text>
+                <v-btn class="media-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-2-input')">
+                  <v-icon>photo_camera</v-icon>
+                </v-btn>
+                <v-btn
+                  v-if="image_2_url"
+                  class="media-clear-btn"
+                  fab
+                  small
+                  color="gray"
+                  elevation="0"
+                  @click="image_2_url = null"
+                >
+                  <v-icon>clear</v-icon>
+                </v-btn>
+              </v-responsive>
+            </v-card>
+
+            <v-card 
+              v-show="showVideo == 3"
+              key="3"
               elevation="0"
               class="main-video media-placeholder video-placeholder"
             >
@@ -349,6 +369,8 @@
             ></v-text-field>
             <input id="image-input" type="hidden" />
             <input name="image_url" type="hidden" v-model="image_url" />
+            <input id="image-2-input" type="hidden" />
+            <input name="image_2_url" type="hidden" v-model="image_2_url" />
             <input id="cover-input" type="hidden" />
             <input name="cover_url" type="hidden" v-model="cover_url" />
             <input name="video" type="hidden" v-model="video" />
@@ -374,7 +396,8 @@
           <div class="ed-aside relative">
           </div>
           <div class="ed-content flex-grow-1">
-            <v-select
+            <input type="hidden" name="id_author" v-model="id_author" />
+            <!--<v-select
               name="id_author"
               :items="authors"
               item-text="title"
@@ -383,7 +406,7 @@
               label="Autor"
               clearable
               hide-details
-            ></v-select>
+            ></v-select>-->
           </div>
         </div>
 
@@ -394,7 +417,7 @@
             <v-text-field
               name="author"
               v-model="author"
-              label="Autor inny"
+              label="Autor"
             ></v-text-field>
           </div>
         </div>
@@ -410,7 +433,10 @@
             </v-btn>
           </div>
           <div class="ed-content flex-grow-1">
-            
+            <article-gallery 
+              v-model="gallery" 
+              :article-id="id"
+            />
           </div>
         </div>
       </div>
@@ -582,13 +608,15 @@ import cms from '../api/cms'
 import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
 import ContentTags from '../components/ContentTags.vue'
+import ArticleGallery from '../components/ArticleGallery.vue';
 
 export default {
   name: 'Contents',
   props: ['id'],
   components: {
     'editor': Editor,
-    ContentTags
+    ContentTags,
+    ArticleGallery
   },
   data: () => ({
     tableName: 'contents',
@@ -599,6 +627,7 @@ export default {
     clickbait: null,
     content: null,
     image_url: null,
+    image_2_url: null,
     image_caption: null,
     video: null,
     author: '',
@@ -610,14 +639,20 @@ export default {
     id_author: null,
     id_lang: null,
     event_date: null,
+    event_time: null,
     event_date_end: null,
+
+    gallery: [
+      { id: 10, url: 'http://elektrownia.test/img/2026/2/01/wichrowe_pion.jpg', name: 'Existing.jpg' },
+      { id: 11, url: 'http://elektrownia.test/img/2026/2/01/wichrowe_pion.jpg', name: 'Existing-sdfdsfsdf-sdfsdfsdf-sdfs.jpg' }
+    ],
 
     // slug
     showSlug: false,
     // affiliate
     showAffiliate: false,
     // main image
-    showVideo: false,
+    showVideo: 1,
     dialogMedia: false,
     dialogMediaContent: '',
 
@@ -642,18 +677,13 @@ export default {
   computed: {
     ...mapGetters('config', ['config', 'contentsStates', 'categoryTemplate']),
     btnImageColor() {
-      if (!this.showVideo) {
-        return 'primary'
-      } else {
-        return (this.image_url) ? 'secondary' : 'grey lighten-2'
-      }
+      return (this.showVideo == 1) ? 'primary' : 'grey lighten-2'
+    },
+    btnPanoramaColor() {
+      return (this.showVideo == 2) ? 'primary' : 'grey lighten-2'
     },
     btnVideoColor() {
-      if (this.showVideo) {
-        return 'primary'
-      } else {
-        return (this.video) ? 'secondary' : 'grey lighten-2'
-      }
+      return (this.showVideo == 3) ? 'primary' : 'grey lighten-2'
     },
     tinyInit() {
       return {
@@ -721,15 +751,6 @@ export default {
     view() {
       return (this.id_category) ? this.categoryTemplate(this.id_category).view : this.categoryTemplate(1).view
     },
-    isProfileImage() {
-      return (this.id_category == 666) ? true : false
-    },
-    avatarImage() {
-      return (this.image_url) ? this.config.serverUrl + '/thumbs/136x136/' + this.image_url : this.config.serverUrl + '/images/no_avatar.svg'
-    },
-    coverImage() {
-      return (this.cover_url) ? this.config.serverUrl + '/thumbs/1080x360/' + this.cover_url : null
-    },
     langs() {
       return this.config.langs
     }
@@ -763,6 +784,7 @@ export default {
             this.clickbait = response.clickbait;
             this.content = response.content;
             this.image_url = response.image_url;
+            this.image_2_url = response.image_2_url;
             this.image_alt = response.image_alt;
             this.image_caption = response.image_caption;
             this.video = response.video;
@@ -776,6 +798,7 @@ export default {
             this.id_author = response.id_author;
             this.id_lang = (response.id_lang) ? response.id_lang : 1;
             this.event_date = response.event_date;
+            this.event_time = response.event_time;
             this.event_date_end = response.event_date_end;
 
             //tags
