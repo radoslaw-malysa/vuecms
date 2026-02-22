@@ -111,9 +111,11 @@ export default {
       this.$vuetify.theme.dark = false;
       this.darkMode = false;
     }
+    this.getConfig()
   },
   methods: {
     ...mapActions('profile', ['logout']),
+    ...mapActions('config', ['getConfig']),
     logoutUser() {
       this.logout();
       this.$router.push({ path: '/login' })

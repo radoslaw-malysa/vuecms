@@ -2,7 +2,7 @@ import cms from '../../api/cms'
 
 const state = () => ({
   config: {
-    serverUrl: 'http://elektrownia.test', //http://blokpres
+    serverUrl: '', //http://elektrownia.test
     categories: [
       { id: 1, title: 'Wiadomości' },
       { id: 2, title: 'Kryptowaluty' },
@@ -40,6 +40,16 @@ const state = () => ({
     langs: [
       { id: 1, title: 'pl' },
       { id: 2, title: 'en' }
+    ],
+    important_tags: [
+      { id: 29, title: 'Wydarzenia' },
+      { id: 55, title: 'Filmy' },
+      { id: 66, title: 'Wydarzenia filmowe' },
+      { id: 7, title: 'Aktualności' },
+      { id: 7, title: 'Zbiory' },
+      { id: 30, title: 'Edukacja' },
+      { id: 70, title: 'Zbiory' },
+      { id: 54, title: 'Slider' }
     ]
   }
 })
@@ -72,6 +82,9 @@ const getters = {
       return obj
     }, {})
   },
+  important_tags(state) {
+    return state.config.important_tags;
+  },
   categoryTemplate: (state) => (id_category) => {
     return (id_category) ? state.config.contentsTemplates.find(el => el.id_category === id_category) : state.config.contentsTemplates.find(el => el.id_category == 1)
   }
@@ -79,13 +92,15 @@ const getters = {
 
 const mutations = {
   setConfig: (state, data) => {
-    state.config = data
+    if (data.important_tags) {
+      state.config.important_tags = data.important_tags
+    }
   },
 }
 
 const actions = {
   getConfig({commit}) {
-    commit('setLoading', true);
+    //commit('setLoading', true);
     return cms.getConfig()
     .then(data => {
       commit('setConfig', data);

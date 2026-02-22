@@ -34,12 +34,14 @@
                     v-model="event_date"
                     name="event_date"
                     readonly
+                    outlined 
                     rounded
-                    outlined
+                    dense
                     hide-details
                     v-bind="attrs"
                     v-on="on"
-                    dense
+                    clearable
+                    clear-icon="cancel"
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -79,13 +81,14 @@
                   <v-text-field
                     v-model="event_date_end"
                     name="event_date_end"
-                    readonly
                     rounded
                     outlined
                     hide-details
                     v-bind="attrs"
                     v-on="on"
                     dense
+                    clearable
+                    clear-icon="cancel"
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -109,7 +112,7 @@
             <v-textarea
               name="title"
               v-model="title"
-              @change="titleToSlug(false)"
+              @change="titleToSlug(false); titleToClickbait(false)"
               label="Tytuł"
               auto-grow
               rows="1"
@@ -371,8 +374,6 @@
             <input name="image_url" type="hidden" v-model="image_url" />
             <input id="image-2-input" type="hidden" />
             <input name="image_2_url" type="hidden" v-model="image_2_url" />
-            <input id="cover-input" type="hidden" />
-            <input name="cover_url" type="hidden" v-model="cover_url" />
             <input name="video" type="hidden" v-model="video" />
           </div>
         </div>
@@ -397,16 +398,6 @@
           </div>
           <div class="ed-content flex-grow-1">
             <input type="hidden" name="id_author" v-model="id_author" />
-            <!--<v-select
-              name="id_author"
-              :items="authors"
-              item-text="title"
-              item-value="id"
-              v-model="id_author"
-              label="Autor"
-              clearable
-              hide-details
-            ></v-select>-->
           </div>
         </div>
 
@@ -433,9 +424,11 @@
             </v-btn>
           </div>
           <div class="ed-content flex-grow-1">
-            <article-gallery 
+            <gallery 
               v-model="gallery" 
               :article-id="id"
+              :slug="slug"
+              :serverUrl="config.serverUrl"
             />
           </div>
         </div>
@@ -483,7 +476,7 @@
             <v-card-text class="py-8">
               <v-row>
                 <v-col
-                  cols="8"
+                  cols="6"
                 >
                   <label>Data aktualizacji</label>
                   <v-menu
@@ -529,32 +522,47 @@
                     name="update_time_h"
                   ></v-text-field>
                 </v-col>
+                <v-col
+                  cols="2"
+                  class="d-flex align-end"
+                >
+                  <v-btn
+                    icon
+                    large
+                    :color="(ord == 3) ? 'primary' : 'grey lighten-2'" 
+                    @click=toggleOrd(3)
+                    title="Przypnij zawsze na górze"
+                  >
+                    <v-icon>push_pin</v-icon>
+                  </v-btn>
+                  <input type="hidden" name="ord" v-model="ord" />
+                </v-col>
               </v-row>
 
-              <v-row>
+              <!--<v-row>
                 <v-col>
                   <label>Wyróżnij</label>
-                  <input type="hidden" name="ord" v-model="ord" />
+                  
                   <v-chip
                     filter
-                    class="mr-2 medium"
+                    class="mr-2"
                     :color="(ord == 3) ? 'primary' : ''"
                     @click=toggleOrd(3)
                   >Przypięty</v-chip>
                   <v-chip
                     filter
-                    
-                    class="medium"
                     :color="(ord == 2) ? 'accent' : ''"
                     @click=toggleOrd(2)
                   >Sponsorowany</v-chip>
                 </v-col>
-              </v-row>
+              </v-row>-->
 
               <v-row>
                 <v-col>
-                  <label>Tagi</label>
-                  <content-tags :inputData.sync="tags" />
+                  <content-tags 
+                    :inputData.sync="tags" 
+                    
+                  />
                 </v-col>
               </v-row>
 
@@ -573,6 +581,7 @@
                     hide-details
                   ></v-select>
                   <input type="hidden" name="view" v-model="view" />
+                  <input type="hidden" name="id_category" v-model="id_category" />
                 </v-col>
               </v-row>
 
@@ -608,7 +617,7 @@ import cms from '../api/cms'
 import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
 import ContentTags from '../components/ContentTags.vue'
-import ArticleGallery from '../components/ArticleGallery.vue';
+import Gallery from '../components/ArticleGalleryx.vue';
 
 export default {
   name: 'Contents',
@@ -616,7 +625,7 @@ export default {
   components: {
     'editor': Editor,
     ContentTags,
-    ArticleGallery
+    Gallery
   },
   data: () => ({
     tableName: 'contents',
@@ -635,22 +644,18 @@ export default {
     ord: 0,
     update_time_d: null,
     update_time_h: null,
-    cover_url: null,
     id_author: null,
     id_lang: null,
     event_date: null,
     event_time: null,
     event_date_end: null,
-
-    gallery: [
-      { id: 10, url: 'http://elektrownia.test/img/2026/2/01/wichrowe_pion.jpg', name: 'Existing.jpg' },
-      { id: 11, url: 'http://elektrownia.test/img/2026/2/01/wichrowe_pion.jpg', name: 'Existing-sdfdsfsdf-sdfsdfsdf-sdfs.jpg' }
-    ],
+    view: '',
+    gallery: [],
+    tags: [],
 
     // slug
     showSlug: false,
-    // affiliate
-    showAffiliate: false,
+
     // main image
     showVideo: 1,
     dialogMedia: false,
@@ -662,12 +667,6 @@ export default {
     videoTmp: null,
     insertVideoMenu: false,
 
-    // tags
-    tags: [],
-
-    // authors
-    authors: [],
-
     dateMenu: false,
     eventDateMenu: false,
     eventDateEndMenu: false,
@@ -675,7 +674,7 @@ export default {
     // dark: false
   }),
   computed: {
-    ...mapGetters('config', ['config', 'contentsStates', 'categoryTemplate']),
+    ...mapGetters('config', ['config', 'contentsStates']),
     btnImageColor() {
       return (this.showVideo == 1) ? 'primary' : 'grey lighten-2'
     },
@@ -748,9 +747,9 @@ export default {
         }
       }
     },
-    view() {
+    /*view() {
       return (this.id_category) ? this.categoryTemplate(this.id_category).view : this.categoryTemplate(1).view
-    },
+    },*/
     langs() {
       return this.config.langs
     }
@@ -767,7 +766,6 @@ export default {
   },
   mounted() {
     this.loadItem();
-    this.loadAuthors();
     //this.dark = localStorage.getItem("dark");
   },  
   methods: {
@@ -792,17 +790,19 @@ export default {
             this.author = response.author;
             this.state = response.state;
             this.ord = response.ord;
-            this.update_time_d = (response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(0, 10) : new Date().toISOString().substr(0, 10);
-            this.update_time_h = (response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(11, 5) : new Date().toISOString().substr(11, 5);
-            this.cover_url = response.cover_url;
+            this.update_time_d = (response.update_time && response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(0, 10) : new Date().toISOString().substr(0, 10);
+            this.update_time_h = (response.update_time && response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(11, 5) : new Date().toISOString().substr(11, 5);
             this.id_author = response.id_author;
             this.id_lang = (response.id_lang) ? response.id_lang : 1;
             this.event_date = response.event_date;
             this.event_time = response.event_time;
             this.event_date_end = response.event_date_end;
-
+            this.view = response.view;
             //tags
             this.tags = response.tags;
+            
+            //gallery
+            this.gallery = [...response.gallery];
 
           } else {
             this.$refs.form.reset();
@@ -847,6 +847,7 @@ export default {
 
       fd.content = this.content;
       fd.tags = this.tags; //fd.tags = this.tags.map((item) => item.id )
+      fd.gallery = this.gallery;
       
       if (this.id > 0) {
         cms.update(this.tableName, this.id, fd)
@@ -904,21 +905,20 @@ export default {
         this.slug = slugify(this.title)
       }
     },
-    copySlug() {
+    titleToClickbait(force) {
+      if (!this.clickbait || force) {
+        this.clickbait = this.title
+      }
+    },
+    /*copySlug() {
       let copyInput = document.getElementById('slug');
       copyInput.select();
       copyInput.setSelectionRange(0, 99999);
       document.execCommand("copy");
       this.$store.commit('snack/open', {text: 'Slug skopiowany do schowka'});
-    },
+    },*/
     parentRefresh() {
       window.opener.formRefresh();
-    },
-    loadAuthors() {
-      cms.autocomplete('users', '', { })
-      .then(res => {
-        this.authors = res
-      });
     },
   }
 }

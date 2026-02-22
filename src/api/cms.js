@@ -48,7 +48,11 @@ export default {
     .catch(() => badResponse());
   },
   getConfig() {
-    console.log('getting config');
+    return fetch(apiUrl + '/get-config?t=' + new Date().getTime(), {
+      method: 'GET'
+    })
+    .then(response => response.json())
+    .catch(() => badResponse());
   },
   autocomplete(table, q, params) {
     return fetch(apiUrl + '/autocomplete/' + table + '/' + q + '?t=' + new Date().getTime() + ((params) ? '&' + objToQuery(params) : ''), {

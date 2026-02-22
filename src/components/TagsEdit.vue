@@ -2,7 +2,7 @@
     <v-dialog v-model="dialog" persistent max-width="500px">
       <v-card>
         <v-card-title class="justify-space-between">
-          <span class="headline" v-text="(id == 0) ? 'Nowy tag' : 'Tag'"></span>
+          <span class="headline" v-text="(id == 0) ? 'Nowy tag' : `Tag ${id}`"></span>
           <v-btn text icon @click="$emit('close-edit')">
             <v-icon>close</v-icon>
           </v-btn>
@@ -21,6 +21,7 @@
             ></v-text-field>
             <v-text-field label="Kolejność" type="text" v-model="ord" 
             ></v-text-field>
+
             <v-select
               :items="config.langs"
               item-text="title"
@@ -29,6 +30,7 @@
               label="Język"
               required :rules="requiredRules"
             ></v-select>
+            
             <v-select
               v-model="active"
               :items="[{id: 1, title: 'Aktywny'},{id: 2, title: 'Nieaktywny'}]"
@@ -37,10 +39,31 @@
               label="Status"
               required :rules="requiredRules"
             ></v-select>
-            <v-textarea
-              label="Opis"
-              v-model="description"
-            ></v-textarea>
+
+            <div class="mb-2 mt-2">
+              <v-chip
+                class="mr-2"
+                :color="(systemic == 1) ? 'primary' : ''" 
+                @click="systemic = (systemic == 0) ? 1 : 0"
+                title="Niewidoczny na stronie WWW"
+              >
+                <v-avatar left>
+                  <v-icon>build</v-icon>
+                </v-avatar>
+                Systemowy
+              </v-chip>
+              <v-chip
+                class="mr-2"
+                :color="(important == 1) ? 'primary' : ''" 
+                @click="important = (important == 0) ? 1 : 0"
+              >
+                <v-avatar left>
+                  <v-icon>repeat</v-icon>
+                </v-avatar>
+                Często używany
+              </v-chip>
+            </div>
+            
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -89,8 +112,9 @@ export default {
     slug: '',
     ord: '0',
     active: 1,
-    description: '',
-    id_lang: 1
+    id_lang: 1,
+    systemic: 0,
+    important: 0
   }),
   computed: {
     ...mapGetters('config', ['config']),
@@ -117,8 +141,9 @@ export default {
           this.slug = response.slug;
           this.ord = response.ord;
           this.active = response.active;
-          this.description = response.description;
           this.id_lang = response.id_lang;
+          this.systemic = response.systemic;
+          this.important = response.important;
         } else {
           // this.$refs.form.reset();
           this.resetItem()
@@ -134,8 +159,9 @@ export default {
           title: this.title,
           ord: this.ord,
           active: this.active,
-          description: this.description,
-          id_lang: this.id_lang
+          id_lang: this.id_lang,
+          systemic: this.systemic,
+          important: this.important
         })
         .then(response => {
           if (response.id) {
@@ -150,8 +176,9 @@ export default {
           title: this.title,
           ord: this.ord,
           active: this.active,
-          description: this.description,
-          id_lang: this.id_lang
+          id_lang: this.id_lang,
+          systemic: this.systemic,
+          important: this.important
         })
         .then(response => {
           if (response.id) {
@@ -177,7 +204,7 @@ export default {
       this.title = ''
       this.slug = ''
       this.ord = 0
-      this.description = ''
+      this.important = 0
     },
     titleToSlug(force) {
       if (!this.slug || force) {

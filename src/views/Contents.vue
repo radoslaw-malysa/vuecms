@@ -24,36 +24,6 @@
               class="mx-4"
               vertical
             ></v-divider>
-            <v-select
-              :items="config.langs"
-              item-text="title"
-              item-value="id"
-              v-model="filters.id_lang"
-              label="Język"
-              solo
-              flat
-              hide-details
-              dense
-            ></v-select>
-            <v-divider
-              class="mx-4"
-              vertical
-            ></v-divider>
-            <!--<v-select
-              :items="config.categories"
-              item-text="title"
-              item-value="id"
-              v-model="filters.id_category"
-              label="Kategoria"
-              solo
-              flat
-              hide-details
-              dense
-            ></v-select>
-            <v-divider
-              class="mx-4"
-              vertical
-            ></v-divider>-->
             <v-autocomplete
               v-model="filters.id_tag"
               item-text="title"
@@ -71,11 +41,42 @@
               clearable
             ></v-autocomplete>
             <v-divider
+              class="mx-4"
+              vertical
+            ></v-divider>
+            <v-select
+              :items="config.langs"
+              item-text="title"
+              item-value="id"
+              v-model="filters.id_lang"
+              label="Język"
+              solo
+              flat
+              hide-details
+              dense
+            ></v-select>
+            <v-divider
               class="ml-4"
               vertical
             ></v-divider>
-            <v-btn icon class="ml-1" color="primary" @click="editItem(0)">
-              <v-icon>add</v-icon>
+            <!--<v-select
+              :items="config.categories"
+              item-text="title"
+              item-value="id"
+              v-model="filters.id_category"
+              label="Kategoria"
+              solo
+              flat
+              hide-details
+              dense
+            ></v-select>
+            <v-divider
+              class="mx-4"
+              vertical
+            ></v-divider>-->
+            
+            <v-btn icon class="ml-1 btn-primary" @click="editItem(0)">
+              <v-icon color="#ffffff">add</v-icon>
             </v-btn>
           </v-toolbar>
         </div>
@@ -84,10 +85,9 @@
 
     <v-toolbar
       flat
-      height="56px"
-      class="filter-toolbar nobg-dark my-3 mb-12"
+      class="filter-toolbar nobg-dark my-2  h-56"
     >
-      <v-select
+      <!--<v-select
         v-model="filters.state"
         :items="config.contentsStates"
         item-text="title"
@@ -99,39 +99,18 @@
         rounded
         hide-details
         class="mr-2 state-select"
-      ></v-select>
-      
-      <!--<v-select
-        v-model="filters.id_user"
-        :items="config.usersGroups"
-        item-text="title"
-        item-value="id"
-        placeholder="Redaktor"
-        clearable
-        dense
-        outlined
-        rounded
-        hide-details
-        class="mr-2 user-select"
       ></v-select>-->
 
       <v-chip
-        outlined
-        filter
-        :input-value="filters.ord == 2"
-        @click="toggleSponsored()"
+        v-for="(item) in config.important_tags"
+        :key="item.id"
+        :color="(filters.id_tag == item.id) ? 'primary' : ''"
+        @click="filters.id_tag == item.id ? filters.id_tag = null : filters.id_tag = item.id"
         class="mr-2"
       >
-        Sponsorowane
+        {{item.title}}
       </v-chip>
-      <v-chip
-        outlined
-        filter
-        :input-value="filters.affiliate_url == 1"
-        @click="toggleAffiliated()"
-      >
-        Afiliacyjne
-      </v-chip>
+      
       <v-spacer></v-spacer>
     </v-toolbar>
 
@@ -372,3 +351,10 @@
     }
   }
 </script>
+
+<style>
+  .v-btn.btn-primary {
+    background-color: #1976d2;
+    color: #fff;
+  }
+</style>
