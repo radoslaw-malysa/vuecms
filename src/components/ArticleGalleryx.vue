@@ -76,6 +76,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import axios from 'axios';
 import draggable from 'vuedraggable';
 
@@ -116,6 +117,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters('config', ['serverUrl']),
+  },
   methods: {
     onDrop(e) {
       console.log('drop')
@@ -139,7 +143,7 @@ export default {
 
       try {
         //http://elektrownia.test/cms
-        const response = await axios.post(`http://elektrownia.test/cms/gallery/process/${this.articleId}`, formData, {
+        const response = await axios.post(`${this.serverUrl}/cms/gallery/process/${this.articleId}`, formData, {
           onUploadProgress: (progressEvent) => {
             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
             // Update progress bar

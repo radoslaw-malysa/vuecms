@@ -85,6 +85,9 @@ const getters = {
   important_tags(state) {
     return state.config.important_tags;
   },
+  serverUrl(state) {
+    return state.config.serverUrl;
+  },
   categoryTemplate: (state) => (id_category) => {
     return (id_category) ? state.config.contentsTemplates.find(el => el.id_category === id_category) : state.config.contentsTemplates.find(el => el.id_category == 1)
   }
