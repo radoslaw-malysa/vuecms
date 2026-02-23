@@ -41,16 +41,7 @@ const state = () => ({
       { id: 1, title: 'pl' },
       { id: 2, title: 'en' }
     ],
-    important_tags: [
-      { id: 29, title: 'Wydarzenia' },
-      { id: 55, title: 'Filmy' },
-      { id: 66, title: 'Wydarzenia filmowe' },
-      { id: 7, title: 'Aktualności' },
-      { id: 7, title: 'Zbiory' },
-      { id: 30, title: 'Edukacja' },
-      { id: 70, title: 'Zbiory' },
-      { id: 54, title: 'Slider' }
-    ]
+    important_tags: []
   }
 })
 

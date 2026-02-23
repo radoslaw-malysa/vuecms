@@ -76,7 +76,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import axios from 'axios';
 import draggable from 'vuedraggable';
 
@@ -116,9 +115,6 @@ export default {
         }
       }
     }
-  },
-  computed: {
-    ...mapGetters('config', ['serverUrl']),
   },
   methods: {
     onDrop(e) {

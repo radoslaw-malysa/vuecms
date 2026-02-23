@@ -100,10 +100,9 @@
         hide-details
         class="mr-2 state-select"
       ></v-select>-->
-
       <v-chip
-        v-for="(item, index) in config.important_tags"
-        :key="index"
+        v-for="(item) in config.important_tags"
+        :key="item.id"
         :color="(filters.id_tag == item.id) ? 'primary' : ''"
         @click="filters.id_tag == item.id ? filters.id_tag = null : filters.id_tag = item.id"
         class="mr-2"
