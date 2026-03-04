@@ -227,7 +227,7 @@
                     aspect-ratio="1"
                     max-height="750"
                     max-width="750"
-                    :src="config.serverUrl + '/thumbs/1024x1024/' + image_url"
+                    :src="config.serverUrl + '/thumbs/768x768/' + image_url"
                   ></v-img>
                 </v-card-text>
                 <v-btn class="media-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-input')">
@@ -260,7 +260,7 @@
                     aspect-ratio="2"
                     max-height="375"
                     max-width="750"
-                    :src="config.serverUrl + '/thumbs/1024x1024/' + image_2_url"
+                    :src="config.serverUrl + '/thumbs/768x768/' + image_2_url"
                   ></v-img>
                 </v-card-text>
                 <v-btn class="media-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-2-input')">
@@ -890,6 +890,7 @@ export default {
       });
     },
     openMediaDialog(field_id) {
+      console.log(field_id)
       //if (this.dialogMediaContent == '') {
         this.dialogMediaContent = '<iframe width="100%" style="height:80vh;" frameborder="0" src="' + this.config.serverUrl + '/filemanager/dialog.php?relative_url=1&type=0&field_id=' + field_id + '" data-alloy-tabstop="true" tabindex="-1"></iframe>';
       //}

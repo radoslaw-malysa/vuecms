@@ -2,7 +2,7 @@ import cms from '../../api/cms'
 
 const state = () => ({
   config: {
-    serverUrl: '', //http://elektrownia.test
+    serverUrl: (window.location.hostname == 'localhost') ? 'http://elektrownia.test' : '', //http://elektrownia.test
     categories: [
       { id: 1, title: 'Wiadomości' },
       { id: 2, title: 'Kryptowaluty' },

@@ -36,11 +36,11 @@
               dense
             ></v-select>
             <v-divider
-              class="mx-4"
+              class="ml-4"
               vertical
             ></v-divider>
-            <v-btn icon color="primary" @click="editItem(0)">
-              <v-icon>add</v-icon>
+            <v-btn icon class="ml-1 btn-primary" @click="editItem(0)">
+              <v-icon color="#ffffff">add</v-icon>
             </v-btn>
           </v-toolbar>
         </div>

@@ -21,8 +21,8 @@ var vm = new Vue({
 /*responsive filemanager*/
 window.responsive_filemanager_callback = (field_id) => { 
   //setTimeout(function() {
-  if (field_id == 'cover-input') {
-    vm.$children[0].$children[0].$children[0].$children[0].cover_url = document.getElementById(field_id).value;
+  if (field_id == 'image-2-input') {
+    vm.$children[0].$children[0].$children[0].$children[0].image_2_url = document.getElementById(field_id).value;
   } else {
     vm.$children[0].$children[0].$children[0].$children[0].image_url = document.getElementById(field_id).value;
   }
