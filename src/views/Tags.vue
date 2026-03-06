@@ -85,22 +85,13 @@
         @page-count="pageCount = $event"
         class="nobg-dark"
         item-class="css"
+        @click:row="editItem"
       >
         <template v-slot:item.active="{ item }">
           {{ (item.active == 1) ? 'Aktywny' : 'Nieaktywny' }}
         </template>
         <template v-slot:item.id_lang="{ item }">
           {{ (item.id_lang == 2) ? 'EN' : 'PL' }}
-        </template>
-        <template v-slot:item.actions="{ item }">
-          <v-btn
-            icon
-            @click="editItem(item.id)"
-          >
-            <v-icon>
-              edit
-            </v-icon>
-          </v-btn>
         </template>
         <template v-slot:no-data>
           Nic nie znaleziono
@@ -162,7 +153,6 @@
         { text: 'Kolejność', align: 'start', sortable: true, value: 'ord' },
         { text: 'Status', align: 'start', value: 'active' },
         { text: 'Język', align: 'start', value: 'id_lang' },
-        { text: '', align: 'end', value: 'actions', sortable: false }
       ],
       
       itemsx: ['Kategoria', 'Foo', 'Bar', 'Fizz', 'Buzz'],
@@ -231,8 +221,8 @@
           this.loading = false;
         });
       },
-      editItem(id) {
-        this.editId = id;
+      editItem(item) {
+        this.editId = item.id;
         this.editDialog = true;
       },
       editUpdated() {

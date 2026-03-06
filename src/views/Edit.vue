@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="d-flex justify-center pt-0 pb-0 relative">
     <v-btn
-      depressed
+      
       large
       fab
       icon            
@@ -57,13 +57,13 @@
             <div class="px-1">
                <label>Godzina</label>
                 <v-text-field placeholder="Godzina" type="time" 
-                    outlined 
-                    rounded
-                    dense
-                    hide-details=""
-                    v-model="event_time"
-                    name="event_time"
-                  ></v-text-field>
+                  outlined 
+                  rounded
+                  dense
+                  hide-details=""
+                  v-model="event_time"
+                  name="event_time"
+                ></v-text-field>
             </div>
             <div class="px-1 flex-grow-1">&nbsp;</div>
             <div>
@@ -414,15 +414,7 @@
         </div>
 
         <div class="d-flex" style="margin-bottom: 250px;">
-          <div class="ed-aside">
-            <v-btn
-              icon
-              large
-              title="Dodaj galerię zdjęć"
-            >
-              <v-icon>add_a_photo</v-icon>
-            </v-btn>
-          </div>
+          <div class="ed-aside"></div>
           <div class="ed-content flex-grow-1">
             <gallery 
               v-model="gallery" 
@@ -582,6 +574,30 @@
                   ></v-select>
                   <input type="hidden" name="view" v-model="view" />
                   <input type="hidden" name="id_category" v-model="id_category" />
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col>
+                  <label>Link do artykułu</label>
+                  <v-text-field 
+                    type="text" 
+                    outlined 
+                    rounded
+                    dense
+                    hide-details=""
+                    v-model="articleLink"
+                    readonly
+                    class="inp-with-btn"
+                  >
+                    <v-btn
+                      slot="append"
+                      color="secondary"
+                      rounded
+                      elevation="0"
+                      @click="copyLinkHandler"
+                    >Kopiuj</v-btn>
+                  </v-text-field>
                 </v-col>
               </v-row>
 
@@ -752,6 +768,11 @@ export default {
     },*/
     langs() {
       return this.config.langs
+    },
+    articleLink() {
+      if (!this.id) { return ''; }
+      const lang = this.langs.find(item => item.id === this.id_lang);
+      return lang ? window.location.origin + '/' + lang.title + '/' + this.slug + '/' + this.id : ''
     }
   },
   watch: {
@@ -857,7 +878,8 @@ export default {
           } else {
             this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
           }
-          this.loading = false;
+          // this.loading = false;
+          this.loadItem();
           this.parentRefresh();
         });
       } else {
@@ -870,7 +892,8 @@ export default {
           } else {
             this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
           }
-          this.loading = false;
+          this.loadItem();
+          // this.loading = false;
           this.parentRefresh();
         });
       }
@@ -921,6 +944,13 @@ export default {
     parentRefresh() {
       window.opener.formRefresh();
     },
+    copyLinkHandler() {
+      navigator.clipboard.writeText(this.articleLink).then(() => {
+        this.$store.commit('snack/open', {text: 'Link skopiowany!', color: 'success'});
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    }
   }
 }
 </script>
@@ -956,6 +986,12 @@ export default {
   }
   .v-textarea.slim textarea {
     margin-top: 0 !important;
+  }
+  .inp-with-btn .v-input__append-inner {
+    margin-top: 2px !important;
+  }
+  .v-text-field--rounded.inp-with-btn > .v-input__control > .v-input__slot {
+    padding-right: 2px;
   }
   
   @media (min-width: 1264px) {

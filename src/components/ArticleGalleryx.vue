@@ -13,7 +13,7 @@
       @click="$refs.fileInput.click()"
     >
       <!--<v-icon size="48" color="grey">upload</v-icon>-->
-      <div class="text-subtitle-1 mt-2 text-grey">Kliknij lub upuść zdjęcia tutaj</div>
+      <div class="text-subtitle-1 mt-2 text-grey d-flex align-center align-content-center"><v-icon class="mr-2">add_a_photo</v-icon> Kliknij lub upuść zdjęcia tutaj</div>
       <input 
         type="file" 
         ref="fileInput" 

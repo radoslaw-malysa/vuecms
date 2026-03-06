@@ -129,6 +129,7 @@
         loading-text="Pobieram dane..."
         @page-count="pageCount = $event"
         class="nobg-dark"
+        @click:row="editItem"
       >
         <template v-slot:item.image_url="{ item }">
           <img v-if="item.image_url" :src="imageServer + item.image_url" loading="lazy" class="thu" />
@@ -136,22 +137,10 @@
         <template v-slot:item.title="{ item }">
           {{ item.title }}
           <v-chip v-if="item.ord == 3" class="mx-1 primary" small >Przypięty</v-chip>
-          <v-chip v-else-if="item.ord == 2" class="mx-1 accent" small >Sponsor</v-chip>
-          <v-chip v-if="item.affiliate_url" class="mx-1 orange" small :title="item.affiliate_url">Afiliacyjny</v-chip>
         </template>
         <template v-slot:item.state="{ item }">
           {{ (item.state) ? contentsStates[item.state].title : '' }}
           <v-chip v-if="!item.state" class="danger" small >Nieokreślony</v-chip>
-        </template>
-        <template v-slot:item.actions="{ item }">
-          <v-btn
-            icon
-            @click="editItem(item.id)"
-          >
-            <v-icon>
-              edit
-            </v-icon>
-          </v-btn>
         </template>
         <template v-slot:no-data>
           Nic nie znaleziono
@@ -217,12 +206,11 @@
       headers: [
         { text: 'Obrazek',  align: 'start', sortable: false, value: 'image_url' },
         { text: 'Tytuł', align: 'start', sortable: true, value: 'title' },
-        { text: 'Pop.', align: 'start', sortable: true, value: 'visits' },
+        { text: 'Data wydarz.', align: 'start', sortable: true, value: 'event_date', width: '120'  },
+        { text: 'Koniec', align: 'start', sortable: true, value: 'event_date_end', width: '120'  },
         { text: 'Aktualizacja', align: 'start', sortable: true, value: 'update_time' },
-        { text: 'Status', align: 'start', value: 'state' },
-        { text: '', align: 'end', value: 'actions', sortable: false }
+        { text: 'Status', align: 'start', value: 'state' }
       ],
-      
     }),
     computed: {
       ...mapGetters('config', ['config', 'contentsStates']),
@@ -298,9 +286,10 @@
           this.loading = false;
         });
       },
-      editItem(id) {
+      editItem(item) {
         //this.editId = id;
         //this.editDialog = true;
+        let id = item.id
 
         let editRoute = this.$router.resolve({ 
           name: 'Artykuł',
@@ -330,12 +319,12 @@
           this.finderSticked = false;
         }
       },
-      toggleSponsored() {
+      /*toggleSponsored() {
         this.filters.ord = (this.filters.ord == 2) ? '' : 2
       },
       toggleAffiliated() {
         this.filters.affiliate_url = (this.filters.affiliate_url == 1) ? '' : 1
-      },
+      },*/
       findTag(q) {
         this.tagLoading = true;
         cms.autocomplete('tags', q)
@@ -355,5 +344,8 @@
   .v-btn.btn-primary {
     background-color: #1976d2;
     color: #fff;
+  }
+  .v-data-table tbody tr {
+    cursor: pointer;
   }
 </style>
