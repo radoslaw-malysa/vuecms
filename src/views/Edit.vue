@@ -230,20 +230,25 @@
                     :src="config.serverUrl + '/thumbs/768x768/' + image_url"
                   ></v-img>
                 </v-card-text>
-                <v-btn class="media-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-input')">
-                  <v-icon>photo_camera</v-icon>
-                </v-btn>
-                <v-btn
-                  v-if="image_url"
-                  class="media-clear-btn"
-                  fab
-                  small
-                  color="gray"
-                  elevation="0"
-                  @click="image_url = null"
-                >
-                  <v-icon>clear</v-icon>
-                </v-btn>
+                <div class="image-tools">
+                  <image-uploader @uploaded="onImageUploaded" />
+                  <v-btn fab small color="gray" elevation="0">
+                    <v-icon>add_a_photo</v-icon>
+                  </v-btn>
+                  <v-btn fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-input')">
+                    <v-icon>perm_media</v-icon>
+                  </v-btn>
+                  <v-btn
+                    v-if="image_url"
+                    fab
+                    small
+                    color="gray"
+                    elevation="0"
+                    @click="image_url = null"
+                  >
+                    <v-icon>clear</v-icon>
+                  </v-btn>
+                </div>
               </v-responsive>
             </v-card>
 
@@ -634,6 +639,7 @@ import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
 import ContentTags from '../components/ContentTags.vue'
 import Gallery from '../components/ArticleGalleryx.vue';
+import ImageUploader from '../components/ImageUploader.vue'
 
 export default {
   name: 'Contents',
@@ -641,7 +647,8 @@ export default {
   components: {
     'editor': Editor,
     ContentTags,
-    Gallery
+    Gallery,
+    ImageUploader
   },
   data: () => ({
     tableName: 'contents',
@@ -921,6 +928,10 @@ export default {
       //window.addEventListener('message', onMessage);
       this.dialogMedia = true;
     },
+    onImageUploaded(url) {
+      // this.image_url = url;
+      console.log(url)
+    },
     abort() {
       window.close();
     },
@@ -973,6 +984,13 @@ export default {
   }
   .main-video iframe {
     display: block;
+  }
+  .image-tools {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    display: flex;
+    gap: 8px;
   }
   .media-edit-btn {
     position: absolute;
