@@ -1,6 +1,5 @@
 <template>
   <div class="gallery-container">
-    <!-- Custom Drop Zone using Vuetify Styles -->
     <v-sheet
       outline
       color="grey lighten-4"
@@ -12,7 +11,6 @@
       style="border: 2px dashed #ccc; cursor: pointer"
       @click="$refs.fileInput.click()"
     >
-      <!--<v-icon size="48" color="grey">upload</v-icon>-->
       <div class="text-subtitle-1 mt-2 text-grey d-flex align-center align-content-center"><v-icon class="mr-2">add_a_photo</v-icon> Kliknij lub upuść zdjęcia tutaj</div>
       <input 
         type="file" 
@@ -118,7 +116,6 @@ export default {
   },
   methods: {
     onDrop(e) {
-      console.log('drop')
       this.isDragging = false;
       const files = e.dataTransfer.files;
       this.uploadFiles(files);
@@ -135,10 +132,9 @@ export default {
     async uploadSingleFile(file) {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('slug', this.slug);
+      // formData.append('slug', this.slug);
 
       try {
-        //http://elektrownia.test/cms
         const response = await axios.post(`${this.serverUrl}/cms/gallery/process/${this.articleId}`, formData, {
           onUploadProgress: (progressEvent) => {
             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);

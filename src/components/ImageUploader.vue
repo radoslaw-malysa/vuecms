@@ -1,14 +1,15 @@
 <template>
   <div class="image-uploader">
-    <!-- The actual button user sees -->
     <v-btn
-      color="primary"
+      fab 
+      small 
+      color="gray" 
+      elevation="0"
       :loading="isUploading"
       :disabled="isUploading"
       @click="triggerSelect"
     >
-      <v-icon left>mdi-cloud-upload</v-icon>
-      Upload Image
+      <v-icon>add_a_photo</v-icon>
     </v-btn>
 
     <!-- Hidden File Input -->
@@ -27,6 +28,12 @@ import axios from 'axios';
 
 export default {
   name: 'ImageUploader',
+  props: {
+    serverUrl: {
+      type: [String],
+      required: true
+    }
+  },
   data() {
     return {
       file: null,
@@ -52,10 +59,10 @@ export default {
       this.isUploading = true;
 
       const formData = new FormData();
-      formData.append('image', file);
-
+      formData.append('file', file);
+      console.log(this.serverUrl)
       try {
-        const response = await axios.post('/api/upload', formData, {
+        const response = await axios.post(`${this.serverUrl}/cms/image/upload`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -63,11 +70,11 @@ export default {
 
         // 3. Send the URL back to parent
         // Assuming backend returns: { url: "https://..." }
-        this.$emit('uploaded', response.data.url);
+        this.$emit('uploaded', response.data.image_url);
         
       } catch (error) {
         console.error("Upload failed:", error);
-        alert("Upload failed. Please try again.");
+        alert("Nie udało się");
       } finally {
         this.isUploading = false;
         // Reset the file so the change event triggers even if the user picks the same file again

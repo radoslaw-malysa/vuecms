@@ -231,10 +231,7 @@
                   ></v-img>
                 </v-card-text>
                 <div class="image-tools">
-                  <image-uploader @uploaded="onImageUploaded" />
-                  <v-btn fab small color="gray" elevation="0">
-                    <v-icon>add_a_photo</v-icon>
-                  </v-btn>
+                  <image-uploader @uploaded="onImageUploaded" :serverUrl="config.serverUrl" />
                   <v-btn fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-input')">
                     <v-icon>perm_media</v-icon>
                   </v-btn>
@@ -268,20 +265,23 @@
                     :src="config.serverUrl + '/thumbs/768x768/' + image_2_url"
                   ></v-img>
                 </v-card-text>
-                <v-btn class="media-edit-btn" fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-2-input')">
-                  <v-icon>photo_camera</v-icon>
-                </v-btn>
-                <v-btn
-                  v-if="image_2_url"
-                  class="media-clear-btn"
-                  fab
-                  small
-                  color="gray"
-                  elevation="0"
-                  @click="image_2_url = null"
-                >
-                  <v-icon>clear</v-icon>
-                </v-btn>
+                <div class="image-tools">
+                  <image-uploader @uploaded="onImage2Uploaded" :serverUrl="config.serverUrl" />
+                  <v-btn fab small color="gray" elevation="0" @click.stop="openMediaDialog('image-2-input')">
+                    <v-icon>perm_media</v-icon>
+                  </v-btn>
+                  <v-btn
+                    v-if="image_2_url"
+                    fab
+                    small
+                    color="gray"
+                    elevation="0"
+                    @click="image_2_url = null"
+                  >
+                    <v-icon>clear</v-icon>
+                  </v-btn>
+                </div>
+                
               </v-responsive>
             </v-card>
 
@@ -929,8 +929,10 @@ export default {
       this.dialogMedia = true;
     },
     onImageUploaded(url) {
-      // this.image_url = url;
-      console.log(url)
+      this.image_url = url;
+    },
+    onImage2Uploaded(url) {
+      this.image_2_url = url;
     },
     abort() {
       window.close();
