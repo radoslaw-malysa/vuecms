@@ -39,7 +39,7 @@
               class="ml-4"
               vertical
             ></v-divider>
-            <v-btn icon class="ml-1 btn-primary" @click="editItem(0)">
+            <v-btn icon class="ml-1 btn-primary" @click="editItem({id:0})">
               <v-icon color="#ffffff">add</v-icon>
             </v-btn>
           </v-toolbar>

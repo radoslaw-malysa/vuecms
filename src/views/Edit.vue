@@ -885,7 +885,7 @@ export default {
           } else {
             this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
           }
-          // this.loading = false;
+          this.loading = false;
           this.loadItem();
           this.parentRefresh();
         });
@@ -893,14 +893,14 @@ export default {
         cms.create(this.tableName, fd)
         .then(response => {
           if (response.id) {
-            //this.id = response.id;
+            this.id = response.id;
             this.$store.commit('snack/open', {text: 'Artykuł pomyślnie zapisany', color: 'success'});
             this.$router.push({ path: '/contents/' + response.id });
           } else {
             this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
           }
+          this.loading = false;
           this.loadItem();
-          // this.loading = false;
           this.parentRefresh();
         });
       }
