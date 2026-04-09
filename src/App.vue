@@ -24,7 +24,7 @@
       >
         <v-tab to="/">Treści</v-tab>
         <v-tab to="/tags" value="/tags">Tagi</v-tab>
-        <v-tab to="/pages" value="/pages">Strony</v-tab>
+        <!--<v-tab to="/pages" value="/pages">Strony</v-tab>-->
         <v-tab to="/settings" value="/settings">Ustawienia</v-tab>
       </v-tabs>
 
@@ -32,8 +32,8 @@
       <v-btn to="/users" icon class="ml-5 mr-1" :color="($route.path == '/users') ? 'primary' : ''" title="Użytkownicy">
         <v-icon>people_alt</v-icon>
       </v-btn>
-      <v-btn icon class="mx-1" :color="($route.path == '/settigs') ? 'primary' : ''" title="Ustawienia">
-        <v-icon>settings</v-icon>
+      <v-btn href="/manual" target="_blank" icon class="mx-1" title="Pomoc">
+        <v-icon>help</v-icon>
       </v-btn>
       <v-btn @click="darkMode = !darkMode" icon class="mx-1" title="Ciemny motyw">
         <v-icon v-text="(darkMode) ? 'light_mode' : 'brightness_4'"></v-icon>

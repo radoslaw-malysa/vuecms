@@ -2,7 +2,7 @@
   <div>
     <label>Tagi</label>
     <v-card outlined flat class="nobg" style="border-radius: 16px">
-      <v-card-text class="pt-0 px-1">
+      <v-card-text class="pt-1 px-1">
         <v-autocomplete
           v-model="selected"
           :items="items"

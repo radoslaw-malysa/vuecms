@@ -451,6 +451,7 @@
                 item-text="title"
                 item-value="id"
                 v-model="state"
+                :background-color="state !== 1 ? 'red lighten-4' : ''"
                 placeholder="Status"
                 solox
                 outlined
@@ -856,7 +857,7 @@ export default {
           this.id_category = parseInt(id_cat);
         }
         //state
-        this.state = 2;
+        this.state = 1;
         // lang
         this.id_lang = 1;
       }
