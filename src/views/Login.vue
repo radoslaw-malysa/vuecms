@@ -14,7 +14,9 @@
 			>
 				<v-card flat class="no-bg">
 					<v-card-text>
-						<p class="display-1 text--primary">Blokpres</p>
+						<div class="mb-4 ">
+							<img src="images/logo_full.svg" alt="elektrownia logo" class="w-100" />
+						</div>
 						<v-alert
 							border="left"
 							type="error"
@@ -53,7 +55,7 @@
 							></v-text-field>
 						</v-form>
 						<div class="text-right">
-							<v-btn x-large   color="primary" @click="loginUser" :loading="loading">Zaloguj</v-btn>
+							<v-btn x-large color="primary" @click="loginUser" :loading="loading" class="w-100">Zaloguj</v-btn>
 						</div>
 					</v-card-text>
 				</v-card>

@@ -13,7 +13,7 @@
           alt="Blokpres Logo"
           class="shrink mr-2"
           contain
-          src="/img/logo.svg"
+          src="images/logo.svg"
           transition="scale-transition"
           width="36"
         />
