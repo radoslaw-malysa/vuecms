@@ -49,7 +49,7 @@
                   locale="pl"
                   no-title
                   scrollable
-                  @input="eventDateMenu = false; $refs.eventDateMenu.save(event_date)"
+                  @input="eventDateMenu = false; $refs.eventDateMenu.save(event_date); updateArchivingDate(event_date)"
                 >
                 </v-date-picker>
               </v-menu>
@@ -96,7 +96,7 @@
                   locale="pl"
                   no-title
                   scrollable
-                  @input="eventDateEndMenu = false; $refs.eventDateEndMenu.save(event_date_end)"
+                  @input="eventDateEndMenu = false; $refs.eventDateEndMenu.save(event_date_end); updateArchivingDateEnd(event_date_end)"
                 >
                 </v-date-picker>
               </v-menu>
@@ -471,7 +471,7 @@
 
             </v-toolbar>
           
-            <v-card-text class="py-8">
+            <v-card-text class="py-4">
               <v-row>
                 <v-col
                   cols="6"
@@ -536,6 +536,66 @@
                   <input type="hidden" name="ord" v-model="ord" />
                 </v-col>
               </v-row>
+
+              <v-row>
+                <v-col
+                  cols="7"
+                >
+                  <label>Data archiwizacji</label>
+                  <v-menu
+                    ref="archivingDateMenu"
+                    v-model="archivingDateMenu"
+                    :close-on-content-click="false"
+                    :return-value.sync="archiving_date"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="archiving_date"
+                        name="archiving_date"
+                        readonly
+                        outlined 
+                        rounded
+                        dense
+                        hide-details
+                        v-bind="attrs"
+                        v-on="on"
+                        clearable
+                        clear-icon="cancel"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="archiving_date"
+                      locale="pl"
+                      no-title
+                      scrollable
+                      @input="archivingDateMenu = false; $refs.archivingDateMenu.save(archiving_date)"
+                    >
+                    </v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col
+                  cols="5"
+                  class="d-inline-flex align-end"
+                >
+                  <v-chip
+                    v-if="isArchive"
+                    class="ma-2"
+                    color="red"
+                    label
+                    text-color="white"
+                  >
+                    <v-icon left>
+                      report
+                    </v-icon>
+                    Archiwum
+                  </v-chip>
+                </v-col>
+              </v-row>
+              
+
 
               <!--<v-row>
                 <v-col>
@@ -673,6 +733,7 @@ export default {
     event_date: null,
     event_time: null,
     event_date_end: null,
+    archiving_date: null,
     view: '',
     gallery: [],
     tags: [],
@@ -694,6 +755,7 @@ export default {
     dateMenu: false,
     eventDateMenu: false,
     eventDateEndMenu: false,
+    archivingDateMenu: false,
     loading: false,
     // dark: false
   }),
@@ -777,6 +839,16 @@ export default {
     langs() {
       return this.config.langs
     },
+    isArchive() {
+      if (this.archiving_date) {
+        const today = new Date().toISOString().split('T')[0];
+        if (this.archiving_date < today) {
+          return true
+        }
+      }
+
+      return false
+    },
     articleLink() {
       if (!this.id) { return ''; }
       const lang = this.langs.find(item => item.id === this.id_lang);
@@ -826,6 +898,7 @@ export default {
             this.event_date = response.event_date;
             this.event_time = response.event_time;
             this.event_date_end = response.event_date_end;
+            this.archiving_date = response.archiving_date;
             this.view = response.view;
             //tags
             this.tags = response.tags;
@@ -957,6 +1030,16 @@ export default {
     },*/
     parentRefresh() {
       window.opener.formRefresh();
+    },
+    updateArchivingDateEnd(event_date) {
+      const date = new Date(event_date);
+      date.setDate(date.getDate() + 14);
+      this.archiving_date = date.toISOString().split('T')[0];
+    },
+    updateArchivingDate(event_date) {
+      if (!this.event_date_end) {
+        this.updateArchivingDateEnd(event_date);
+      }
     },
     copyLinkHandler() {
       navigator.clipboard.writeText(this.articleLink).then(() => {

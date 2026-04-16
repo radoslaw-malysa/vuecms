@@ -138,9 +138,12 @@
           {{ item.title }}
           <v-chip v-if="item.ord == 3" class="mx-1 primary" small >Przypięty</v-chip>
         </template>
+        <template v-slot:item.event_date="{ item }">
+          {{ item.event_date }}<br />{{ item.event_date_end }}
+        </template>
         <template v-slot:item.state="{ item }">
-          {{ (item.state) ? contentsStates[item.state].title : '' }}
-          <v-chip v-if="!item.state" class="danger" small >Nieokreślony</v-chip>
+          <v-chip v-if="item.state == 1 && item.archive && item.archive < 0" color="red" text-color="white" small >Archiwum</v-chip>
+          <span v-else>{{ (item.state) ? contentsStates[item.state].title : '' }}</span>
         </template>
         <template v-slot:no-data>
           Nic nie znaleziono
@@ -207,7 +210,7 @@
         { text: 'Obrazek',  align: 'start', sortable: false, value: 'image_url' },
         { text: 'Tytuł', align: 'start', sortable: true, value: 'title' },
         { text: 'Data wydarz.', align: 'start', sortable: true, value: 'event_date', width: '120'  },
-        { text: 'Koniec', align: 'start', sortable: true, value: 'event_date_end', width: '120'  },
+        { text: 'Archiwizacja', align: 'start', sortable: true, value: 'archiving_date', width: '120'  },
         { text: 'Aktualizacja', align: 'start', sortable: true, value: 'update_time' },
         { text: 'Status', align: 'start', value: 'state' }
       ],
