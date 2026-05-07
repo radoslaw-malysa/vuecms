@@ -165,7 +165,7 @@
           </div>
         </div>
 
-        <div class="d-flex mb-6">
+        <!--<div class="d-flex mb-6">
           <div class="ed-aside"></div>
           <div class="ed-content flex-grow-1">
             <v-textarea
@@ -177,6 +177,21 @@
               row-height="20"
               class="f5-l"
             ></v-textarea>
+          </div>
+        </div>-->
+
+        <div class="d-flex mb-6">
+          <div class="ed-aside">
+          </div>
+          <div class="ed-content subtitle-content editor-wrap aarticle-content article-cms flex-grow-1" style="width:750px;">
+            <div class="subtitle-label" v-text="(subtitle ? 'Wprowadzenie' : '')"></div>
+            <editor
+              id="editor-subtitle"
+              :inline=true
+              v-model="subtitle"
+              :init="tinyInitSubtitle"
+              class="editor-content"
+            />
           </div>
         </div>
 
@@ -833,6 +848,32 @@ export default {
         }
       }
     },
+    tinyInitSubtitle() {
+      return {
+        width: 750,
+        language: 'pl',
+        skin: (localStorage.getItem("dark") == 'true') ? 'oxide-dark' : 'oxide',
+        placeholder: 'Wprowadzenie',
+        menubar: false,
+        object_resizing: false,
+        entity_encoding : 'raw',
+        browser_spellcheck: true,
+        media_filter_html: false,
+        media_live_embeds: false,
+        relative_urls : false,
+        remove_script_host : true,
+        document_base_url : "/",
+        convert_urls : true,
+        plugins: [
+          'advlist autolink lists link charmap preview anchor',
+          'searchreplace visualblocks code',
+          'media table textcolor paste code'
+        ],
+        toolbar: [
+          'bold italic | alignleft aligncenter alignright alignjustify | forecolor | bullist numlist | link anchor | removeformat code' ],
+        image_advtab: false,
+      }
+    },
     /*view() {
       return (this.id_category) ? this.categoryTemplate(this.id_category).view : this.categoryTemplate(1).view
     },*/
@@ -948,6 +989,7 @@ export default {
       }
 
       fd.content = this.content;
+      fd.subtitle = this.subtitle;
       fd.tags = this.tags; //fd.tags = this.tags.map((item) => item.id )
       fd.gallery = this.gallery;
       
@@ -1096,6 +1138,19 @@ export default {
   }
   .v-text-field--rounded.inp-with-btn > .v-input__control > .v-input__slot {
     padding-right: 2px;
+  }
+  .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
+    cursor: text;
+  }
+  .subtitle-content .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
+    top: 0;
+  }
+  .subtitle-label {
+    color: rgba(0, 0, 0, 0.6);
+    height: 20px;
+    line-height: 20px;
+    letter-spacing: normal;
+    font-size: 12px;
   }
   
   @media (min-width: 1264px) {
