@@ -47,6 +47,7 @@
                 <v-date-picker
                   v-model="event_date"
                   locale="pl"
+                  :first-day-of-week="1"
                   no-title
                   scrollable
                   @input="eventDateMenu = false; $refs.eventDateMenu.save(event_date); updateArchivingDate(event_date)"
@@ -94,6 +95,7 @@
                 <v-date-picker
                   v-model="event_date_end"
                   locale="pl"
+                  :first-day-of-week="1"
                   no-title
                   scrollable
                   @input="eventDateEndMenu = false; $refs.eventDateEndMenu.save(event_date_end); updateArchivingDateEnd(event_date_end)"
@@ -517,6 +519,7 @@
                     <v-date-picker
                       v-model="update_time_d"
                       locale="pl"
+                      :first-day-of-week="1"
                       no-title
                       scrollable
                       @input="dateMenu = false; $refs.dateMenu.save(update_time_d)"
@@ -584,6 +587,7 @@
                     <v-date-picker
                       v-model="archiving_date"
                       locale="pl"
+                      :first-day-of-week="1"
                       no-title
                       scrollable
                       @input="archivingDateMenu = false; $refs.archivingDateMenu.save(archiving_date)"
@@ -660,7 +664,27 @@
 
               <v-row>
                 <v-col>
-                  <label>Link do artykułu</label>
+                  <div class="d-flex justify-space-between">
+                    <label>Link do artykułu</label>
+                    <div>
+                      <v-btn
+                        x-small
+                        color="primary"
+                        rounded
+                        text
+                        @click="copyLinkHandler"
+                      >Kopiuj</v-btn>
+                      <v-btn
+                        :href="articleLink"
+                        target="_blank"
+                        color="primary"
+                        x-small
+                        rounded
+                        text
+                        @click="copyLinkHandler"
+                      >Otwórz</v-btn>
+                    </div>
+                  </div>
                   <v-text-field 
                     type="text" 
                     outlined 
@@ -669,15 +693,7 @@
                     hide-details=""
                     v-model="articleLink"
                     readonly
-                    class="inp-with-btn"
                   >
-                    <v-btn
-                      slot="append"
-                      color="secondary"
-                      rounded
-                      elevation="0"
-                      @click="copyLinkHandler"
-                    >Kopiuj</v-btn>
                   </v-text-field>
                 </v-col>
               </v-row>
