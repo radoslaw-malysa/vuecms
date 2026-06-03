@@ -25,6 +25,7 @@
         <v-tab to="/">Treści</v-tab>
         <v-tab to="/tags" value="/tags">Tagi</v-tab>
         <!--<v-tab to="/pages" value="/pages">Strony</v-tab>-->
+        <v-tab to="/collection" value="/collection">Kolekcja</v-tab>
         <v-tab to="/settings" value="/settings">Ustawienia</v-tab>
       </v-tabs>
 
@@ -87,13 +88,13 @@ export default {
   computed: {
     ...mapGetters('profile', ['isLogged','user']),
     hideSlider() {
-      return (this.$route.path == '/' || this.$route.path == '/tags' || this.$route.path == '/settings') ? false : true
+      return (this.$route.path == '/' || this.$route.path == '/tags' || this.$route.path == '/collection' || this.$route.path == '/settings') ? false : true
     },
     currentRoute() {
       return this.$route.name
     },
     showMainBar() {
-      return (this.currentRoute != 'Logowanie' && this.currentRoute != 'Artykuł') ? true : false;
+      return (this.currentRoute != 'Logowanie' && this.currentRoute != 'Artykuł' && this.currentRoute != 'Art') ? true : false;
     }
   },
   watch: {

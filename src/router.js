@@ -8,6 +8,8 @@ import Tags from './views/Tags.vue'
 import Pages from './views/Pages.vue'
 import Settings from './views/Settings.vue'
 import Edit from './views/Edit.vue'
+import Collection from './views/Collection.vue'
+import EditArtwork from './views/EditArtwork.vue'
 
 Vue.use(Router)
 
@@ -50,6 +52,17 @@ const router = new Router({
       path: '/settings',
       name: 'Ustawienia',
       component: Settings
+    },
+    {
+      path: '/collection',
+      name: 'Kolekcja',
+      component: Collection
+    },
+    {
+      path: '/collection/:id',
+      name: 'Art',
+      component: EditArtwork,
+      props: true
     },
   ]
 })
