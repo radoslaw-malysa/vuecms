@@ -20,6 +20,24 @@
             &nbsp;
           </div>
           <div class="ed-content flex-grow-1">
+            <v-select
+              :items="artFields"
+              item-text="title"
+              item-value="id"
+              v-model="field_of_art"
+              label="Typ obiektu"
+              name="field_of_art"
+              flat
+            ></v-select>
+          </div>
+        </div>
+
+
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
+          </div>
+          <div class="ed-content flex-grow-1">
             <v-textarea
               name="author"
               v-model="author"
@@ -56,13 +74,15 @@
                   name="year_of_creation_start"
                   v-model="year_of_creation_start"
                   label="Data powstania"
+                  type="number"
                 ></v-text-field>
               </v-col>
               <v-col cols="6">
                 <v-text-field
-                  name="year_of_creation_stop"
-                  v-model="year_of_creation_stop"
+                  name="year_of_creation_end"
+                  v-model="year_of_creation_end"
                   label="Data ukończenia"
+                  type="number"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -75,27 +95,115 @@
           </div>
           <div class="ed-content flex-grow-1">
             <v-text-field
-              name="year_of_acquisition"
-              v-model="year_of_acquisition"
-              label="Data pozyskania"
+              name="acquisition"
+              v-model="acquisition"
+              label="Sposób pozyskania"
+              type="text"
             ></v-text-field>
           </div>
         </div>
 
-
-        
-
-        <div class="d-flex mb-10 mt-6">
-          <div class="ed-aside relative">
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
           </div>
           <div class="ed-content flex-grow-1">
             <v-text-field
-              name="author"
-              v-model="author"
-              label="Autor"
+              name="year_of_acquisition"
+              v-model="year_of_acquisition"
+              label="Data pozyskania"
+              type="number"
             ></v-text-field>
           </div>
         </div>
+
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-text-field
+              name="height"
+              v-model="height"
+              label="Wysokość"
+              type="text"
+            ></v-text-field>
+          </div>
+        </div>
+
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-text-field
+              name="width"
+              v-model="width"
+              label="Szerokość"
+              type="text"
+            ></v-text-field>
+          </div>
+        </div>
+
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-text-field
+              name="shape"
+              v-model="shape"
+              label="Kształt"
+              type="text"
+            ></v-text-field>
+          </div>
+        </div>
+
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-text-field
+              name="technique"
+              v-model="technique"
+              label="Technika wykonania"
+              type="text"
+            ></v-text-field>
+          </div>
+        </div>
+
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-text-field
+              name="medium"
+              v-model="medium"
+              label="Medium"
+              type="text"
+            ></v-text-field>
+          </div>
+        </div>
+
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-text-field
+              name="material"
+              v-model="material"
+              label="Materiał"
+              type="text"
+            ></v-text-field>
+          </div>
+        </div>
+        
+
+
+        
 
         <div class="d-flex" style="margin-bottom: 250px;">
           <div class="ed-aside"></div>
@@ -103,7 +211,7 @@
             <gallery 
               v-model="gallery" 
               :article-id="id"
-              :slug="slug"
+              slug="artworks"
               :serverUrl="config.serverUrl"
             />
           </div>
@@ -147,183 +255,9 @@
                 :loading="loading"
                 @click="saveItem"
               >Zapisz</v-btn>
-
             </v-toolbar>
           
-            <v-card-text class="py-4">
-              <v-row>
-                <v-col
-                  cols="6"
-                >
-                  <label>Data aktualizacji</label>
-                  <v-menu
-                    ref="dateMenu"
-                    v-model="dateMenu"
-                    :close-on-content-click="false"
-                    :return-value.sync="update_time_d"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="update_time_d"
-                        name="update_time_d"
-                        readonly
-                        rounded
-                        outlined
-                        hide-details
-                        v-bind="attrs"
-                        v-on="on"
-                        dense
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      v-model="update_time_d"
-                      locale="pl"
-                      :first-day-of-week="1"
-                      no-title
-                      scrollable
-                      @input="dateMenu = false; $refs.dateMenu.save(update_time_d)"
-                    >
-                    </v-date-picker>
-                  </v-menu>
-                </v-col>
-                <v-col cols="4">
-                  <label>Godzina</label>
-                  <v-text-field placeholder="Godzina" type="text" 
-                    outlined 
-                    rounded
-                    dense
-                    hide-details=""
-                    v-model="update_time_h"
-                    name="update_time_h"
-                  ></v-text-field>
-                </v-col>
-                <v-col
-                  cols="2"
-                  class="d-flex align-end"
-                >
-                  <v-btn
-                    icon
-                    large
-                    :color="(ord == 3) ? 'primary' : 'grey lighten-2'" 
-                    @click=toggleOrd(3)
-                    title="Przypnij zawsze na górze"
-                  >
-                    <v-icon>push_pin</v-icon>
-                  </v-btn>
-                  <input type="hidden" name="ord" v-model="ord" />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col
-                  cols="7"
-                >
-                  <label>Data archiwizacji</label>
-                  <v-menu
-                    ref="archivingDateMenu"
-                    v-model="archivingDateMenu"
-                    :close-on-content-click="false"
-                    :return-value.sync="archiving_date"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="archiving_date"
-                        name="archiving_date"
-                        readonly
-                        outlined 
-                        rounded
-                        dense
-                        hide-details
-                        v-bind="attrs"
-                        v-on="on"
-                        clearable
-                        clear-icon="cancel"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      v-model="archiving_date"
-                      locale="pl"
-                      :first-day-of-week="1"
-                      no-title
-                      scrollable
-                      @input="archivingDateMenu = false; $refs.archivingDateMenu.save(archiving_date)"
-                    >
-                    </v-date-picker>
-                  </v-menu>
-                </v-col>
-                <v-col
-                  cols="5"
-                  class="d-inline-flex align-end"
-                >
-                  <v-chip
-                    v-if="isArchive"
-                    class="ma-2"
-                    color="red"
-                    label
-                    text-color="white"
-                  >
-                    <v-icon left>
-                      report
-                    </v-icon>
-                    Archiwum
-                  </v-chip>
-                </v-col>
-              </v-row>
-              
-
-
-              <!--<v-row>
-                <v-col>
-                  <label>Wyróżnij</label>
-                  
-                  <v-chip
-                    filter
-                    class="mr-2"
-                    :color="(ord == 3) ? 'primary' : ''"
-                    @click=toggleOrd(3)
-                  >Przypięty</v-chip>
-                  <v-chip
-                    filter
-                    :color="(ord == 2) ? 'accent' : ''"
-                    @click=toggleOrd(2)
-                  >Sponsorowany</v-chip>
-                </v-col>
-              </v-row>-->
-
-              <v-row>
-                <v-col>
-                  <content-tags 
-                    :inputData.sync="tags" 
-                    
-                  />
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col>
-                  <label>Język</label>
-                  <v-select
-                    name="id_lang"
-                    :items="langs"
-                    item-text="title"
-                    item-value="id"
-                    v-model="id_lang"
-                    outlined
-                    rounded
-                    dense
-                    hide-details
-                  ></v-select>
-                  <input type="hidden" name="view" v-model="view" />
-                  <input type="hidden" name="id_category" v-model="id_category" />
-                </v-col>
-              </v-row>
-
+            <v-card-text class="pt-16">
               <v-row>
                 <v-col>
                   <div class="d-flex justify-space-between">
@@ -359,8 +293,8 @@
                   </v-text-field>
                 </v-col>
               </v-row>
-
             </v-card-text>
+
           </v-card>
         </div>
       </div>
@@ -393,7 +327,6 @@ import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
 import ContentTags from '../components/ContentTags.vue'
 import Gallery from '../components/ArticleGalleryx.vue';
-import ImageUploader from '../components/ImageUploader.vue'
 
 export default {
   name: 'EditArtwork',
@@ -401,38 +334,30 @@ export default {
   components: {
     'editor': Editor,
     ContentTags,
-    Gallery,
-    ImageUploader
+    Gallery
   },
   data: () => ({
-    tableName: 'contents',
-    id_category: null,
-    slug: null,
+    tableName: 'artworks',
+    register_number: null,
+    field_of_art: null,
     title: null,
-    author: null,
+    acquisition: null,
     year_of_acquisition: null,
-    content: null,
+    author: null,
+    location: null,
+    year_of_creation_start: null,
+    year_of_creation_end: null,
+    height: null,
+    width: '',
+    shape: null,
+    technique: 0,
+    medium: null,
+    material: null,
+    technical_data: null,
     image_url: null,
-    image_2_url: null,
-    image_caption: null,
-    video: null,
-    author: '',
+    images: null,
     state: null,
-    ord: 0,
-    update_time_d: null,
-    update_time_h: null,
-    id_author: null,
-    id_lang: null,
-    event_date: null,
-    event_time: null,
-    event_date_end: null,
-    archiving_date: null,
-    view: '',
     gallery: [],
-    tags: [],
-
-    // slug
-    showSlug: false,
 
     // main image
     showVideo: 1,
@@ -450,139 +375,25 @@ export default {
     eventDateEndMenu: false,
     archivingDateMenu: false,
     loading: false,
-    // dark: false
+
+    artFields: [
+      { id: 'Malarstwo', title: 'Malarstwo' },
+      { id: 'Fotografia', title: 'Fotografia' },
+      { id: 'Grafika komputerowa', title: 'Grafika komputerowa' },
+      { id: 'Grafika warsztatowa', title: 'Grafika warsztatowa' },
+      { id: 'Muzealia Pozaartystyczne', title: 'Muzealia Pozaartystyczne' },
+      { id: 'Rysunek', title: 'Rysunek' },
+      { id: 'Rzeźba', title: 'Rzeźba' },
+      { id: 'Zapisy Cyfrowe', title: 'Zapisy Cyfrowe' }
+    ],
+
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates']),
-    btnImageColor() {
-      return (this.showVideo == 1) ? 'primary' : 'grey lighten-2'
-    },
-    btnPanoramaColor() {
-      return (this.showVideo == 2) ? 'primary' : 'grey lighten-2'
-    },
-    btnVideoColor() {
-      return (this.showVideo == 3) ? 'primary' : 'grey lighten-2'
-    },
-    tinyInit() {
-      return {
-        width: 750,
-        language: 'pl',
-        skin: (localStorage.getItem("dark") == 'true') ? 'oxide-dark' : 'oxide',
-        placeholder: 'Treść artykułu...',
-        menubar: false,
-        object_resizing: false,
-        entity_encoding : 'raw',
-        browser_spellcheck: true,
-        media_filter_html: false,
-        media_live_embeds: true,
-        extended_valid_elements: 'script[language|type|src|class],iframe[type|width|height|src|allow|allowfullscreen|style|frameborder|id|scrolling],sr-basic-widget[*]',
-        relative_urls : false,
-        remove_script_host : true,
-        document_base_url : "/",
-        convert_urls : true,
-        plugins: [
-          'advlist autolink lists link image charmap preview anchor',
-          'searchreplace visualblocks code fullscreen',
-          'media table textcolor paste code responsivefilemanager '
-        ],
-        toolbar: [
-          'undo redo | styleselect | fontsizeselect | bold italic blockquote | alignleft aligncenter alignright alignjustify | forecolor backcolor',
-          'bullist numlist | outdent indent | table | link anchor image media | responsivefilemanager | removeformat code' ],
-        image_advtab: true,
-        external_filemanager_path: this.config.serverUrl + '/filemanager/',
-        filemanager_title: 'Media',
-        external_plugins: {
-          'responsivefilemanager': this.config.serverUrl + '/js/tinymce/plugins/responsivefilemanager/plugin.min.js',
-          'filemanager': this.config.serverUrl + '/filemanager/plugin.min.js'
-        },
-        setup: (editor) => {
-          editor.on("focus", () => {
-            document.getElementById("editor-wrap").classList.add("focused");
-          });
-          editor.on("blur", () => {
-            document.getElementById("editor-wrap").classList.remove("focused");
-          });
-          editor.ui.registry.addContextToolbar("editimage", {
-            predicate: (node) => {
-              return node.nodeName.toLowerCase() === "img";
-            },
-            items: "editimage removeimage",
-            position: "node",
-            scope: "node"
-          });
-          editor.ui.registry.addButton("editimage", {
-            icon: "edit-block",
-            onAction: () => {
-              editor.execCommand("mceImage");
-            }
-          });
-          editor.ui.registry.addButton("removeimage", {
-            icon: "remove",
-            onAction: () => {
-              const node = tinymce.activeEditor.selection.getNode();
-              node.remove();
-            }
-          });
-        }
-      }
-    },
-    tinyInitSubtitle() {
-      return {
-        width: 750,
-        language: 'pl',
-        skin: (localStorage.getItem("dark") == 'true') ? 'oxide-dark' : 'oxide',
-        placeholder: 'Wprowadzenie',
-        menubar: false,
-        object_resizing: false,
-        entity_encoding : 'raw',
-        browser_spellcheck: true,
-        media_filter_html: false,
-        media_live_embeds: false,
-        relative_urls : false,
-        remove_script_host : true,
-        document_base_url : "/",
-        convert_urls : true,
-        plugins: [
-          'advlist autolink lists link charmap preview anchor',
-          'searchreplace visualblocks code',
-          'media table textcolor paste code'
-        ],
-        toolbar: [
-          'bold italic | alignleft aligncenter alignright alignjustify | forecolor | bullist numlist | link anchor | removeformat code' ],
-        image_advtab: false,
-      }
-    },
-    /*view() {
-      return (this.id_category) ? this.categoryTemplate(this.id_category).view : this.categoryTemplate(1).view
-    },*/
-    langs() {
-      return this.config.langs
-    },
-    isArchive() {
-      if (this.archiving_date) {
-        const today = new Date().toISOString().split('T')[0];
-        if (this.archiving_date < today) {
-          return true
-        }
-      }
-
-      return false
-    },
     articleLink() {
       if (!this.id) { return ''; }
-      const lang = this.langs.find(item => item.id === this.id_lang);
-      return lang ? window.location.origin + '/' + lang.title + '/' + this.slug + '/' + this.id : ''
+      return window.location.origin + '/pl/zbiory/' + this.id
     }
-  },
-  watch: {
-    video () {
-      this.$nextTick(() => {
-        this.resizeVideos();
-      });
-    },
-    /*imageInput () {
-      this.dialogMedia = false;
-    }*/
   },
   mounted() {
     this.loadItem();
@@ -595,59 +406,40 @@ export default {
         cms.getItem(this.tableName, this.id, {})
         .then(response => {
           if (response.id) {
-            this.slug = response.slug;
-            this.id_category = response.id_category;
+            this.register_number = response.register_number;
+            this.field_of_art = response.field_of_art;
             this.title = response.title;
-            this.subtitle = response.subtitle;
-            this.clickbait = response.clickbait;
-            this.content = response.content;
-            this.image_url = response.image_url;
-            this.image_2_url = response.image_2_url;
-            this.image_alt = response.image_alt;
-            this.image_caption = response.image_caption;
-            this.video = response.video;
-            this.videoTmp = response.video;
+            this.acquisition = response.acquisition;
+            this.year_of_acquisition = response.year_of_acquisition;
             this.author = response.author;
+            this.year_of_creation_start = response.year_of_creation_start;
+            this.year_of_creation_end = response.year_of_creation_end;
+            this.height = response.height;
+            this.width = response.width;
+            this.shape = response.shape;
+            this.technique = response.technique;
+            this.medium = response.medium;
+            this.material = response.material;
             this.state = response.state;
-            this.ord = response.ord;
-            this.update_time_d = (response.update_time && response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(0, 10) : new Date().toISOString().substr(0, 10);
-            this.update_time_h = (response.update_time && response.update_time != '0000-00-00 00:00:00') ? response.update_time.substr(11, 5) : new Date().toISOString().substr(11, 5);
-            this.id_author = response.id_author;
-            this.id_lang = (response.id_lang) ? response.id_lang : 1;
-            this.event_date = response.event_date;
-            this.event_time = response.event_time;
-            this.event_date_end = response.event_date_end;
-            this.archiving_date = response.archiving_date;
-            this.view = response.view;
-            //tags
-            this.tags = response.tags;
             
             //gallery
             this.gallery = [...response.gallery];
+            console.log('xxx');
+            console.log(this.gallery);
 
           } else {
             this.$refs.form.reset();
           }
 
           //resize videos
-          this.$nextTick(() => {
+          /*this.$nextTick(() => {
             this.resizeVideos();
-          });
+          });*/
           
           this.loading = false;
         });
       } else {
-        //update
-        let d = new Date();
-        this.update_time_d = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().substr(0, 10);
-        this.update_time_h = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().substr(11, 5);
-
-        //id category
-        const urlParams = new URLSearchParams(window.location.search);
-        const id_cat = urlParams.get('id_category');
-        if (id_cat) {
-          this.id_category = parseInt(id_cat);
-        }
+        
         //state
         this.state = 1;
         // lang
