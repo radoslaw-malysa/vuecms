@@ -32,21 +32,29 @@
           </div>
         </div>
 
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-text-field
+              name="register_number"
+              v-model="register_number"
+              label="Nr ewidencyjny"
+            ></v-text-field>
+          </div>
+        </div>
 
         <div class="d-flex">
           <div class="ed-aside">
             &nbsp;
           </div>
           <div class="ed-content flex-grow-1">
-            <v-textarea
+            <v-text-field
               name="author"
               v-model="author"
               label="Autor"
-              auto-grow
-              rows="1"
-              row-height="20"
-              class="textarea-title f5-l"
-            ></v-textarea>
+            ></v-text-field>
           </div>
         </div>
         
@@ -200,10 +208,6 @@
             ></v-text-field>
           </div>
         </div>
-        
-
-
-        
 
         <div class="d-flex" style="margin-bottom: 250px;">
           <div class="ed-aside"></div>
@@ -211,13 +215,12 @@
             <gallery 
               v-model="gallery" 
               :article-id="id"
-              slug="artworks"
+              :slug="register_number"
               :serverUrl="config.serverUrl"
             />
           </div>
         </div>
       </div>
-
 
       <div class="pl-12 ed-drawer">
         <div class="sticked-top">
@@ -270,18 +273,11 @@
                         text
                         @click="copyLinkHandler"
                       >Kopiuj</v-btn>
-                      <v-btn
-                        :href="articleLink"
-                        target="_blank"
-                        color="primary"
-                        x-small
-                        rounded
-                        text
-                        @click="copyLinkHandler"
-                      >Otwórz</v-btn>
                     </div>
                   </div>
                   <v-text-field 
+                    append-icon="outbound"
+                    @click:append="goToUrlHandler"
                     type="text" 
                     outlined 
                     rounded
@@ -289,6 +285,7 @@
                     hide-details=""
                     v-model="articleLink"
                     readonly
+                    class="article-link"
                   >
                   </v-text-field>
                 </v-col>
@@ -323,17 +320,13 @@
 <script>
 import { mapGetters } from 'vuex'
 import cms from '../api/cms'
-import Editor from '@tinymce/tinymce-vue'
 import slugify from '../api/slugify'
-import ContentTags from '../components/ContentTags.vue'
-import Gallery from '../components/ArticleGalleryx.vue';
+import Gallery from '../components/ArtworkGallery.vue';
 
 export default {
   name: 'EditArtwork',
   props: ['id'],
   components: {
-    'editor': Editor,
-    ContentTags,
     Gallery
   },
   data: () => ({
@@ -424,7 +417,7 @@ export default {
             
             //gallery
             this.gallery = [...response.gallery];
-            console.log('xxx');
+            
             console.log(this.gallery);
 
           } else {
@@ -481,7 +474,7 @@ export default {
           if (response.id) {
             this.id = response.id;
             this.$store.commit('snack/open', {text: 'Artykuł pomyślnie zapisany', color: 'success'});
-            this.$router.push({ path: '/contents/' + response.id });
+            this.$router.push({ path: '/collection/' + response.id });
           } else {
             this.$store.commit('snack/open', {text: (response.message) ? response.message : 'Nie udało się zapisać zmian', color: 'error'});
           }
@@ -559,11 +552,16 @@ export default {
       }).catch(err => {
         console.error('Failed to copy: ', err);
       });
+    },
+    goToUrlHandler() {
+      window.open(this.articleLink, "_blank");
     }
   }
 }
 </script>
 
 <style>
-  
+.v-text-field--rounded.article-link > .v-input__control > .v-input__slot {
+    padding: 0 14px;
+}
 </style>

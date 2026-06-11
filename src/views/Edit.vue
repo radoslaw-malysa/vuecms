@@ -674,18 +674,11 @@
                         text
                         @click="copyLinkHandler"
                       >Kopiuj</v-btn>
-                      <v-btn
-                        :href="articleLink"
-                        target="_blank"
-                        color="primary"
-                        x-small
-                        rounded
-                        text
-                        @click="copyLinkHandler"
-                      >Otwórz</v-btn>
                     </div>
                   </div>
                   <v-text-field 
+                    append-icon="outbound"
+                    @click:append="goToUrlHandler"
                     type="text" 
                     outlined 
                     rounded
@@ -693,6 +686,7 @@
                     hide-details=""
                     v-model="articleLink"
                     readonly
+                    class="article-link"
                   >
                   </v-text-field>
                 </v-col>
@@ -1105,6 +1099,9 @@ export default {
       }).catch(err => {
         console.error('Failed to copy: ', err);
       });
+    },
+    goToUrlHandler() {
+      window.open(this.articleLink, "_blank");
     }
   }
 }
