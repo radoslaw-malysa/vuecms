@@ -1,7 +1,7 @@
 import profile from '../../api/profile'
 
 const state = () => ({
-  user: {},
+  user: JSON.parse(localStorage.getItem('user_profile')) || {},
   dark: null,
   loading: false
 })
@@ -9,6 +9,13 @@ const state = () => ({
 const getters = {
   user(state) {
     return state.user
+  },
+  profile(state) {
+    /*const savedData = localStorage.getItem('user_profile');
+    if (!savedData) return {};
+    
+    return JSON.parse(savedData);*/
+    return state.user;
   },
   isLogged(state) {
     return (state.user.id) ? true : false
@@ -21,6 +28,9 @@ const getters = {
 const mutations = {
   setUser: (state, data) => {
     state.user = data
+
+    const stringifiedData = JSON.stringify(data);
+    localStorage.setItem('user_profile', stringifiedData);
   },
   setLoading: (state, data) => {
     state.loading = data
@@ -47,7 +57,7 @@ const actions = {
     })
   },
   restore({commit}) {
-    commit('setUser', profile.restore())
+    // commit('setUser', profile.restore())
   },
   logout({commit}) {
     profile.logout();

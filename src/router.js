@@ -10,6 +10,7 @@ import Settings from './views/Settings.vue'
 import Edit from './views/Edit.vue'
 import Collection from './views/Collection.vue'
 import EditArtwork from './views/EditArtwork.vue'
+import Log from './views/Log.vue'
 
 Vue.use(Router)
 
@@ -63,6 +64,11 @@ const router = new Router({
       name: 'Art',
       component: EditArtwork,
       props: true
+    },
+    {
+      path: '/log',
+      name: 'Log',
+      component: Log
     },
   ]
 })

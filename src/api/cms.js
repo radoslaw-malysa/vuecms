@@ -60,5 +60,12 @@ export default {
     })
     .then(response => response.json())
     .catch(() => badResponse());
-  }
+  },
+  getLog(table_name, id_record, params) {
+    return fetch(apiUrl + '/get-log/' + table_name + '/' + id_record + '?t=' + new Date().getTime() + '&' + objToQuery(params), {
+      method: 'GET'
+    })
+    .then(response => response.json())
+    .catch(() => badResponse());
+  },
 }

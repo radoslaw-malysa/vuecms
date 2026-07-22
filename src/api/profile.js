@@ -30,7 +30,8 @@ export default {
     //return true;
   },
   restore() {
-    const profile = localStorage.getItem('profile');
+    // const profile = localStorage.getItem('profile');
+    const profile = localStorage.getItem('user_profile');
     if (profile) {
       return JSON.parse(profile)
     } else {

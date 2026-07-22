@@ -67,10 +67,11 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
+          <log-dialog v-bind:id_record="id" table_name="tags"></log-dialog>
           <v-menu v-if="id" offset-y :disabled="!valid || loading">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
-                color="warning"
+                color="error"
                 x-large
                 text
                 v-bind="attrs"
@@ -97,8 +98,12 @@
 import { mapGetters } from 'vuex'
 import cms from '../api/cms'
 import slugify from '../api/slugify'
+import LogDialog from './LogDialog.vue';
 export default {
   props: ['id', 'dialog'],
+  components: {
+    LogDialog
+  },
   data: () => ({
     tableName: 'tags',
     valid: true,

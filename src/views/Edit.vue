@@ -692,6 +692,12 @@
                 </v-col>
               </v-row>
 
+              <v-row>
+                <v-col>
+                  <log-dialog v-bind:id_record="id" v-bind:table_name="tableName"></log-dialog>
+                </v-col>
+              </v-row>
+
             </v-card-text>
           </v-card>
         </div>
@@ -726,6 +732,7 @@ import slugify from '../api/slugify'
 import ContentTags from '../components/ContentTags.vue'
 import Gallery from '../components/ArticleGalleryx.vue';
 import ImageUploader from '../components/ImageUploader.vue'
+import LogDialog from '../components/LogDialog.vue'
 
 export default {
   name: 'Contents',
@@ -734,7 +741,8 @@ export default {
     'editor': Editor,
     ContentTags,
     Gallery,
-    ImageUploader
+    ImageUploader,
+    LogDialog
   },
   data: () => ({
     tableName: 'contents',

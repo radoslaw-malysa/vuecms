@@ -39,6 +39,7 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
+        <log-dialog v-bind:id_record="id" table_name="users"></log-dialog>
         <v-spacer></v-spacer>
         <v-btn x-large color="secondary" text @click="$emit('close-edit')">Anuluj</v-btn>
         <v-btn x-large text color="primary" @click="saveItem" :disabled="!valid || loading">Zapisz zmiany</v-btn>
@@ -50,8 +51,12 @@
 <script>
 import { mapGetters } from 'vuex'
 import cms from '../api/cms'
+import LogDialog from './LogDialog.vue';
 export default {
   props: ['id', 'dialog'],
+  components: {
+    LogDialog
+  },
   data: () => ({
     tableName: 'users',
     valid: true,

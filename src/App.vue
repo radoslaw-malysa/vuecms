@@ -26,11 +26,12 @@
         <v-tab to="/tags" value="/tags">Tagi</v-tab>
         <!--<v-tab to="/pages" value="/pages">Strony</v-tab>-->
         <v-tab to="/collection" value="/collection">Kolekcja</v-tab>
-        <v-tab to="/settings" value="/settings">Ustawienia</v-tab>
+        <v-tab v-if="profile.id_group == 1" to="/settings" value="/settings">Ustawienia</v-tab>
+        <v-tab v-if="profile.id_group == 1" to="/log" value="/log">Log</v-tab>
       </v-tabs>
 
       <v-spacer></v-spacer>
-      <v-btn to="/users" icon class="ml-5 mr-1" :color="($route.path == '/users') ? 'primary' : ''" title="Użytkownicy">
+      <v-btn v-if="profile.id_group == 1" to="/users" icon class="ml-5 mr-1" :color="($route.path == '/users') ? 'primary' : ''" title="Użytkownicy">
         <v-icon>people_alt</v-icon>
       </v-btn>
       <v-btn href="/manual" target="_blank" icon class="mx-1" title="Pomoc">
@@ -86,7 +87,7 @@ export default {
     darkMode: false,
   }),
   computed: {
-    ...mapGetters('profile', ['isLogged','user']),
+    ...mapGetters('profile', ['isLogged','user','profile']),
     hideSlider() {
       return (this.$route.path == '/' || this.$route.path == '/tags' || this.$route.path == '/collection' || this.$route.path == '/settings') ? false : true
     },

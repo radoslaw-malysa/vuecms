@@ -290,6 +290,12 @@
                   </v-text-field>
                 </v-col>
               </v-row>
+
+              <v-row>
+                <v-col>
+                  <log-dialog v-bind:id_record="id" v-bind:table_name="tableName"></log-dialog>
+                </v-col>
+              </v-row>
             </v-card-text>
 
           </v-card>
@@ -322,12 +328,14 @@ import { mapGetters } from 'vuex'
 import cms from '../api/cms'
 import slugify from '../api/slugify'
 import Gallery from '../components/ArtworkGallery.vue';
+import LogDialog from '../components/LogDialog.vue';
 
 export default {
   name: 'EditArtwork',
   props: ['id'],
   components: {
-    Gallery
+    Gallery,
+    LogDialog
   },
   data: () => ({
     tableName: 'artworks',
