@@ -145,6 +145,28 @@
           <v-chip v-if="item.state == 1 && item.archive && item.archive < 0" color="red" text-color="white" small >Archiwum</v-chip>
           <span v-else>{{ (item.state) ? contentsStates[item.state].title : '' }}</span>
         </template>
+        <template v-slot:item.actions="{ item }">
+          <v-btn
+            v-if="filters.id_tag"
+            icon
+            @click="moveUp(item.id)"
+            class="move"
+          >
+            <v-icon>
+              arrow_upward
+            </v-icon>
+          </v-btn>
+          <v-btn
+            v-if="filters.id_tag"
+            icon
+            @click="moveDown(item.id)"
+            class="move"
+          >
+            <v-icon>
+              arrow_downward
+            </v-icon>
+          </v-btn>
+        </template>
         <template v-slot:no-data>
           Nic nie znaleziono
         </template>
@@ -212,7 +234,8 @@
         { text: 'Data wydarz.', align: 'start', sortable: true, value: 'event_date', width: '120'  },
         { text: 'Archiwizacja', align: 'start', sortable: true, value: 'archiving_date', width: '120'  },
         { text: 'Aktualizacja', align: 'start', sortable: true, value: 'update_time' },
-        { text: 'Status', align: 'start', value: 'state' }
+        { text: 'Status', align: 'start', value: 'state' },
+        { text: '', align: 'end', value: 'actions', sortable: false, width: '110' }
       ],
     }),
     computed: {
@@ -289,20 +312,37 @@
           this.loading = false;
         });
       },
-      editItem(item) {
+      editItem(item,x,y) {
         //this.editId = id;
         //this.editDialog = true;
-        let id = item.id
+        if (!y.target.classList.contains("v-icon")) {
+          let id = item.id;
 
-        let editRoute = this.$router.resolve({ 
-          name: 'Artykuł',
-          params: { id: id },
+          let editRoute = this.$router.resolve({ 
+            name: 'Artykuł',
+            params: { id: id },
+          });
+
+          let url = editRoute.href;
+          if (id == 0) { url += '?id_category=' + this.filters.id_category; }
+          
+          window.open(url, '_blank');
+        }
+      },
+      moveUp(id) {
+        console.log()
+        cms.moveUpItem(id, this.filters.id_tag)
+        .then(response => {
+          console.log(response);
+          this.getItems();
         });
-
-        let url = editRoute.href;
-        if (id == 0) { url += '?id_category=' + this.filters.id_category; }
-        
-        window.open(url, '_blank');
+      },
+      moveDown(id) {
+        cms.moveDownItem(id, this.filters.id_tag)
+        .then(response => {
+          console.log(response);
+          this.getItems();
+        });
       },
       editUpdated() {
         this.editDialog = false;
@@ -350,5 +390,11 @@
   }
   .v-data-table tbody tr {
     cursor: pointer;
+  }
+  .move {
+    opacity: 0.4;
+  }
+  tr:hover .move {
+    opacity: 1;
   }
 </style>

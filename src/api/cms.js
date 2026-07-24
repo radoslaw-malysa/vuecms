@@ -68,4 +68,18 @@ export default {
     .then(response => response.json())
     .catch(() => badResponse());
   },
+  moveUpItem(id, id_tag) {
+    return fetch(apiUrl + '/move-up/' + id_tag + '/' + id + '?t=' + new Date().getTime(), {
+      method: 'GET'
+    })
+    .then(response => response.json())
+    .catch(() => badResponse());
+  },
+  moveDownItem(id, id_tag) {
+    return fetch(apiUrl + '/move-down/' + id_tag + '/' + id + '?t=' + new Date().getTime(), {
+      method: 'GET'
+    })
+    .then(response => response.json())
+    .catch(() => badResponse());
+  },
 }
