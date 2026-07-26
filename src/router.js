@@ -11,6 +11,7 @@ import Edit from './views/Edit.vue'
 import Collection from './views/Collection.vue'
 import EditArtwork from './views/EditArtwork.vue'
 import Log from './views/Log.vue'
+import Admin from './views/Admin.vue'
 
 Vue.use(Router)
 
@@ -69,6 +70,11 @@ const router = new Router({
       path: '/log',
       name: 'Log',
       component: Log
+    },
+    {
+      path: '/admin',
+      name: 'Admin',
+      component: Admin
     },
   ]
 })

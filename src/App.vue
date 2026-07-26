@@ -27,6 +27,7 @@
         <!--<v-tab to="/pages" value="/pages">Strony</v-tab>-->
         <v-tab to="/collection" value="/collection">Kolekcja</v-tab>
         <v-tab v-if="profile.id_group == 1" to="/settings" value="/settings">Ustawienia</v-tab>
+        <v-tab v-if="profile.id_group == 1" to="/admin" value="/admin">Administracja</v-tab>
         <v-tab v-if="profile.id_group == 1" to="/log" value="/log">Log</v-tab>
       </v-tabs>
 

@@ -901,7 +901,7 @@ export default {
     isArchive() {
       if (this.archiving_date) {
         const today = new Date().toISOString().split('T')[0];
-        if (this.archiving_date < today) {
+        if (this.archiving_date <= today) {
           return true
         }
       }

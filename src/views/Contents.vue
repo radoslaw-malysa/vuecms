@@ -142,7 +142,7 @@
           {{ item.event_date }}<br />{{ item.event_date_end }}
         </template>
         <template v-slot:item.state="{ item }">
-          <v-chip v-if="item.state == 1 && item.archive && item.archive < 0" color="red" text-color="white" small >Archiwum</v-chip>
+          <v-chip v-if="item.state == 1 && item.archiving_date && item.archive <= 0" color="red" text-color="white" small >Archiwum</v-chip>
           <span v-else>{{ (item.state) ? contentsStates[item.state].title : '' }}</span>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -392,7 +392,7 @@
     cursor: pointer;
   }
   .move {
-    opacity: 0.4;
+    opacity: 0.3;
   }
   tr:hover .move {
     opacity: 1;
