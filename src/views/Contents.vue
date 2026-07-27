@@ -75,7 +75,7 @@
               vertical
             ></v-divider>-->
             
-            <v-btn icon class="ml-1 btn-primary" @click="editItem({id:0})">
+            <v-btn icon class="ml-1 btn-primary" @click="addItem({id:0})">
               <v-icon color="#ffffff">add</v-icon>
             </v-btn>
           </v-toolbar>
@@ -328,6 +328,19 @@
           
           window.open(url, '_blank');
         }
+      },
+      addItem(item) {
+        let id = item.id;
+
+        let editRoute = this.$router.resolve({ 
+          name: 'Artykuł',
+          params: { id: id },
+        });
+
+        let url = editRoute.href;
+        if (id == 0) { url += '?id_category=' + this.filters.id_category; }
+        
+        window.open(url, '_blank');
       },
       moveUp(id) {
         console.log()
