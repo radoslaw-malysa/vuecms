@@ -56,7 +56,7 @@
 
 <script>
 import cms from '../api/cms'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import draggable from 'vuedraggable';
 export default {
   components: {
@@ -65,6 +65,7 @@ export default {
   name: "ContentTags",
   props: {
     inputData: Array,
+    id_lang: Number
   },
   data () {
     return {
@@ -102,8 +103,12 @@ export default {
     search (val) {
       val && val !== this.select && this.queryItems(val)
     },
+    id_lang (val) {
+      this.getConfig(val)
+    }
   },
   methods: {
+    ...mapActions('config', ['getConfig']),
     queryItems (q) {
       this.isLoading = true;
       cms.autocomplete('tags', q, { })

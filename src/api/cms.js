@@ -47,8 +47,8 @@ export default {
     .then(response => response.json())
     .catch(() => badResponse());
   },
-  getConfig() {
-    return fetch(apiUrl + '/get-config?t=' + new Date().getTime(), {
+  getConfig(id_lang = 1) {
+    return fetch(apiUrl + '/get-config?id_lang=' + id_lang + '&t=' + new Date().getTime(), {
       method: 'GET'
     })
     .then(response => response.json())

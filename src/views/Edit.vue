@@ -638,7 +638,7 @@
                 <v-col>
                   <content-tags 
                     :inputData.sync="tags" 
-                    
+                    :id_lang="id_lang"
                   />
                 </v-col>
               </v-row>

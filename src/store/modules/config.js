@@ -93,9 +93,9 @@ const mutations = {
 }
 
 const actions = {
-  getConfig({commit}) {
+  getConfig({commit}, id_lang = 1) {
     //commit('setLoading', true);
-    return cms.getConfig()
+    return cms.getConfig(id_lang)
     .then(data => {
       commit('setConfig', data);
       return data;

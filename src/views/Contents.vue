@@ -49,6 +49,7 @@
               item-text="title"
               item-value="id"
               v-model="filters.id_lang"
+              @change="changeLang"
               label="Język"
               solo
               flat
@@ -186,7 +187,7 @@
 
 <script>
   import cms from '../api/cms';
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
   export default {
     name: 'Contents',
     data: () => ({
@@ -270,7 +271,7 @@
       filters: {
         handler () {
           if (this.options.page == 1) {
-            console.log('page=1');
+            //console.log('page=1');
             this.getItems();
             //this.options.page = 1;
           } else {
@@ -294,6 +295,7 @@
       },
     },
     methods: {
+      ...mapActions('config', ['getConfig']),
       getItems() {
         this.loading = true;
         let params = {...this.options, ...this.filters};
@@ -391,7 +393,9 @@
           this.tagLoading = false;
         });
       },
-      
+      changeLang() {
+        this.getConfig(this.filters.id_lang);
+      }
     }
   }
 </script>

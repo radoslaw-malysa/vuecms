@@ -19,9 +19,6 @@
               append-icon="sync"
               @click:append="titleToSlug(true)"
             ></v-text-field>
-            <v-text-field label="Kolejność" type="text" v-model="ord" 
-            ></v-text-field>
-
             <v-select
               :items="config.langs"
               item-text="title"
@@ -30,6 +27,8 @@
               label="Język"
               required :rules="requiredRules"
             ></v-select>
+            <v-text-field label="Kolejność" type="text" v-model="ord" 
+            ></v-text-field>
             
             <v-select
               v-model="active"
@@ -171,8 +170,8 @@ export default {
         .then(response => {
           if (response.id) {
             this.$emit('edit-updated');
-          } else {
-            console.log('error');
+          } else if (response.message) {
+            alert(response.message);
           }
         });
       } else {
