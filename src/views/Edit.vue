@@ -656,6 +656,7 @@
                     rounded
                     dense
                     hide-details
+                    class="uppercase"
                   ></v-select>
                   <input type="hidden" name="view" v-model="view" />
                   <input type="hidden" name="id_category" v-model="id_category" />
@@ -668,7 +669,7 @@
                     color="primary"
                     v-if="id > 0 && !id_source"
                     @click="addTranslation(2)"
-                  >Przetłumacz EN</v-btn>
+                  >Utwórz EN</v-btn>
                   <v-btn
                     rounded
                     plain
@@ -794,7 +795,6 @@ export default {
     view: '',
     gallery: [],
     tags: [],
-    contents_translate: [],
 
     // for new translated article
     id_source: 0,
@@ -1243,6 +1243,9 @@ export default {
     line-height: 20px;
     letter-spacing: normal;
     font-size: 12px;
+  }
+  .uppercase {
+    text-transform: uppercase;
   }
   
   @media (min-width: 1264px) {

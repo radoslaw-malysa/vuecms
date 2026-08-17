@@ -118,7 +118,9 @@ export default {
     active: 1,
     id_lang: 1,
     systemic: 0,
-    important: 0
+    important: 0,
+    id_source: 0,
+    id_translated: 0
   }),
   computed: {
     ...mapGetters('config', ['config']),
@@ -148,6 +150,7 @@ export default {
           this.id_lang = response.id_lang;
           this.systemic = response.systemic;
           this.important = response.important;
+          this.id_source = response.id_source;
         } else {
           // this.$refs.form.reset();
           this.resetItem()
