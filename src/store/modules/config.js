@@ -73,15 +73,15 @@ const getters = {
       return obj
     }, {})
   },
-  important_tags(state) {
-    return state.config.important_tags;
+  getImportantTags: (state) => (id_lang) => {
+    return state.config.important_tags[id_lang];
   },
   serverUrl(state) {
     return state.config.serverUrl;
   },
   categoryTemplate: (state) => (id_category) => {
     return (id_category) ? state.config.contentsTemplates.find(el => el.id_category === id_category) : state.config.contentsTemplates.find(el => el.id_category == 1)
-  }
+  },
 }
 
 const mutations = {
@@ -93,9 +93,9 @@ const mutations = {
 }
 
 const actions = {
-  getConfig({commit}, id_lang = 1) {
+  getConfig({commit}) {
     //commit('setLoading', true);
-    return cms.getConfig(id_lang)
+    return cms.getConfig()
     .then(data => {
       commit('setConfig', data);
       return data;

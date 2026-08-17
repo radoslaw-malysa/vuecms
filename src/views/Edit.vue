@@ -12,7 +12,7 @@
       <v-icon>arrow_back</v-icon>
     </v-btn>
     <form id="form-contents" action="" method="post" class="d-flex">
-      
+      <input type="hidden" name="id_source" v-model="id_source" />
       <div class="ed d-inline-block py-10">
 
         <div class="d-flex mb-6">
@@ -660,6 +660,30 @@
                   <input type="hidden" name="view" v-model="view" />
                   <input type="hidden" name="id_category" v-model="id_category" />
                 </v-col>
+                <v-col>
+                  <label>&nbsp;</label>
+                  <v-btn
+                    rounded
+                    depressed
+                    color="primary"
+                    v-if="id > 0 && !id_source"
+                    @click="addTranslation(2)"
+                  >Przetłumacz EN</v-btn>
+                  <v-btn
+                    rounded
+                    plain
+                    color="secondary"
+                    v-if="id > 0 && id_translated"
+                    @click="showArticle(id_translated)"
+                  >Pokaż EN</v-btn>
+                  <v-btn
+                    rounded
+                    plain
+                    color="secondary"
+                    v-if="id > 0 && id_source"
+                    @click="showArticle(id_source)"
+                  >Pokaż PL</v-btn>
+                </v-col>
               </v-row>
 
               <v-row>
@@ -770,6 +794,11 @@ export default {
     view: '',
     gallery: [],
     tags: [],
+    contents_translate: [],
+
+    // for new translated article
+    id_source: 0,
+    id_translated: 0,
 
     // slug
     showSlug: false,
@@ -930,11 +959,24 @@ export default {
   },  
   methods: {
     loadItem() {
-      if (this.id > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id_source = urlParams.get('id_source');
+      const translate_to = urlParams.get('translate_to');
+      
+      if (this.id > 0 || id_source > 0) {
         this.loading = true;
-        cms.getItem(this.tableName, this.id, {})
+        let params = {};
+
+        if (id_source && id_source > 0) {
+          params.id_source = id_source;
+        }
+        if (translate_to && translate_to != 1) {
+          params.translate_to = translate_to;
+        }
+
+        cms.getItem(this.tableName, this.id, params)
         .then(response => {
-          if (response.id) {
+          if (response) {
             this.slug = response.slug;
             this.id_category = response.id_category;
             this.title = response.title;
@@ -959,6 +1001,8 @@ export default {
             this.event_date_end = response.event_date_end;
             this.archiving_date = response.archiving_date;
             this.view = response.view;
+            this.id_source = response.id_source;
+            this.id_translated = response.id_translated;
             //tags
             this.tags = response.tags;
             
@@ -977,17 +1021,24 @@ export default {
           this.loading = false;
         });
       } else {
-        //update
+        //update time
         let d = new Date();
         this.update_time_d = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().substr(0, 10);
         this.update_time_h = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().substr(11, 5);
 
-        //id category
-        const urlParams = new URLSearchParams(window.location.search);
-        const id_cat = urlParams.get('id_category');
+        //id lang
+        /*const urlParams = new URLSearchParams(window.location.search);
+        const id_lang = urlParams.get('id_lang');
+
+        if (id_lang && id_lang != 1) {
+
+        }*/
+        
+        /*const id_cat = urlParams.get('id_category');
         if (id_cat) {
           this.id_category = parseInt(id_cat);
-        }
+        }*/
+
         //state
         this.state = 1;
         // lang
@@ -1110,6 +1161,26 @@ export default {
     },
     goToUrlHandler() {
       window.open(this.articleLink, "_blank");
+    },
+    addTranslation(id_lang_to_add) {
+      let editRoute = this.$router.resolve({ 
+        name: 'Artykuł',
+        params: { id: 0 },
+      });
+
+      let url = editRoute.href + '?id_source=' + this.id + '&translate_to=' + id_lang_to_add;
+      
+      window.open(url, '_blank');
+    },
+    showArticle(id) {
+      let editRoute = this.$router.resolve({ 
+        name: 'Artykuł',
+        params: { id: id },
+      });
+
+      let url = editRoute.href;
+      
+      window.open(url, '_blank');
     }
   }
 }

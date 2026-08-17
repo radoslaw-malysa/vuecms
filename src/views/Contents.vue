@@ -102,7 +102,7 @@
         class="mr-2 state-select"
       ></v-select>-->
       <v-chip
-        v-for="(item) in config.important_tags"
+        v-for="(item) in importantTags"
         :key="item.id"
         :color="(filters.id_tag == item.id) ? 'primary' : ''"
         @click="filters.id_tag == item.id ? filters.id_tag = null : filters.id_tag = item.id"
@@ -240,7 +240,7 @@
       ],
     }),
     computed: {
-      ...mapGetters('config', ['config', 'contentsStates']),
+      ...mapGetters('config', ['getImportantTags', 'config', 'contentsStates']),
       finderHeight() {
         return (this.finderSticked) ? 64 : 56
       },
@@ -255,6 +255,9 @@
       },
       imageServer() {
         return (this.filters.id_category == 1 || this.filters.id_category == 3) ? this.config.serverUrl + '/thumbs/180x120/' : this.config.serverUrl + '/thumbs/60x60/'
+      },
+      importantTags() {
+        return this.getImportantTags(this.filters.id_lang)
       }
     },
     mounted() {
@@ -394,7 +397,7 @@
         });
       },
       changeLang() {
-        this.getConfig(this.filters.id_lang);
+        this.getConfig();
       }
     }
   }

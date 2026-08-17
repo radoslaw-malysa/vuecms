@@ -77,7 +77,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('config', { mainTags: 'important_tags' }),
+    ...mapGetters('config', ['getImportantTags']),
     selection:{
       get(){
         return this.inputData
@@ -94,9 +94,14 @@ export default {
         this.$emit('update:inputData', val)
       }
     },
+    importantTags() {
+      return this.getImportantTags(this.id_lang)
+    },
     mainTagsUnused() {
       const idsToRemove = new Set(this.selection.map(obj => obj.id));
-      return this.mainTags.filter(obj => !idsToRemove.has(obj.id));
+      if (this.importantTags) {
+        return this.importantTags.filter(obj => !idsToRemove.has(obj.id));
+      }
     }
   },
   watch: {
@@ -140,7 +145,7 @@ export default {
       console.log(exists)
 
       if (!exists) {
-        const selected = this.mainTags.find((el) => el.id === id)
+        const selected = this.importantTags.find((el) => el.id === id)
         this.selection.push(selected);
       }
     }
