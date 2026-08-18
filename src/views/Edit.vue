@@ -669,7 +669,7 @@
                     color="primary"
                     v-if="id > 0 && !id_source"
                     @click="addTranslation(2)"
-                  >Utwórz EN</v-btn>
+                  >Przetłumacz EN</v-btn>
                   <v-btn
                     rounded
                     plain
@@ -818,8 +818,7 @@ export default {
     eventDateMenu: false,
     eventDateEndMenu: false,
     archivingDateMenu: false,
-    loading: false,
-    // dark: false
+    loading: false
   }),
   computed: {
     ...mapGetters('config', ['config', 'contentsStates']),
