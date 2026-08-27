@@ -106,8 +106,12 @@
         :key="item.id"
         :color="(filters.id_tag == item.id) ? 'primary' : ''"
         @click="filters.id_tag == item.id ? filters.id_tag = null : filters.id_tag = item.id"
-        class="mr-2"
+        class="mr-1"
+        
       >
+        <v-icon v-if="item.icon" left>
+          {{item.icon}}
+        </v-icon>
         {{item.title}}
       </v-chip>
       
