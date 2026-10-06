@@ -51,9 +51,22 @@
           </div>
           <div class="ed-content flex-grow-1">
             <v-text-field
-              name="author"
-              v-model="author"
-              label="Autor"
+              name="author_name"
+              v-model="author_name"
+              label="Imię autora"
+            ></v-text-field>
+          </div>
+        </div>
+
+        <div class="d-flex">
+          <div class="ed-aside">
+            &nbsp;
+          </div>
+          <div class="ed-content flex-grow-1">
+            <v-text-field
+              name="author_surname"
+              v-model="author_surname"
+              label="Nazwisko autora"
             ></v-text-field>
           </div>
         </div>
@@ -344,7 +357,8 @@ export default {
     title: null,
     acquisition: null,
     year_of_acquisition: null,
-    author: null,
+    author_name: null,
+    author_surname: null,
     location: null,
     year_of_creation_start: null,
     year_of_creation_end: null,
@@ -412,7 +426,8 @@ export default {
             this.title = response.title;
             this.acquisition = response.acquisition;
             this.year_of_acquisition = response.year_of_acquisition;
-            this.author = response.author;
+            this.author_name = response.author_name;
+            this.author_surname = response.author_surname;
             this.year_of_creation_start = response.year_of_creation_start;
             this.year_of_creation_end = response.year_of_creation_end;
             this.height = response.height;
