@@ -1162,9 +1162,10 @@ export default {
       window.open(this.articleLink, "_blank");
     },
     addTranslation(id_lang_to_add) {
+
       let editRoute = this.$router.resolve({ 
         name: 'Artykuł',
-        params: { id: 0 },
+        params: { id: (this.id_translated) ? this.id_translated : 0 },
       });
 
       let url = editRoute.href + '?id_source=' + this.id + '&translate_to=' + id_lang_to_add;
